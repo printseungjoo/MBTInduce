@@ -256,7 +256,6 @@ To protect user privacy:
 - AI API Integration
 - Express
 
-
 ### Authentication
 - Google OAuth
 
