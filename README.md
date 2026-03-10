@@ -7,6 +7,24 @@ Users can choose specific MBTI characteristics and control how strongly those tr
 
 The platform helps users receive responses that match the emotional tone or logical style they want, and also allows them to simulate conversations with specific MBTI personalities.
 
+---
+
+## ⚠️ Problem Statement
+
+Current AI chat services typically provide responses based on a single generalized model.  
+While this approach works well for many cases, it does not consider that people often want different types of responses depending on their personality or emotional needs.
+
+For example, some users may prefer empathetic and supportive responses, while others may prefer logical and objective advice. However, most AI systems generate answers without allowing users to control these perspectives.
+
+In addition, people are often curious about how individuals with different personality types might react in certain situations. Existing AI tools do not provide an easy way to simulate conversations or responses based on specific personality traits.
+
+Because of this limitation, users cannot easily:
+
+- Guide the tone or reasoning style of AI responses  
+- Compare answers from different personality perspectives  
+- Simulate conversations with specific personality types  
+
+MBTInduce addresses this problem by allowing users to influence AI responses using MBTI personality traits and simulate interactions from different personality perspectives.
 
 ---
 
@@ -32,7 +50,7 @@ For example:
 - A user whose MBTI is **ESFJ** might want ChatGPT to plan tightly while a user whose MBTI is **ESFP** does not want to.
 
 
-This service helps users explore user's problem in various views, understand others better, and simulate conversations based on MBTI personalities.
+This service helps users explore their problems from various perspectives, understand others better, and simulate conversations based on MBTI personalities.
 
 
 ---
@@ -236,6 +254,7 @@ To protect user privacy:
 ### Backend
 - Node.js
 - AI API Integration
+- Express
 
 
 ### Authentication
@@ -243,10 +262,17 @@ To protect user privacy:
 
 
 ### AI
-- ChatGPT API
+- OpenAI API
 - Prompt Engineering
 - Personality-based response tuning
 
+
+---
+
+### Tools
+- Jira
+- Figma
+- Git / GitHub
 
 ---
 
