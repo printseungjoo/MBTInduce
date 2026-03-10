@@ -236,7 +236,7 @@ To protect user privacy:
 ### Backend
 - Node.js
 - AI API Integration
-
+- Express
 
 ### Authentication
 - Google OAuth
