@@ -14,3 +14,6 @@ export const theme = {
         paleLavender: '#B08BC2'
     }
 }
+
+export type AppTheme = typeof theme;
+
