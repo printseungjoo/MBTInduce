@@ -30,6 +30,17 @@ const Subtitle = styled.p`
     color: ${({ theme }) => theme.colors.lightWhite};
 `;
 
+const WebsiteIntro = styled.div`
+    color: ${({ theme }) => theme.colors.lightWhite};
+    background-color: ${({ theme }) => theme.colors.royalPurple};
+    font-size: 0.8rem;
+    margin: 0 0.5vw;
+    padding: 2vh 1vw;
+    border-radius: 10px;
+    margin-top: auto;
+    margin-bottom: 8vh;
+`;
+
 type clickedNameGeneric = 'Main Chat' | 'Simulation' | 'Calendar' | 'Log In' | 'History'
 
 // 원래는 로그인 유무에 따라 4번째 버튼 이름이 달라집니다. 코드 수정은 로그인 기능이 구현된 뒤에 하겠습니다.
@@ -46,6 +57,9 @@ export function NavigationDrawer({ className, isOpen }: NavigationDrawerProps) {
             <PageButton name='👥  Simulation' clicked = {clickedName === 'Simulation'} clickedName = {() => setClickedName('Simulation')} />
             <PageButton name='📅  Calendar' clicked = {clickedName === 'Calendar'} clickedName = {() => setClickedName('Calendar')} />
             <PageButton name='👣 Log In' clicked = {clickedName === 'Log In'} clickedName = {() => setClickedName('Log In')} />
+            <WebsiteIntro>
+                MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.
+            </WebsiteIntro>
         </NavigationDrawerStyled>
     )
 }
