@@ -83,13 +83,6 @@
   - `sameSite: "none"` in production, `"lax"` in development
 - CORS credentials enabled in `src/app.js`.
 
-### 7) Next steps
-1. Create `.env` with OAuth and DB credentials.
-2. Run Prisma migration and client generation.
-3. Replace chat assistant placeholder reply with real OpenAI service call.
-4. Add input validation layer (zod/joi) and pagination.
-5. Add admin/user integration tests.
-
 ---
 
 ## 2026-03-24 (Frontend handoff: TV requirements only)
