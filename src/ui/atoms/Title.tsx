@@ -7,7 +7,7 @@ interface TitleProps {
 
 const TitleStyled = styled.p`
     font-weight: bolder;
-    font-size: 2.4vw;
+    font-size: 2vw;
     color: ${({ theme }) => theme.colors.lightWhite};
 `;
 

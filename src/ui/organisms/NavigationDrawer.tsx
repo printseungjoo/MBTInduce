@@ -3,10 +3,12 @@ import { useState } from 'react'
 
 import { Title } from '../atoms/Title';
 import { PageButton } from '../atoms/PageButton';
+import { getURL } from '../atoms/getURL';
 
 interface NavigationDrawerProps {
     className?: string;
     isOpen: boolean;
+    children?: React.ReactNode;
 }
 
 const NavigationDrawerStyled = styled.div<{ isOpen: boolean }>`
@@ -15,7 +17,7 @@ const NavigationDrawerStyled = styled.div<{ isOpen: boolean }>`
     background-color: ${({ theme }) => theme.colors.deepPlum};
     left: ${({ isOpen }) => isOpen ? '0' : '-100%'};
     transition: left 0.4s ease-in-out;
-    padding-top: 6vh;
+    padding-top: 2vh;
     display: flex;
     flex-direction: column;
 `;
@@ -24,6 +26,10 @@ const PaddingLeftWithLine = styled.div`
     padding-left: 1vw;
     padding-bottom: 2vh;
     border-bottom: 0.5px solid ${({ theme }) => theme.colors.lightWhite};
+`;
+
+const FlexDiv = styled.div`
+    display: flex;
 `;
 
 const Subtitle = styled.p`
@@ -38,25 +44,28 @@ const WebsiteIntro = styled.div`
     padding: 2vh 1vw;
     border-radius: 10px;
     margin-top: auto;
-    margin-bottom: 8vh;
+    margin-bottom: 4vh;
 `;
 
 type clickedNameGeneric = 'Main Chat' | 'Simulation' | 'Calendar' | 'Log In' | 'History'
 
 // 원래는 로그인 유무에 따라 4번째 버튼 이름이 달라집니다. 코드 수정은 로그인 기능이 구현된 뒤에 하겠습니다.
-export function NavigationDrawer({ className, isOpen }: NavigationDrawerProps) {
-    const [clickedName, setClickedName] = useState<clickedNameGeneric>('Main Chat');
+export function NavigationDrawer({ className, isOpen, children }: NavigationDrawerProps) {
+    const [clickedName, setClickedName] = useState<clickedNameGeneric>(getURL);
 
     return (
         <NavigationDrawerStyled className={className} isOpen={isOpen}>
             <PaddingLeftWithLine>
-                <Title title='MBTInduce' />
+                <FlexDiv>
+                    <Title title='MBTInduce' />
+                    {children}
+                </FlexDiv>
                 <Subtitle> MBTI Chat-GPT AI Agent </Subtitle>
             </PaddingLeftWithLine>
-            <PageButton name='💬  Main Chat' clicked = {clickedName === 'Main Chat'} clickedName = {() => setClickedName('Main Chat')} />
-            <PageButton name='👥  Simulation' clicked = {clickedName === 'Simulation'} clickedName = {() => setClickedName('Simulation')} />
-            <PageButton name='📅  Calendar' clicked = {clickedName === 'Calendar'} clickedName = {() => setClickedName('Calendar')} />
-            <PageButton name='👣 Log In' clicked = {clickedName === 'Log In'} clickedName = {() => setClickedName('Log In')} />
+            <PageButton name='💬  Main Chat' clicked={clickedName === 'Main Chat'} text = 'MainChat' />
+            <PageButton name='👥  Simulation' clicked={clickedName === 'Simulation'} text = 'Simulation' />
+            <PageButton name='📅  Calendar' clicked={clickedName === 'Calendar'} text = 'Calendar' />
+            <PageButton name='👣 Log In' clicked={clickedName === 'Log In'} text = 'LogIn' />
             <WebsiteIntro>
                 MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.
             </WebsiteIntro>

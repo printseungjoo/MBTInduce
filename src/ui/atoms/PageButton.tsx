@@ -17,11 +17,18 @@ interface PageButtonProps {
     name: string;
     clicked: boolean;
     clickedName?: () => void;
+    text: string;
 }
 
-export function PageButton({ name, clicked, clickedName }: PageButtonProps) {
+export function PageButton({ name, clicked, text }: PageButtonProps) {
+    const handleClick = () => {
+        if (text) {
+            location.href = `${text}.html`;
+        } 
+    };
+
     return(
-        <PageButtonStyled clicked = { clicked } onClick = { clickedName }>
+        <PageButtonStyled clicked = { clicked } onClick = { handleClick }>
             { name }
         </PageButtonStyled>
     )
