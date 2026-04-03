@@ -1,15 +1,15 @@
 import styled from '@emotion/styled'
 
-const InvisibleCheckbox = styled.input`
+const InvisibleCheckbox = styled.input<{isOpen?: boolean}>`
     display: none;
 
     & + label {
-        position: absolute;
+        position: relative; 
         display: block;
-        left: 1%;
-        top: 2.5%;
-        width: 2.5%;
+        width: ${({ isOpen }) => isOpen ? '5vw' : '2.5vw'};
         height: 3vh;
+        left: ${({ isOpen }) => isOpen ? '3.5vw' : '1.5vw'};
+        top: ${({ isOpen }) => isOpen ? '1.3vh' : '0.3vh'};
         cursor: pointer;
     }
 
@@ -59,13 +59,14 @@ const HamburgerSticks = styled.label`
 
 interface HamburgerProps {
     isClicked?: () => void;
+    isOpen?: boolean;
 }
 
-export function Hamburger({ isClicked }: HamburgerProps) {
+export function Hamburger({ isClicked, isOpen }: HamburgerProps) {
     return (
         <>
-            <InvisibleCheckbox type = 'checkbox' id = 'icon' onChange = { isClicked } />
-            <HamburgerSticks htmlFor = 'icon'>
+            <InvisibleCheckbox type='checkbox' id='icon' onChange={ isClicked } isOpen = { isOpen } />
+            <HamburgerSticks htmlFor='icon'>
                 <span></span>
                 <span></span>
                 <span></span>
