@@ -51,6 +51,7 @@ const TextInputBoxStyled = styled.input`
 export function TextInputBox() {
     const [text, setText] = useState<string>('');
     const [example, setExample] = useState<string>('');
+    const [exampleShown, setExampleShown] = useState<boolean>(false);
 
     const textExampleClicked = (textExample: string) => {
         setExample(textExample);
@@ -63,16 +64,16 @@ export function TextInputBox() {
 
     return (
         <TextInputDiv>
-            <ExamplesDiv>
+            {exampleShown && <ExamplesDiv>
                 <TextExample content = 'Can you give me honest advice about this situation?' clicked = { textExampleClicked } />
                 <TextExample content = 'Can you comfort me about this situation?' clicked = { textExampleClicked } />
                 <TextExample content = 'Should I choose option A or option B?' clicked = { textExampleClicked } />
                 <TextExample content = 'What are the pros and cons of this decision?' clicked = { textExampleClicked } />
                 <TextExample content = 'What would be the logical way to decide this?' clicked = { textExampleClicked } />
                 <TextExample content = 'How can I improve myself?' clicked = { textExampleClicked } />
-            </ExamplesDiv>
+            </ExamplesDiv>}
             <TextInputBoxDiv>
-                <TextExampleButton>
+                <TextExampleButton onClick = {() => setExampleShown(!exampleShown)}>
                     📜
                 </TextExampleButton>
                 <TextInputBoxStyled placeholder = 'Type your message' value = { text } onChange = {(e) => setText(e.target.value)} />
