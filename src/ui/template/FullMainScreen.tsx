@@ -1,12 +1,12 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
-import { NavigationDrawer } from '../organisms/NavigationDrawer'
-import { Hamburger } from '../atoms/Hamburger'
-import { Title } from '../atoms/Title'
+import NavigationDrawer from '../organisms/NavigationDrawer'
+import Hamburger from '../atoms/Hamburger'
+import Title from '../atoms/Title'
 import { getURL } from '../atoms/GetURL';
-import { RightScreen } from '../organisms/RightScreen'
-import { TextInputBox } from '../molecules/TextInputBox'
+import RightScreen from '../organisms/RightScreen'
+import TextInputBox from '../molecules/TextInputBox'
 
 const FullScreen = styled.div`
     width: 100vw;
@@ -38,7 +38,7 @@ const NavigationDrawerPlus = styled(NavigationDrawer) <{ isOpen: boolean }>`
     height: 100vh;
 `;
 
-export function FullMainScreen() {
+export default function FullMainScreen() {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [url, setUrl] = useState(getURL);
 

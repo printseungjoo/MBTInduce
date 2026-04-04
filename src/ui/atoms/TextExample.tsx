@@ -19,7 +19,7 @@ interface TextExampleProps {
     clicked: (textExample: string) => void;
 }
 
-export function TextExample({ content, clicked }: TextExampleProps) {
+export default function TextExample({ content, clicked }: TextExampleProps) {
     return(
         <TextInputWrapper onClick = {() => clicked(content)}>
             { content }

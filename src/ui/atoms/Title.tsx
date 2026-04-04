@@ -11,7 +11,7 @@ const TitleStyled = styled.p`
     color: ${({ theme }) => theme.colors.lightWhite};
 `;
 
-export function Title({ title }: TitleProps) {
+export default function Title({ title }: TitleProps) {
     return(
         <TitleStyled>
             { title }

@@ -20,7 +20,7 @@ interface PageButtonProps {
     text: string;
 }
 
-export function PageButton({ name, clicked, text }: PageButtonProps) {
+export default function PageButton({ name, clicked, text }: PageButtonProps) {
     const handleClick = () => {
         if (text) {
             location.href = `${text}.html`;

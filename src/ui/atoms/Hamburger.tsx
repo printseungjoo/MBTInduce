@@ -62,7 +62,7 @@ interface HamburgerProps {
     isOpen?: boolean;
 }
 
-export function Hamburger({ isClicked, isOpen }: HamburgerProps) {
+export default function Hamburger({ isClicked, isOpen }: HamburgerProps) {
     return (
         <>
             <InvisibleCheckbox type='checkbox' id='icon' onChange={ isClicked } isOpen = { isOpen } />

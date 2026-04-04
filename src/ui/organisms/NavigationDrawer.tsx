@@ -1,8 +1,8 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
-import { Title } from '../atoms/Title';
-import { PageButton } from '../atoms/PageButton';
+import Title from '../atoms/Title';
+import PageButton from '../atoms/PageButton';
 import { getURL } from '../atoms/GetURL';
 
 interface NavigationDrawerProps {
@@ -49,8 +49,7 @@ const WebsiteIntro = styled.div`
 
 type clickedNameGeneric = 'Main Chat' | 'Simulation' | 'Calendar' | 'Log In' | 'History'
 
-// 원래는 로그인 유무에 따라 4번째 버튼 이름이 달라집니다. 코드 수정은 로그인 기능이 구현된 뒤에 하겠습니다.
-export function NavigationDrawer({ className, isOpen, children }: NavigationDrawerProps) {
+export default function NavigationDrawer({ className, isOpen, children }: NavigationDrawerProps) {
     const [clickedName, setClickedName] = useState<clickedNameGeneric>(getURL);
 
     return (
