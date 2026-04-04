@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react';
 
-import { TextExample } from '../atoms/TextExample'
+import TextExample from '../atoms/TextExample'
 
 const TextInputDiv = styled.div`
     display: flex;
@@ -48,7 +48,7 @@ const TextInputBoxStyled = styled.input`
     font-size: 1rem;
 `;
 
-export function TextInputBox() {
+export default function TextInputBox() {
     const [text, setText] = useState<string>('');
     const [example, setExample] = useState<string>('');
     const [exampleShown, setExampleShown] = useState<boolean>(false);

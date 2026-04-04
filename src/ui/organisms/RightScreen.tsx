@@ -9,7 +9,7 @@ const RightScreenStyled = styled.div`
     top: 0;
 `;
 
-export function RightScreen() {
+export default function RightScreen() {
     return(
         <RightScreenStyled />
     )
