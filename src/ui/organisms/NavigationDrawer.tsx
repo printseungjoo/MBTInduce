@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import { Title } from '../atoms/Title';
 import { PageButton } from '../atoms/PageButton';
-import { getURL } from '../atoms/getURL';
+import { getURL } from '../atoms/GetURL';
 
 interface NavigationDrawerProps {
     className?: string;
@@ -54,18 +54,18 @@ export function NavigationDrawer({ className, isOpen, children }: NavigationDraw
     const [clickedName, setClickedName] = useState<clickedNameGeneric>(getURL);
 
     return (
-        <NavigationDrawerStyled className={className} isOpen={isOpen}>
+        <NavigationDrawerStyled className = { className } isOpen = { isOpen }>
             <PaddingLeftWithLine>
                 <FlexDiv>
                     <Title title='MBTInduce' />
-                    {children}
+                    { children }
                 </FlexDiv>
                 <Subtitle> MBTI Chat-GPT AI Agent </Subtitle>
             </PaddingLeftWithLine>
-            <PageButton name='💬  Main Chat' clicked={clickedName === 'Main Chat'} text = 'MainChat' />
-            <PageButton name='👥  Simulation' clicked={clickedName === 'Simulation'} text = 'Simulation' />
-            <PageButton name='📅  Calendar' clicked={clickedName === 'Calendar'} text = 'Calendar' />
-            <PageButton name='👣 Log In' clicked={clickedName === 'Log In'} text = 'LogIn' />
+            <PageButton name = '💬  Main Chat' clicked={clickedName === 'Main Chat'} text = 'MainChat' />
+            <PageButton name = '👥  Simulation' clicked={clickedName === 'Simulation'} text = 'Simulation' />
+            <PageButton name = '📅  Calendar' clicked={clickedName === 'Calendar'} text = 'Calendar' />
+            <PageButton name = '👣 Log In' clicked={clickedName === 'Log In'} text = 'LogIn' />
             <WebsiteIntro>
                 MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.
             </WebsiteIntro>
