@@ -6,6 +6,7 @@ import { Hamburger } from '../atoms/Hamburger'
 import { Title } from '../atoms/Title'
 import { getURL } from '../atoms/GetURL';
 import { RightScreen } from '../organisms/RightScreen'
+import { TextInputBox } from '../molecules/TextInputBox'
 
 const FullScreen = styled.div`
     width: 100vw;
@@ -19,6 +20,9 @@ const MainContent = styled.div<{ isOpen: boolean }>`
     height: 100vh;
     box-sizing: border-box;
     padding-left: 1%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 `;
 
 const HeaderDiv = styled.div`
@@ -53,6 +57,7 @@ export function FullMainScreen() {
                         {!isOpen && <Hamburger isClicked = { isClicked } isOpen = { isOpen } />}
                         <Title title = { url } />
                     </HeaderDiv>
+                    <TextInputBox />
                 </MainContent>
                 <RightScreen />
             </FullScreen>
