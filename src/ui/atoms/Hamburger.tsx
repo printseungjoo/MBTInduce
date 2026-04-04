@@ -8,7 +8,7 @@ const InvisibleCheckbox = styled.input<{isOpen?: boolean}>`
         display: block;
         width: ${({ isOpen }) => isOpen ? '5vw' : '2.5vw'};
         height: 3vh;
-        left: ${({ isOpen }) => isOpen ? '3.5vw' : '1.5vw'};
+        left: ${({ isOpen }) => isOpen ? '3.5vw' : '1vw'};
         top: ${({ isOpen }) => isOpen ? '1.3vh' : '0.3vh'};
         cursor: pointer;
     }
