@@ -1,6 +1,6 @@
 import './App.css'
 
-import { FullMainScreen } from './ui/template/FullMainScreen'
+import FullMainScreen from './ui/template/FullMainScreen'
 
 function App() {
   return (
