@@ -1,9 +1,10 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
-import Title from '../atoms/Title';
-import PageButton from '../atoms/PageButton';
-import { getURL } from '../atoms/GetURL';
+import Title from '../atoms/Title'
+import PageButton from '../atoms/PageButton'
+import { getURL } from '../atoms/GetURL'
+import WebsiteIntro from '../atoms/WebsiteIntro'
 
 interface NavigationDrawerProps {
     className?: string;
@@ -36,17 +37,6 @@ const Subtitle = styled.p`
     color: ${({ theme }) => theme.colors.lightWhite};
 `;
 
-const WebsiteIntro = styled.div`
-    color: ${({ theme }) => theme.colors.lightWhite};
-    background-color: ${({ theme }) => theme.colors.royalPurple};
-    font-size: 0.8rem;
-    margin: 0 0.5vw;
-    padding: 2vh 1vw;
-    border-radius: 10px;
-    margin-top: auto;
-    margin-bottom: 4vh;
-`;
-
 type clickedNameGeneric = 'Main Chat' | 'Simulation' | 'Calendar' | 'Log In' | 'History'
 
 export default function NavigationDrawer({ className, isOpen, children }: NavigationDrawerProps) {
@@ -65,9 +55,7 @@ export default function NavigationDrawer({ className, isOpen, children }: Naviga
             <PageButton name = '👥  Simulation' clicked={clickedName === 'Simulation'} text = 'Simulation' />
             <PageButton name = '📅  Calendar' clicked={clickedName === 'Calendar'} text = 'Calendar' />
             <PageButton name = '👣 Log In' clicked={clickedName === 'Log In'} text = 'LogIn' />
-            <WebsiteIntro>
-                MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.
-            </WebsiteIntro>
+            <WebsiteIntro content = 'MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.' />
         </NavigationDrawerStyled>
     )
 }
