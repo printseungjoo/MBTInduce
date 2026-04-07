@@ -1,15 +1,6 @@
 import { prisma } from "../lib/prisma.js";
-
-function mbtiToInstruction(mbti) {
-  const parts = [];
-  if (!mbti) return "Use a balanced and helpful tone.";
-
-  parts.push(mbti.energy === "I" ? "Respond with a reflective tone." : "Respond with energetic tone.");
-  parts.push(mbti.information === "N" ? "Focus on abstract possibilities." : "Focus on concrete details.");
-  parts.push(mbti.decision === "F" ? "Include empathy and emotional context." : "Prioritize logical clarity.");
-  parts.push(mbti.lifestyle === "P" ? "Allow flexible suggestions." : "Provide structured steps.");
-  return parts.join(" ");
-}
+import { lettersFromWeights, mbtiToWeightedInstruction, normalizeMbtiWeights } from "../lib/mbtiPrompt.js";
+import { getChatCompletion } from "../services/openAiService.js";
 
 async function ensureSessionOwner(sessionId, userId) {
   const chatSession = await prisma.chatSession.findFirst({
@@ -77,7 +68,9 @@ export async function getChatSessionDetail(req, res, next) {
 export async function postMessage(req, res, next) {
   try {
     const sessionId = req.params.id;
-    const content = req.body?.content;
+    const body = req.body || {};
+    const content = body.content ?? body.text;
+    const persistMbtiWeights = body.persistMbtiWeights !== false;
 
     if (!content || typeof content !== "string") {
       return res.status(400).json({ message: "content is required" });
@@ -88,11 +81,83 @@ export async function postMessage(req, res, next) {
       return res.status(404).json({ message: "Chat session not found" });
     }
 
-    const mbti = await prisma.mbtiPreference.findUnique({
+    let mbti = await prisma.mbtiPreference.findUnique({
       where: { userId: req.user.id },
     });
 
-    const instruction = mbtiToInstruction(mbti);
+    const hasInlineWeights =
+      (body.mbtiWeights && typeof body.mbtiWeights === "object") ||
+      typeof body.energyWeight === "number" ||
+      typeof body.informationWeight === "number" ||
+      typeof body.decisionWeight === "number" ||
+      typeof body.lifestyleWeight === "number";
+
+    if (hasInlineWeights) {
+      const baseE = mbti?.energyWeight ?? 50;
+      const baseI = mbti?.informationWeight ?? 50;
+      const baseD = mbti?.decisionWeight ?? 50;
+      const baseL = mbti?.lifestyleWeight ?? 50;
+
+      const nextW = normalizeMbtiWeights({
+        energy: body.mbtiWeights?.energy ?? body.energyWeight ?? baseE,
+        information: body.mbtiWeights?.information ?? body.informationWeight ?? baseI,
+        decision: body.mbtiWeights?.decision ?? body.decisionWeight ?? baseD,
+        lifestyle: body.mbtiWeights?.lifestyle ?? body.lifestyleWeight ?? baseL,
+      });
+      const letters = lettersFromWeights(nextW);
+
+      if (persistMbtiWeights) {
+        mbti = await prisma.mbtiPreference.upsert({
+          where: { userId: req.user.id },
+          update: {
+            energyWeight: nextW.energy,
+            informationWeight: nextW.information,
+            decisionWeight: nextW.decision,
+            lifestyleWeight: nextW.lifestyle,
+            energy: letters.energy,
+            information: letters.information,
+            decision: letters.decision,
+            lifestyle: letters.lifestyle,
+          },
+          create: {
+            userId: req.user.id,
+            energyWeight: nextW.energy,
+            informationWeight: nextW.information,
+            decisionWeight: nextW.decision,
+            lifestyleWeight: nextW.lifestyle,
+            energy: letters.energy,
+            information: letters.information,
+            decision: letters.decision,
+            lifestyle: letters.lifestyle,
+          },
+        });
+      } else if (mbti) {
+        mbti = {
+          ...mbti,
+          energy: letters.energy,
+          information: letters.information,
+          decision: letters.decision,
+          lifestyle: letters.lifestyle,
+          energyWeight: nextW.energy,
+          informationWeight: nextW.information,
+          decisionWeight: nextW.decision,
+          lifestyleWeight: nextW.lifestyle,
+        };
+      } else {
+        mbti = {
+          energy: letters.energy,
+          information: letters.information,
+          decision: letters.decision,
+          lifestyle: letters.lifestyle,
+          energyWeight: nextW.energy,
+          informationWeight: nextW.information,
+          decisionWeight: nextW.decision,
+          lifestyleWeight: nextW.lifestyle,
+        };
+      }
+    }
+
+    const instruction = mbtiToWeightedInstruction(mbti);
 
     const userMessage = await prisma.message.create({
       data: {
@@ -102,7 +167,38 @@ export async function postMessage(req, res, next) {
       },
     });
 
-    const assistantReplyText = `[MBTI 적용 응답] ${instruction} | 사용자 입력: ${content}`;
+    const history = await prisma.message.findMany({
+      where: { chatSessionId: sessionId },
+      orderBy: { createdAt: "asc" },
+    });
+
+    const maxTurns = Number(process.env.CHAT_MAX_MESSAGES) || 40;
+    const recent = history.length > maxTurns ? history.slice(-maxTurns) : history;
+
+    const systemContent = [
+      "You are a helpful assistant in an app called MBTInduce.",
+      "Follow the MBTI style guidance below for tone and structure.",
+      "Match the user's language (e.g. Korean if they write Korean).",
+      "Do not prefix your answer with meta labels like [MBTI 적용 응답]. Answer directly.",
+      "",
+      instruction,
+    ].join("\n");
+
+    const openaiMessages = [
+      { role: "system", content: systemContent },
+      ...recent.map((m) => ({
+        role: m.role === "USER" ? "user" : m.role === "ASSISTANT" ? "assistant" : "system",
+        content: m.content,
+      })),
+    ];
+
+    let assistantReplyText;
+    try {
+      assistantReplyText = await getChatCompletion(openaiMessages);
+    } catch (aiError) {
+      assistantReplyText = `[AI 응답 생성 실패] ${aiError?.message || "unknown error"}`;
+    }
+
     const assistantMessage = await prisma.message.create({
       data: {
         chatSessionId: sessionId,
@@ -118,9 +214,24 @@ export async function postMessage(req, res, next) {
       },
     });
 
+    const appliedMbti =
+      mbti && typeof mbti.energyWeight === "number"
+        ? {
+            energy: mbti.energy,
+            information: mbti.information,
+            decision: mbti.decision,
+            lifestyle: mbti.lifestyle,
+            energyWeight: mbti.energyWeight,
+            informationWeight: mbti.informationWeight,
+            decisionWeight: mbti.decisionWeight,
+            lifestyleWeight: mbti.lifestyleWeight,
+          }
+        : null;
+
     return res.status(201).json({
       userMessage,
       assistantMessage,
+      appliedMbti,
     });
   } catch (error) {
     next(error);

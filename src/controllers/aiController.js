@@ -13,11 +13,10 @@ export async function postAiRespond(req, res, next) {
     const prompt = buildPrompt(message, traitsArray);
 
     // Placeholder AI logic – returns structured dummy data for now.
-    const aiResult = await getAiResponse({ message: prompt, traits: traitsArray });
+    const replyText = await getAiResponse({ message: prompt, traits: traitsArray });
 
     return res.status(200).json({
-      reply: "This is a placeholder AI response influenced by MBTI traits.",
-      debug: aiResult,
+      reply: replyText,
     });
   } catch (error) {
     next(error);
