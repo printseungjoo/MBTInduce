@@ -39,6 +39,14 @@ export interface PatchMeResponse {
 }
 
 // ---------- MBTI ----------
+/** Slider 0–100 = percent toward E, S, F, P respectively (matches RangeBar left pole). */
+export interface MbtiSliderWeights {
+  energy: number;
+  information: number;
+  decision: number;
+  lifestyle: number;
+}
+
 export interface MbtiPreference {
   id: string;
   userId: string;
@@ -46,6 +54,10 @@ export interface MbtiPreference {
   information: "S" | "N";
   decision: "F" | "T";
   lifestyle: "P" | "J";
+  energyWeight: number;
+  informationWeight: number;
+  decisionWeight: number;
+  lifestyleWeight: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -55,10 +67,16 @@ export interface GetMbtiResponse {
 }
 
 export interface PutMbtiRequest {
-  energy: "E" | "I";
-  information: "S" | "N";
-  decision: "F" | "T";
-  lifestyle: "P" | "J";
+  energy?: "E" | "I";
+  information?: "S" | "N";
+  decision?: "F" | "T";
+  lifestyle?: "P" | "J";
+  /** Same keys as RangeBar percentages toward E, S, F, P. */
+  mbtiWeights?: Partial<MbtiSliderWeights>;
+  energyWeight?: number;
+  informationWeight?: number;
+  decisionWeight?: number;
+  lifestyleWeight?: number;
 }
 
 export interface PutMbtiResponse {
@@ -105,12 +123,32 @@ export interface GetChatSessionDetailResponse {
 }
 
 export interface PostChatMessageRequest {
-  content: string;
+  /** Prefer `content`; `text` accepted for parity with TextInputBox state name. */
+  content?: string;
+  text?: string;
+  mbtiWeights?: Partial<MbtiSliderWeights>;
+  energyWeight?: number;
+  informationWeight?: number;
+  decisionWeight?: number;
+  lifestyleWeight?: number;
+  /** Default true: save slider snapshot to MbtiPreference when weights are sent. */
+  persistMbtiWeights?: boolean;
 }
 
 export interface PostChatMessageResponse {
   userMessage: ChatMessage;
   assistantMessage: ChatMessage;
+  appliedMbti: Pick<
+    MbtiPreference,
+    | "energy"
+    | "information"
+    | "decision"
+    | "lifestyle"
+    | "energyWeight"
+    | "informationWeight"
+    | "decisionWeight"
+    | "lifestyleWeight"
+  > | null;
 }
 
 // ---------- Rating / Feedback ----------

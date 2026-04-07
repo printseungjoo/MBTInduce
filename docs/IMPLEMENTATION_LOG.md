@@ -265,3 +265,14 @@
   - Includes frontend request/response interfaces aligned to current backend APIs.
   - Includes minimal `apiFetch<T>()` helper with `credentials: "include"`.
   - Intended to be copied into frontend repository and adjusted per UI framework.
+
+### OpenAI GPT-4o mini (2026-04-07)
+- `src/services/openAiService.js`: `getChatCompletion` → `https://api.openai.com/v1/chat/completions`, default model `gpt-4o-mini`.
+- `POST /api/chat/sessions/:id/messages`: builds system + recent DB messages, saves model reply (or error text).
+- `.env.example`: `OPENAI_*`, `CHAT_MAX_MESSAGES`; `.gitignore` includes `.env`.
+
+### Main Chat — MBTI sliders (2026-04-07)
+- `docs/MAIN_CHAT_API.md`: maps `MBTInduce_frontend` `RangeBar` / `TextInputBox` to REST bodies (`mbtiWeights`, `content`|`text`).
+- Prisma `MbtiPreference` extended with `energyWeight`, `informationWeight`, `decisionWeight`, `lifestyleWeight` (0–100, E/S/F/P poles).
+- `POST /api/chat/sessions/:id/messages` merges slider snapshot, optional DB persist, returns `appliedMbti`.
+- See `docs/worklog.md` for full worklog entry and `CHANGELOG.md` for user-facing summary.

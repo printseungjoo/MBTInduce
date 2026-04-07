@@ -75,6 +75,14 @@ model MbtiPreference {
   information String    @default("S")
   decision    String    @default("T")
   lifestyle   String    @default("J")
+  /// 0–100, percent leaning toward E (matches frontend RangeBar E / I)
+  energyWeight Int       @default(50)
+  /// 0–100, percent leaning toward S (S / N)
+  informationWeight Int  @default(50)
+  /// 0–100, percent leaning toward F (F / T)
+  decisionWeight Int     @default(50)
+  /// 0–100, percent leaning toward P (P / J)
+  lifestyleWeight Int    @default(50)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
