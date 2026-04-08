@@ -3,10 +3,12 @@ import styled from '@emotion/styled'
 interface TwoMBTIsButtonProps {
     leftMBTILetter: string;
     rightMBTILetter: string;
+    clicked: boolean;
+    onClick?: () => void;
 }
 
-const TwoMMBTIsButtonStyled = styled.button`
-    background-color: ${({ theme }) => theme.colors.mutedViolet};
+const TwoMBTIsButtonStyled = styled.button<{ clicked: boolean }>`
+    background-color: ${({ theme, clicked }) => clicked ? theme.colors.softLavender : theme.colors.mutedViolet };
     color: ${({ theme }) => theme.colors.lightWhite};
     display: flex;
     justify-content: center;
@@ -16,12 +18,12 @@ const TwoMMBTIsButtonStyled = styled.button`
     width: 40vw;
 `;
 
-export default function TwoMBTIsButton({ leftMBTILetter, rightMBTILetter }: TwoMBTIsButtonProps) {
+export default function TwoMBTIsButton({ leftMBTILetter, rightMBTILetter, clicked, onClick }: TwoMBTIsButtonProps) {
     return(
-        <TwoMMBTIsButtonStyled>
+        <TwoMBTIsButtonStyled clicked = { clicked } onClick = { onClick }>
             <span> { leftMBTILetter } </span>
             /
             <span> { rightMBTILetter } </span>
-        </TwoMMBTIsButtonStyled>
+        </TwoMBTIsButtonStyled>
     )
 }
