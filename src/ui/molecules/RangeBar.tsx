@@ -1,11 +1,13 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
 
 import Title from '../atoms/Title'
 
 interface RangeBarProps {
     leftMbtiLetter: string;
     rightMbtiLetter: string;
+    value: Dispatch<SetStateAction<number>>;
 }
 
 const Percentage = styled.div`
@@ -70,6 +72,7 @@ const RangeBarStick = styled.input`
 
 export default function RangeBar({ leftMbtiLetter, rightMbtiLetter }: RangeBarProps) {
     const [percentage, setPercentage] = useState<number>(0);
+
     return (
         <>
             <Percentage>
@@ -80,7 +83,7 @@ export default function RangeBar({ leftMbtiLetter, rightMbtiLetter }: RangeBarPr
                 <Center>
                     <Title title = { leftMbtiLetter } />
                 </Center>
-                <RangeBarStick type = 'range' min = '0' max = '100' onChange = {(e) => setPercentage(Number(e.target.value))} />
+                <RangeBarStick type = 'range' min = '0' max = '100' value = { percentage } onChange = {(e) => setPercentage(Number(e.target.value))} />
                 <Center>
                     <Title title = { rightMbtiLetter } />
                 </Center>
