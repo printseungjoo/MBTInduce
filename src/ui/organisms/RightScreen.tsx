@@ -45,6 +45,10 @@ export default function RightScreen() {
     const [sValue, setSValue] = useState<number>(50);
     const [fValue, setFValue] = useState<number>(50);
     const [pValue, setPValue] = useState<number>(50);
+    const [clickedEI, setClickedEI] = useState<boolean>(false);
+    const [clickedSN, setClickedSN] = useState<boolean>(false);
+    const [clickedFT, setClickedFT] = useState<boolean>(false);
+    const [clickedPJ, setClickedPJ] = useState<boolean>(false);
 
     const sendMbtiRange = async() => {
         const mbtiRange: MbtIRangeRequest = { eValue, sValue, fValue, pValue };
@@ -66,6 +70,36 @@ export default function RightScreen() {
         }
     }
 
+    const selectedDualModes: string[] = [];
+    function trueThenPush(typeName: string, value: boolean) {
+        if (value === true) {
+            selectedDualModes.push(typeName);
+        }
+    }
+
+    const sendTwoMBTIs = async() => {
+        trueThenPush('EI', clickedEI);
+        trueThenPush('SN', clickedSN);
+        trueThenPush('FT', clickedFT);
+        trueThenPush('PJ', clickedPJ);
+        try {
+            const response = await fetch('http://localhost:4000/api/showBoth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(selectedDualModes),
+            })
+            if (!response.ok) {
+                throw new Error('twoMBTIs 전송 실패')
+            }
+            const data = await response.json()
+        } catch (error) {
+            console.error('twoMBTIs 전송 중 에러 발생:', error)
+        }
+    }
+
     return(
         <RightScreenStyled>
             <Title title = 'MBTI' />
@@ -76,14 +110,14 @@ export default function RightScreen() {
             <GenerateButtonStyled onClick = { sendMbtiRange } />
             <Title title = 'Show Both' />
             <TwoButtons>
-                <TwoMBTIsButton leftMBTILetter = 'E' rightMBTILetter = 'I' />
-                <TwoMBTIsButton leftMBTILetter = 'S' rightMBTILetter = 'N' />
+                <TwoMBTIsButton leftMBTILetter = 'E' rightMBTILetter = 'I' clicked={ clickedEI } onClick={() => setClickedEI(!clickedEI)} />
+                <TwoMBTIsButton leftMBTILetter = 'S' rightMBTILetter = 'N' clicked={ clickedSN } onClick={() => setClickedSN(!clickedSN)} />
             </TwoButtons>
             <TwoButtons>
-                <TwoMBTIsButton leftMBTILetter = 'F' rightMBTILetter = 'T' />
-                <TwoMBTIsButton leftMBTILetter = 'P' rightMBTILetter = 'J' />
+                <TwoMBTIsButton leftMBTILetter = 'F' rightMBTILetter = 'T' clicked={ clickedFT } onClick={() => setClickedFT(!clickedFT)} />
+                <TwoMBTIsButton leftMBTILetter = 'P' rightMBTILetter = 'J' clicked={ clickedPJ } onClick={() => setClickedPJ(!clickedPJ)} />
             </TwoButtons>
-            <GenerateButtonStyled />
+            <GenerateButtonStyled onClick = { sendTwoMBTIs } />
             <WebsiteIntroStyled content = 'Customize the MBTI before entering your text. Set the MBTI to shape how the response will be generated.' />
         </RightScreenStyled>
     )
