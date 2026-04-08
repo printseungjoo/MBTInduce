@@ -11,6 +11,7 @@ import { userRouter } from "./routes/userRoutes.js";
 import { mbtiRouter } from "./routes/mbti.routes.js";
 import { chatRouter } from "./routes/chat.routes.js";
 import { extraRouter } from "./routes/extra.routes.js";
+import { simulationRouter } from "./routes/simulation.routes.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.js";
 
 const app = express();
@@ -42,6 +43,7 @@ app.use("/api/ai", aiRouter);
 app.use("/api", userRouter);
 app.use("/api/mbti", mbtiRouter);
 app.use("/api/chat", chatRouter);
+app.use("/api/simulation", simulationRouter);
 app.use("/api", extraRouter);
 
 app.use(notFoundHandler);

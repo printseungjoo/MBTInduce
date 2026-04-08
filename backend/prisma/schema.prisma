@@ -28,6 +28,11 @@ enum MessageRole {
   SYSTEM
 }
 
+enum SimulationRole {
+  user
+  ai
+}
+
 model User {
   id           String           @id @default(cuid())
   email        String           @unique
@@ -46,6 +51,9 @@ model User {
   feedbacks    Feedback[]
   ratings      ResponseRating[]
   createdTemplates PromptTemplate[]
+  simulationTemplates SimulationTemplate[]
+  userProfiles UserProfile[]
+  simulationChatMessages SimulationChatMessage[]
 
   @@index([status])
   @@index([role])
@@ -160,4 +168,48 @@ model PromptTemplate {
   createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
 
   @@index([isActive, createdAt])
+}
+
+model SimulationTemplate {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model UserProfile {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  meOrNot   Boolean  @default(false)
+  mbti      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model SimulationChatMessage {
+  id        String         @id @default(cuid())
+  userId    String
+  role      SimulationRole
+  content   String
+  eValue    Int            @default(50)
+  sValue    Int            @default(50)
+  fValue    Int            @default(50)
+  pValue    Int            @default(50)
+  createdAt DateTime       @default(now())
+  rate      Int?
+  updatedAt DateTime       @updatedAt
+
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
