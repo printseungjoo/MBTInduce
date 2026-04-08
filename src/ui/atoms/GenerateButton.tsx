@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 
 interface GenerateButtonProps {
     className?: string;
+    onClick?: () => Promise<void>;
 }
 
 const GenerateButtonStyled = styled.button`
