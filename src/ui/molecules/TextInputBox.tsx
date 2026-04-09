@@ -1,7 +1,13 @@
 import styled from '@emotion/styled'
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
+import type { KeyboardEvent } from 'react'
 
 import TextExample from '../atoms/TextExample'
+
+interface TextInputBoxProps {
+    onSubmit: (value: string) => void;
+    disabled?: boolean;
+}
 
 const TextInputDiv = styled.div`
     display: flex;
@@ -48,7 +54,7 @@ const TextInputBoxStyled = styled.input`
     font-size: 1rem;
 `;
 
-export default function TextInputBox() {
+export default function TextInputBox({ onSubmit, disabled = false }: TextInputBoxProps) {
     const [text, setText] = useState<string>('');
     const [example, setExample] = useState<string>('');
     const [exampleShown, setExampleShown] = useState<boolean>(false);
@@ -61,6 +67,15 @@ export default function TextInputBox() {
         setText(text + ' ' + example);
         setExample('');
     }, [example]);
+
+    function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+        if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
+        const trimmedValue = text.trim();
+        if (!trimmedValue) return;
+        onSubmit(trimmedValue);
+        setText('');
+        }
+    }
 
     return (
         <TextInputDiv>
@@ -76,7 +91,7 @@ export default function TextInputBox() {
                 <TextExampleButton onClick = {() => setExampleShown(!exampleShown)}>
                     📜
                 </TextExampleButton>
-                <TextInputBoxStyled placeholder = 'Type your message' value = { text } onChange = {(e) => setText(e.target.value)} />
+                <TextInputBoxStyled placeholder = 'Type your message' value = { text } onChange = {(e) => setText(e.target.value)} disabled = { disabled } onKeyDown = { handleKeyDown } />
             </TextInputBoxDiv>
         </TextInputDiv>
     );
