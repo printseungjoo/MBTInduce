@@ -14,6 +14,17 @@ interface MbtIRangeRequest {
     pValue: number;
 }
 
+interface RightScreenProps {
+    eValues: number;
+    sValues: number;
+    fValues: number;
+    pValues: number;
+    setEValues: React.Dispatch<React.SetStateAction<number>>;
+    setSValues: React.Dispatch<React.SetStateAction<number>>;
+    setFValues: React.Dispatch<React.SetStateAction<number>>;
+    setPValues: React.Dispatch<React.SetStateAction<number>>;
+}
+
 const RightScreenStyled = styled.div`
     width: 20%;
     height: 100vh;
@@ -40,18 +51,14 @@ const WebsiteIntroStyled = styled(WebsiteIntro)`
     line-height: 3vh;
 `;
 
-export default function RightScreen() {
-    const [eValue, setEValue] = useState<number>(50);
-    const [sValue, setSValue] = useState<number>(50);
-    const [fValue, setFValue] = useState<number>(50);
-    const [pValue, setPValue] = useState<number>(50);
+export default function RightScreen({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues }: RightScreenProps) {
     const [clickedEI, setClickedEI] = useState<boolean>(false);
     const [clickedSN, setClickedSN] = useState<boolean>(false);
     const [clickedFT, setClickedFT] = useState<boolean>(false);
     const [clickedPJ, setClickedPJ] = useState<boolean>(false);
 
     const sendMbtiRange = async() => {
-        const mbtiRange: MbtIRangeRequest = { eValue, sValue, fValue, pValue };
+        const mbtiRange: MbtIRangeRequest = { eValue: eValues, sValue: sValues, fValue: fValues, pValue: pValues };
         try {
             const response = await fetch('http://localhost:4000/api/mbtiRange', {
                 method: 'POST',
@@ -62,11 +69,11 @@ export default function RightScreen() {
                 body: JSON.stringify(mbtiRange),
             })
             if (!response.ok) {
-                throw new Error('mbtiRange 전송 실패')
+                throw new Error('Failed to send mbtiRange')
             }
             const data = await response.json()
         } catch (error) {
-            console.error('mbtiRange 전송 중 에러 발생:', error)
+            console.error('Error transmitting mbtiRange:', error)
         }
     }
 
@@ -92,21 +99,21 @@ export default function RightScreen() {
                 body: JSON.stringify(selectedDualModes),
             })
             if (!response.ok) {
-                throw new Error('twoMBTIs 전송 실패')
+                throw new Error('TwoMBTIs transmission failed')
             }
             const data = await response.json()
         } catch (error) {
-            console.error('twoMBTIs 전송 중 에러 발생:', error)
+            console.error('Error transmitting twoMBTIs:', error)
         }
     }
 
     return(
         <RightScreenStyled>
             <Title title = 'MBTI' />
-            <RangeBar leftMbtiLetter = 'E' rightMbtiLetter = 'I' value = {setEValue} />
-            <RangeBar leftMbtiLetter = 'S' rightMbtiLetter = 'N' value = {setSValue} />
-            <RangeBar leftMbtiLetter = 'F' rightMbtiLetter = 'T' value = {setFValue} />
-            <RangeBar leftMbtiLetter = 'P' rightMbtiLetter = 'J' value = {setPValue} />
+            <RangeBar leftMbtiLetter = 'E' rightMbtiLetter = 'I' value = { eValues } onChange={(e) => setEValues(Number(e))} />
+            <RangeBar leftMbtiLetter = 'S' rightMbtiLetter = 'N' value = { sValues } onChange={(e) => setSValues(Number(e))} />
+            <RangeBar leftMbtiLetter = 'F' rightMbtiLetter = 'T' value = { fValues } onChange={(e) => setFValues(Number(e))} />
+            <RangeBar leftMbtiLetter = 'P' rightMbtiLetter = 'J' value = { pValues } onChange={(e) => setPValues(Number(e))} />
             <GenerateButtonStyled onClick = { sendMbtiRange } />
             <Title title = 'Show Both' />
             <TwoButtons>
