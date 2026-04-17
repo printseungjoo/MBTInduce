@@ -5,6 +5,7 @@ import { requireAuth } from "../middlewares/requireAuth.js";
 const router = Router();
 
 router.get("/", requireAuth, getMyMbti);
+router.post("/", requireAuth, upsertMyMbti);
 router.put("/", requireAuth, upsertMyMbti);
 
 export { router as mbtiRouter };

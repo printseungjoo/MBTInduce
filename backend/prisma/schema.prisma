@@ -91,6 +91,8 @@ model MbtiPreference {
   decisionWeight Int     @default(50)
   /// 0–100, percent leaning toward P (P / J)
   lifestyleWeight Int    @default(50)
+  /// Axes for “Show Both” UI: EI | SN | FT | PJ (frontend sends e.g. ["EI","SN"])
+  showBothAxes String[] @default([])
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

@@ -1,6 +1,12 @@
 import { prisma } from "../lib/prisma.js";
 import { lettersFromWeights, normalizeMbtiWeights } from "../lib/mbtiPrompt.js";
 
+function normalizeLetter(value, allowed, fallback) {
+  if (typeof value !== "string") return fallback;
+  const upper = value.toUpperCase();
+  return allowed.includes(upper) ? upper : fallback;
+}
+
 export async function getMyMbti(req, res, next) {
   try {
     const mbti = await prisma.mbtiPreference.findUnique({
@@ -22,10 +28,15 @@ export async function upsertMyMbti(req, res, next) {
       decision,
       lifestyle,
       mbtiWeights,
+      mbtiRange,
       energyWeight,
       informationWeight,
       decisionWeight,
       lifestyleWeight,
+      eValue,
+      sValue,
+      fValue,
+      pValue,
     } = body;
 
     const existing = await prisma.mbtiPreference.findUnique({
@@ -40,10 +51,30 @@ export async function upsertMyMbti(req, res, next) {
     };
 
     const nextW = normalizeMbtiWeights({
-      energy: mbtiWeights?.energy ?? energyWeight ?? baseW.energy,
-      information: mbtiWeights?.information ?? informationWeight ?? baseW.information,
-      decision: mbtiWeights?.decision ?? decisionWeight ?? baseW.decision,
-      lifestyle: mbtiWeights?.lifestyle ?? lifestyleWeight ?? baseW.lifestyle,
+      energy:
+        mbtiWeights?.energy ??
+        mbtiRange?.eValue ??
+        eValue ??
+        energyWeight ??
+        baseW.energy,
+      information:
+        mbtiWeights?.information ??
+        mbtiRange?.sValue ??
+        sValue ??
+        informationWeight ??
+        baseW.information,
+      decision:
+        mbtiWeights?.decision ??
+        mbtiRange?.fValue ??
+        fValue ??
+        decisionWeight ??
+        baseW.decision,
+      lifestyle:
+        mbtiWeights?.lifestyle ??
+        mbtiRange?.pValue ??
+        pValue ??
+        lifestyleWeight ??
+        baseW.lifestyle,
     });
 
     const derived = lettersFromWeights(nextW);
