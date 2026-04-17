@@ -7,8 +7,8 @@ import Title from '../atoms/Title'
 import { getURL } from '../atoms/GetURL'
 import RightScreen from '../organisms/RightScreen'
 import TextInputBox from '../molecules/TextInputBox'
-import UserChat from '../atoms/userChat'
-import AiChat from '../atoms/aiChat'
+import UserChat from '../atoms/UserChat'
+import AiChat from '../atoms/AiChat'
 
 interface MbtiRange {
     eValue: number;
@@ -104,6 +104,8 @@ const NavigationDrawerPlus = styled(NavigationDrawer)<{ isOpen: boolean }>`
     height: 100vh;
 `;
 
+const API_BASE_URL = 'http://localhost:4000';
+
 export default function FullMainScreen() {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [url, setUrl] = useState(getURL);
@@ -124,11 +126,12 @@ export default function FullMainScreen() {
 
     async function getChatMessages() {
         try {
-            const response = await fetch('http://localhost:8080/api/chat', {
+            const response = await fetch(`${API_BASE_URL}/api/chat`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
             });
             if (!response.ok) {
                 throw new Error('Failed to get chatMessages');
@@ -160,11 +163,12 @@ export default function FullMainScreen() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8080/api/chat', {
+            const response = await fetch(`${API_BASE_URL}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     content: trimmedValue,
                     role: 'user',
@@ -206,11 +210,12 @@ export default function FullMainScreen() {
 
     async function patchChatMessageRate(messageId: string, rate: number) {
         try {
-            const response = await fetch(`http://localhost:8080/api/chat/${messageId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/chat/${messageId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     rate,
                 }),
@@ -241,7 +246,6 @@ export default function FullMainScreen() {
                             <Title title = { url } />
                         </FlexDiv>
                     </HeaderDiv>
-
                     <ChatMessagesDiv>
                         {chatMessages.map((chatMessage) => (
                             <ChatRow key={chatMessage.id} role = { chatMessage.role }>
