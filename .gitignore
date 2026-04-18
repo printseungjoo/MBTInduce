@@ -1,0 +1,3 @@
+# Local-only: do not commit (see team layout / separate frontend branch)
+.cursor/
+frontend/
