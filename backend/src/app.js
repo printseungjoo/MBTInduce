@@ -52,6 +52,7 @@ app.get("/", (req, res) => {
 app.use("/auth", authRouter);
 app.use("/api/ai", aiRouter);
 app.use("/api", userRouter);
+app.use("/api/mbti", mbtiRouter);
 app.use("/api/mbtiRange", mbtiRouter);
 app.use("/api/showBoth", showBothRouter);
 app.use("/api/chat", chatCompatRouter);
