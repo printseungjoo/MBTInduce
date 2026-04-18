@@ -4,7 +4,6 @@
 MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits.  
 Users can choose specific MBTI characteristics and control how strongly those traits influence the AI's answers.
 
-
 The platform helps users receive responses that match the emotional tone or logical style they want, and also allows them to simulate conversations with specific MBTI personalities.
 
 ---
