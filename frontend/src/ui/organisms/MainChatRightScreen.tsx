@@ -3,7 +3,6 @@ import { useState } from 'react'
 
 import Title from '../atoms/Title'
 import RangeBar from '../molecules/RangeBar'
-import GenerateButton from '../atoms/GenerateButton'
 import TwoMBTIsButton from '../atoms/TwoMBTIsButton'
 import WebsiteIntro from '../atoms/WebsiteIntro'
 
@@ -30,10 +29,6 @@ const MainChatRightScreenStyled = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1.2vh;
-`
-
-const GenerateButtonStyled = styled(GenerateButton)`
-    margin: 2.8vh 0;
 `;
 
 const TwoButtons = styled.div`
@@ -106,18 +101,18 @@ export default function MainChatRightScreen({ eValues, sValues, fValues, pValues
     return(
         <MainChatRightScreenStyled>
             <Title title = 'MBTI' />
-            <RangeBar leftMbtiLetter = 'E' rightMbtiLetter = 'I' value = { eValues } onChange={(e) => setEValues(Number(e))} />
-            <RangeBar leftMbtiLetter = 'S' rightMbtiLetter = 'N' value = { sValues } onChange={(e) => setSValues(Number(e))} />
-            <RangeBar leftMbtiLetter = 'F' rightMbtiLetter = 'T' value = { fValues } onChange={(e) => setFValues(Number(e))} />
-            <RangeBar leftMbtiLetter = 'P' rightMbtiLetter = 'J' value = { pValues } onChange={(e) => setPValues(Number(e))} />
+            <RangeBar leftMbtiLetter = 'E' rightMbtiLetter = 'I' value = { eValues } onChange = {(e) => setEValues(Number(e))} />
+            <RangeBar leftMbtiLetter = 'S' rightMbtiLetter = 'N' value = { sValues } onChange = {(e) => setSValues(Number(e))} />
+            <RangeBar leftMbtiLetter = 'F' rightMbtiLetter = 'T' value = { fValues } onChange = {(e) => setFValues(Number(e))} />
+            <RangeBar leftMbtiLetter = 'P' rightMbtiLetter = 'J' value = { pValues } onChange = {(e) => setPValues(Number(e))} />
             <Title title = 'Show Both' />
             <TwoButtons>
-                <TwoMBTIsButton leftMBTILetter = 'E' rightMBTILetter = 'I' clicked={ clickedEI } onClick={() => setClickedEI(!clickedEI)} />
-                <TwoMBTIsButton leftMBTILetter = 'S' rightMBTILetter = 'N' clicked={ clickedSN } onClick={() => setClickedSN(!clickedSN)} />
+                <TwoMBTIsButton leftMBTILetter = 'E' rightMBTILetter = 'I' clicked = { clickedEI } onClick = {() => setClickedEI(!clickedEI)} />
+                <TwoMBTIsButton leftMBTILetter = 'S' rightMBTILetter = 'N' clicked = { clickedSN } onClick = {() => setClickedSN(!clickedSN)} />
             </TwoButtons>
             <TwoButtons>
-                <TwoMBTIsButton leftMBTILetter = 'F' rightMBTILetter = 'T' clicked={ clickedFT } onClick={() => setClickedFT(!clickedFT)} />
-                <TwoMBTIsButton leftMBTILetter = 'P' rightMBTILetter = 'J' clicked={ clickedPJ } onClick={() => setClickedPJ(!clickedPJ)} />
+                <TwoMBTIsButton leftMBTILetter = 'F' rightMBTILetter = 'T' clicked = { clickedFT } onClick = {() => setClickedFT(!clickedFT)} />
+                <TwoMBTIsButton leftMBTILetter = 'P' rightMBTILetter = 'J' clicked = { clickedPJ } onClick = {() => setClickedPJ(!clickedPJ)} />
             </TwoButtons>
             <WebsiteIntroStyled content = 'Customize the MBTI before entering your text. Set the MBTI to shape how the response will be generated.' />
         </MainChatRightScreenStyled>

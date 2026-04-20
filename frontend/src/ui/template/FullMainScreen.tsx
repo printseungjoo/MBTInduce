@@ -1,14 +1,15 @@
 import styled from '@emotion/styled'
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import NavigationDrawer from '../organisms/NavigationDrawer'
 import Hamburger from '../atoms/Hamburger'
 import Title from '../atoms/Title'
-import { getURL } from '../atoms/GetURL'
 import RightScreen from '../template/RightScreen'
 import TextInputBox from '../molecules/TextInputBox'
 import UserChat from '../atoms/UserChat'
 import AiChat from '../atoms/AiChat'
+import InitialSimulationRightScreen from '../molecules/InitialSimulationRightScreen'
 
 interface MbtiRange {
     eValue: number;
@@ -108,13 +109,14 @@ const API_BASE_URL = 'http://localhost:4000';
 
 export default function FullMainScreen() {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [url, setUrl] = useState(getURL);
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [eValue, setEValue] = useState<number>(50);
     const [sValue, setSValue] = useState<number>(50);
     const [fValue, setFValue] = useState<number>(50);
     const [pValue, setPValue] = useState<number>(50);
+
+    const location = useLocation();
 
     function isClicked() {
         setIsOpen(!isOpen);
@@ -235,6 +237,7 @@ export default function FullMainScreen() {
 
     return (
         <FullScreen>
+            {location.pathname === '/Simulation' && <InitialSimulationRightScreen />}
             <NavigationDrawerPlus isOpen = { isOpen }>
                 <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
             </NavigationDrawerPlus>
@@ -243,12 +246,12 @@ export default function FullMainScreen() {
                     <HeaderDiv>
                         <FlexDiv>
                             {!isOpen && <Hamburger isClicked = { isClicked } isOpen = { isOpen } />}
-                            <Title title = { url } />
+                            <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
                         </FlexDiv>
                     </HeaderDiv>
                     <ChatMessagesDiv>
                         {chatMessages.map((chatMessage) => (
-                            <ChatRow key={chatMessage.id} role = { chatMessage.role }>
+                            <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
                                     <UserChat content = { chatMessage.content } />
                                 ) : (
