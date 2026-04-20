@@ -1,9 +1,8 @@
 import styled from '@emotion/styled'
-import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import Title from '../atoms/Title'
 import PageButton from '../atoms/PageButton'
-import { getURL } from '../atoms/GetURL'
 import WebsiteIntro from '../atoms/WebsiteIntro'
 
 interface NavigationDrawerProps {
@@ -40,22 +39,32 @@ const Subtitle = styled.p`
 type clickedNameGeneric = 'Main Chat' | 'Simulation' | 'Calendar' | 'Log In' | 'History'
 
 export default function NavigationDrawer({ className, isOpen, children }: NavigationDrawerProps) {
-    const [clickedName, setClickedName] = useState<clickedNameGeneric>(getURL);
+    const location = useLocation();
+
+    const pathMap: Record<string, clickedNameGeneric> = {
+        '/': 'Main Chat',
+        '/MainChat': 'Main Chat',
+        '/Simulation': 'Simulation',
+        '/Calendar': 'Calendar',
+        '/LogIn': 'Log In',
+    };
+
+    const clickedName = pathMap[location.pathname] ?? 'Main Chat';
 
     return (
         <NavigationDrawerStyled className = { className } isOpen = { isOpen }>
             <PaddingLeftWithLine>
                 <FlexDiv>
-                    <Title title='MBTInduce' />
+                    <Title title = 'MBTInduce' />
                     { children }
                 </FlexDiv>
                 <Subtitle> MBTI Chat-GPT AI Agent </Subtitle>
             </PaddingLeftWithLine>
-            <PageButton name = '💬  Main Chat' clicked={clickedName === 'Main Chat'} text = 'MainChat' />
-            <PageButton name = '👥  Simulation' clicked={clickedName === 'Simulation'} text = 'Simulation' />
-            <PageButton name = '📅  Calendar' clicked={clickedName === 'Calendar'} text = 'Calendar' />
-            <PageButton name = '👣 Log In' clicked={clickedName === 'Log In'} text = 'LogIn' />
-            <WebsiteIntro content = 'MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.' />
+            <PageButton name = '💬  Main Chat' clicked = {clickedName === 'Main Chat'} text = 'MainChat' />
+            <PageButton name = '👥  Simulation' clicked = {clickedName === 'Simulation'} text = 'Simulation' />
+            <PageButton name = '📅  Calendar' clicked = {clickedName === 'Calendar'} text = 'Calendar' />
+            <PageButton name = '👣 Log In' clicked = {clickedName === 'Log In'} text = 'LogIn' />
+            <WebsiteIntro content='MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.' />
         </NavigationDrawerStyled>
     )
 }

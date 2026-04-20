@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { useLocation } from 'react-router-dom'
 
 import MainChatRightScreen from '../organisms/MainChatRightScreen';
+import SimulationRightScreen from '../organisms/SimulationRightScreen';
 
 interface RightScreenProps {
     eValues: number;
@@ -42,7 +43,8 @@ export default function RightScreen({ eValues, sValues, fValues, pValues, setEVa
 
     return(
         <RightScreenStyled>
-            {location.pathname === '/' && <MainChatRightScreen eValues = { eValues } sValues = { sValues } fValues = { fValues } pValues = { pValues } setEValues = { setEValues } setSValues = { setSValues } setFValues = { setFValues } setPValues = { setPValues } />}
+            {(location.pathname === '/MainChat' || location.pathname === '/' ) && <MainChatRightScreen eValues = { eValues } sValues = { sValues } fValues = { fValues } pValues = { pValues } setEValues = { setEValues } setSValues = { setSValues } setFValues = { setFValues } setPValues = { setPValues } />}
+            {location.pathname === '/Simulation' && <SimulationRightScreen />}
         </RightScreenStyled>
     )
 }

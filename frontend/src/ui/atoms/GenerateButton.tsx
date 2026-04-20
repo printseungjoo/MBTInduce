@@ -3,11 +3,13 @@ import styled from '@emotion/styled'
 interface GenerateButtonProps {
     className?: string;
     onClick?: () => Promise<void>;
+    content: string;
 }
 
 const GenerateButtonStyled = styled.button`
     width: 100%;
-    height: 4vh;
+    min-height: 4vh;
+    height: auto;
     font-weight: bolder;
     display: flex;
     justify-content: center;
@@ -16,10 +18,10 @@ const GenerateButtonStyled = styled.button`
     border-radius: 0;
 `;
 
-export default function GenerateButton({ className }: GenerateButtonProps) {
+export default function GenerateButton({ className, content }: GenerateButtonProps) {
     return(
         <GenerateButtonStyled className = { className }>
-            Generate
+            { content }
         </GenerateButtonStyled>
     )
 }
