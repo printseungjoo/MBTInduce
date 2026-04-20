@@ -25,16 +25,12 @@ interface RightScreenProps {
     setPValues: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const RightScreenStyled = styled.div`
-    width: 20%;
-    height: 100vh;
-    background-color: ${({ theme }) => theme.colors.deepPlum};
-    position: fixed;
-    right: 0;
-    top: 0;
-    box-sizing: border-box;
-    padding: 1.5vh 2.5vh;
-`;
+const MainChatRightScreenStyled = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2vh;
+`
 
 const GenerateButtonStyled = styled(GenerateButton)`
     margin: 2.8vh 0;
@@ -47,16 +43,16 @@ const TwoButtons = styled.div`
 `;
 
 const WebsiteIntroStyled = styled(WebsiteIntro)`
-    margin: 0;
+    margin-top: 5vh;
     line-height: 3vh;
 `;
 
-export default function RightScreen({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues }: RightScreenProps) {
+export default function MainChatRightScreen({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues }: RightScreenProps) {
     const [clickedEI, setClickedEI] = useState<boolean>(false);
     const [clickedSN, setClickedSN] = useState<boolean>(false);
     const [clickedFT, setClickedFT] = useState<boolean>(false);
     const [clickedPJ, setClickedPJ] = useState<boolean>(false);
-
+    
     const sendMbtiRange = async() => {
         const mbtiRange: MbtIRangeRequest = { eValue: eValues, sValue: sValues, fValue: fValues, pValue: pValues };
         try {
@@ -76,14 +72,14 @@ export default function RightScreen({ eValues, sValues, fValues, pValues, setEVa
             console.error('Error transmitting mbtiRange:', error)
         }
     }
-
+    
     const selectedDualModes: string[] = [];
     function trueThenPush(typeName: string, value: boolean) {
         if (value === true) {
             selectedDualModes.push(typeName);
         }
     }
-
+    
     const sendTwoMBTIs = async() => {
         trueThenPush('EI', clickedEI);
         trueThenPush('SN', clickedSN);
@@ -108,13 +104,12 @@ export default function RightScreen({ eValues, sValues, fValues, pValues, setEVa
     }
 
     return(
-        <RightScreenStyled>
+        <MainChatRightScreenStyled>
             <Title title = 'MBTI' />
             <RangeBar leftMbtiLetter = 'E' rightMbtiLetter = 'I' value = { eValues } onChange={(e) => setEValues(Number(e))} />
             <RangeBar leftMbtiLetter = 'S' rightMbtiLetter = 'N' value = { sValues } onChange={(e) => setSValues(Number(e))} />
             <RangeBar leftMbtiLetter = 'F' rightMbtiLetter = 'T' value = { fValues } onChange={(e) => setFValues(Number(e))} />
             <RangeBar leftMbtiLetter = 'P' rightMbtiLetter = 'J' value = { pValues } onChange={(e) => setPValues(Number(e))} />
-            <GenerateButtonStyled onClick = { sendMbtiRange } />
             <Title title = 'Show Both' />
             <TwoButtons>
                 <TwoMBTIsButton leftMBTILetter = 'E' rightMBTILetter = 'I' clicked={ clickedEI } onClick={() => setClickedEI(!clickedEI)} />
@@ -124,8 +119,7 @@ export default function RightScreen({ eValues, sValues, fValues, pValues, setEVa
                 <TwoMBTIsButton leftMBTILetter = 'F' rightMBTILetter = 'T' clicked={ clickedFT } onClick={() => setClickedFT(!clickedFT)} />
                 <TwoMBTIsButton leftMBTILetter = 'P' rightMBTILetter = 'J' clicked={ clickedPJ } onClick={() => setClickedPJ(!clickedPJ)} />
             </TwoButtons>
-            <GenerateButtonStyled onClick = { sendTwoMBTIs } />
             <WebsiteIntroStyled content = 'Customize the MBTI before entering your text. Set the MBTI to shape how the response will be generated.' />
-        </RightScreenStyled>
+        </MainChatRightScreenStyled>
     )
 }
