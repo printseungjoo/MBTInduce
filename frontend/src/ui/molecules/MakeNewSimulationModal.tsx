@@ -5,7 +5,7 @@ import CenterPurpleP from '../atoms/CenterPurpleP'
 import Input from '../atoms/Input'
 import GoBackButton from '../atoms/GoBackButton'
 
-const InitialSimulationRightScreenStyled = styled.div`
+const InitialSimulationModalStyled = styled.div`
     position: fixed;
     top: 0;
     left: 0;
@@ -52,7 +52,7 @@ const SubmitButton = styled.button<{isValid: boolean}>`
     border-radius: 0;
 `;
 
-export default function MakeNewSimulationRightScreen() {
+export default function MakeNewSimulationModal() {
     const [mbti, setMbti] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [scenario, setScenario] = useState<string>('');
@@ -62,7 +62,7 @@ export default function MakeNewSimulationRightScreen() {
     const isValid = isMbtiValid && name.trim() !== '' && scenario.trim() != '';
 
     return (
-        <InitialSimulationRightScreenStyled>
+        <InitialSimulationModalStyled>
             <CenterBox>
                 <CenterPurpleP content = 'Write down the situation where you want to turn simulation' />
                 <ScenarioTextArea value = { scenario } onChange = {(e) => setScenario(e.target.value)}/>
@@ -74,6 +74,6 @@ export default function MakeNewSimulationRightScreen() {
                 <GoBackButton />
                 <SubmitButton isValid = { isValid } disabled = { !isValid }> Submit </SubmitButton>
             </CenterBox>
-        </InitialSimulationRightScreenStyled>
+        </InitialSimulationModalStyled>
     )
 }
