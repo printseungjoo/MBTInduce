@@ -115,6 +115,7 @@ export default function FullMainScreen() {
     const [sValue, setSValue] = useState<number>(50);
     const [fValue, setFValue] = useState<number>(50);
     const [pValue, setPValue] = useState<number>(50);
+    const [showSimulation, setShowSimulation] = useState<boolean>(false);
 
     const location = useLocation();
 
@@ -237,7 +238,7 @@ export default function FullMainScreen() {
 
     return (
         <FullScreen>
-            {location.pathname === '/Simulation' && <InitialSimulationModal />}
+            {location.pathname === '/Simulation' && <InitialSimulationModal onConfirm={() => setShowSimulation(true)} />}
             <NavigationDrawerPlus isOpen = { isOpen }>
                 <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
             </NavigationDrawerPlus>
@@ -263,7 +264,7 @@ export default function FullMainScreen() {
                     <TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } />
                 </FlexColumnDiv>
             </MainContent>
-            <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } />
+            <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } />
         </FullScreen>
     );
 }

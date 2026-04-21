@@ -7,6 +7,10 @@ import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
 import OldSimulationModal from './OldSimulationModal'
 
+interface InitialSimulationRightScreenProps {
+    onConfirm: () => void;
+}
+
 const InitialSimulationRightScreenStyled = styled.div`
     position: fixed;
     top: 0;
@@ -30,7 +34,7 @@ const CenterBox = styled.div`
     gap: 1.5vh;
 `;
 
-export default function InitialSimulationRightScreen() {
+export default function InitialSimulationRightScreen({ onConfirm }: InitialSimulationRightScreenProps) {
     const [showNew, setShowNew] = useState(false);
     const [showOld, setShowOld] = useState(false);
     const goToMakeNewSimulationRightScreen = () => {
@@ -43,7 +47,7 @@ export default function InitialSimulationRightScreen() {
         setShowOld(true);
     };
     if (showOld) {
-        return <OldSimulationModal />
+        return <OldSimulationModal onConfirm={ onConfirm } />  // 변경
     }
 
     return (

@@ -13,6 +13,7 @@ interface RightScreenProps {
     setSValues: React.Dispatch<React.SetStateAction<number>>;
     setFValues: React.Dispatch<React.SetStateAction<number>>;
     setPValues: React.Dispatch<React.SetStateAction<number>>;
+    showSimulation: boolean;
 }
 
 const RightScreenStyled = styled.div`
@@ -38,13 +39,13 @@ const RightScreenStyled = styled.div`
     }
 `;
 
-export default function RightScreen({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues }: RightScreenProps) {
+export default function RightScreen({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues, showSimulation }: RightScreenProps) {
     const location = useLocation()
 
     return(
         <RightScreenStyled>
             {(location.pathname === '/MainChat' || location.pathname === '/' ) && <MainChatRightScreen eValues = { eValues } sValues = { sValues } fValues = { fValues } pValues = { pValues } setEValues = { setEValues } setSValues = { setSValues } setFValues = { setFValues } setPValues = { setPValues } />}
-            {location.pathname === '/Simulation' && <SimulationRightScreen />}
+            {location.pathname === '/Simulation' && showSimulation && <SimulationRightScreen />}
         </RightScreenStyled>
     )
 }
