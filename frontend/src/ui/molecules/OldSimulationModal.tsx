@@ -4,6 +4,10 @@ import { useState } from 'react'
 import GoBackButton from '../atoms/GoBackButton'
 import OldSimulationButton from '../atoms/OldSimulationButton'
 
+interface OldSimulationModalProps {
+    onConfirm: () => void;
+}
+
 const OldSimulationModalStyled = styled.div`
     position: fixed;
     top: 0;
@@ -40,11 +44,12 @@ const GoToExampleButton = styled.button`
 `;
 
 // They are dummy data. I will change and update them soon.
-export default function OldSimulationModal() {
+export default function OldSimulationModal({ onConfirm }: OldSimulationModalProps) {
     const [remove, setRemove] = useState<boolean>(false);
 
     const removeModal = () => {
         setRemove(true);
+        onConfirm();
     }
 
     return (
