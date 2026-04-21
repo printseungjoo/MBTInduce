@@ -7,6 +7,8 @@ import {
   deleteUserProfile,
   getChatMessageList,
   getSimulationTemplateList,
+  patchSimulationTemplate,
+  patchUserProfile,
   getUserProfiles,
   patchChatMessage,
 } from "../services/simulation.service.js";
@@ -48,6 +50,21 @@ export async function removeSimulationTemplate(req, res, next) {
   }
 }
 
+export async function patchSimulationTemplateHandler(req, res, next) {
+  try {
+    const { content } = req.body || {};
+    if (content !== undefined && (typeof content !== "string" || !content.trim())) {
+      return res.status(400).json({ message: "content must be non-empty string" });
+    }
+
+    const simulationTemplate = await patchSimulationTemplate(req.user.id, req.params.id, req.body || {});
+    if (!simulationTemplate) return res.status(404).json({ message: "simulationTemplate not found" });
+    return res.status(200).json({ simulationTemplate });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function getUserProfilesHandler(req, res, next) {
   try {
     const userProfiles = await getUserProfiles(req.user.id);
@@ -82,6 +99,33 @@ export async function removeUserProfiles(req, res, next) {
     const removed = await deleteUserProfile(req.user.id, req.params.id);
     if (!removed) return res.status(404).json({ message: "userProfiles not found" });
     return res.status(200).json({ id: req.params.id });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function patchUserProfiles(req, res, next) {
+  try {
+    const { name, meOrNot, mbti } = req.body || {};
+    if (
+      name !== undefined &&
+      (typeof name !== "string" || !name.trim())
+    ) {
+      return res.status(400).json({ message: "name must be non-empty string" });
+    }
+    if (meOrNot !== undefined && typeof meOrNot !== "boolean") {
+      return res.status(400).json({ message: "meOrNot must be boolean" });
+    }
+    if (
+      mbti !== undefined &&
+      (typeof mbti !== "string" || !mbti.trim())
+    ) {
+      return res.status(400).json({ message: "mbti must be non-empty string" });
+    }
+
+    const userProfiles = await patchUserProfile(req.user.id, req.params.id, req.body || {});
+    if (!userProfiles) return res.status(404).json({ message: "userProfiles not found" });
+    return res.status(200).json({ userProfiles });
   } catch (error) {
     next(error);
   }

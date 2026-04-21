@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Refactor: Removed `POST /api/exportChat` and the in-memory export helper from the simulation page API; export chat is out of project scope.
+- feat: Simulation Page initial implementation
+- Feature: Added `PATCH /api/simulation/simulationTemplate/:id` and `PATCH /api/simulation/userProfiles/:id` to support scenario/profile edits in Simulation CRUD.
 - Hotfix: In development auth-bypass mode, `requireAuth` now upserts a test `User` record before setting `req.user`, preventing `ChatSession.userId` foreign-key 500 errors on `/api/chat`.
 - Feature: Added `/api/chat` compatibility routes (`GET`/`POST`/`PATCH`) matching the frontend main chat flat `ChatMessage[]` contract, backed by a per-user “Main Chat” session and existing OpenAI pipeline (`postMessageCore`).
 - Feature: `POST /api/showBoth` accepts a JSON array of axis codes (`EI`, `SN`, `FT`, `PJ`) from the Main Chat “Show Both” UI and persists them on `MbtiPreference.showBothAxes`.
