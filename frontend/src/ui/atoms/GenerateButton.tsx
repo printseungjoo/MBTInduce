@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 
 interface GenerateButtonProps {
     className?: string;
-    onClick?: () => Promise<void>;
+    onClick?: () => Promise<void> | void;
     content: string;
 }
 
@@ -18,9 +18,9 @@ const GenerateButtonStyled = styled.button`
     border-radius: 0;
 `;
 
-export default function GenerateButton({ className, content }: GenerateButtonProps) {
+export default function GenerateButton({ className, content, onClick }: GenerateButtonProps) {
     return(
-        <GenerateButtonStyled className = { className }>
+        <GenerateButtonStyled className = { className } onClick = { onClick }>
             { content }
         </GenerateButtonStyled>
     )
