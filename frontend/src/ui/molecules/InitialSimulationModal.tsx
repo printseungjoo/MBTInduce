@@ -2,9 +2,10 @@ import styled from '@emotion/styled'
 import { useState } from 'react'
 
 import GenerateButton from '../atoms/GenerateButton'
-import MakeNewSimulationRightScreen from './MakeNewSimulationRightScreen'
+import MakeNewSimulationModal from './MakeNewSimulationModal'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
+import OldSimulationModal from './OldSimulationModal'
 
 const InitialSimulationRightScreenStyled = styled.div`
     position: fixed;
@@ -31,18 +32,25 @@ const CenterBox = styled.div`
 
 export default function InitialSimulationRightScreen() {
     const [showNew, setShowNew] = useState(false);
+    const [showOld, setShowOld] = useState(false);
     const goToMakeNewSimulationRightScreen = () => {
         setShowNew(true);
     };
     if (showNew) {
-        return <MakeNewSimulationRightScreen />;
+        return <MakeNewSimulationModal />;
+    }
+    const goToOldSimulationRightScreen = () => {
+        setShowOld(true);
+    };
+    if (showOld) {
+        return <OldSimulationModal />
     }
 
     return (
         <InitialSimulationRightScreenStyled>
             <CenterBox>
                 <GenerateButton content = 'Make new' onClick = { goToMakeNewSimulationRightScreen } />
-                <GenerateButton content = 'Bringing up old conversations' />
+                <GenerateButton content = 'Bringing up old conversations' onClick = { goToOldSimulationRightScreen } />
                 <CenterPurpleP content = ' Users can simulate conversations with a selected MBTI personality. The AI generates dialogue responses as if the selected MBTI personality were participating in the conversation. This feature works like a role-play simulation system.' />
                 <GoBackButton />
             </CenterBox>

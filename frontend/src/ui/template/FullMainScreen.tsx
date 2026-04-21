@@ -9,7 +9,7 @@ import RightScreen from '../template/RightScreen'
 import TextInputBox from '../molecules/TextInputBox'
 import UserChat from '../atoms/UserChat'
 import AiChat from '../atoms/AiChat'
-import InitialSimulationRightScreen from '../molecules/InitialSimulationRightScreen'
+import InitialSimulationModal from '../molecules/InitialSimulationModal'
 
 interface MbtiRange {
     eValue: number;
@@ -237,7 +237,7 @@ export default function FullMainScreen() {
 
     return (
         <FullScreen>
-            {location.pathname === '/Simulation' && <InitialSimulationRightScreen />}
+            {location.pathname === '/Simulation' && <InitialSimulationModal />}
             <NavigationDrawerPlus isOpen = { isOpen }>
                 <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
             </NavigationDrawerPlus>
