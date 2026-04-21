@@ -9,7 +9,7 @@ const WebsiteIntroStyled = styled.div`
     color: ${({ theme }) => theme.colors.lightWhite};
     background-color: ${({ theme }) => theme.colors.royalPurple};
     font-size: 0.8rem;
-    margin: 0 0.5vw;
+    margin: 0 0vw;
     padding: 2vh 1vw;
     border-radius: 10px;
     margin-top: auto;
@@ -19,7 +19,7 @@ const WebsiteIntroStyled = styled.div`
 export default function WebsiteIntro({ content, className }: WebsiteIntroProps) {
     return(
         <WebsiteIntroStyled className = { className }>
-             {content }
+             { content }
         </WebsiteIntroStyled>
     )
 }
