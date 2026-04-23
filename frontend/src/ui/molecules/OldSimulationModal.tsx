@@ -1,11 +1,28 @@
 import styled from '@emotion/styled'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import GoBackButton from '../atoms/GoBackButton'
 import OldSimulationButton from '../atoms/OldSimulationButton'
 
 interface OldSimulationModalProps {
     onConfirm: () => void;
+}
+
+interface ScenarioRequest {
+    content: string;
+}
+
+interface TargetInfoRequest {
+    name: string;
+    meOrNot: boolean;
+    mbti: string;
+    content: string;
+}
+
+interface History {
+    scenario: string;
+    name: string;
+    mbti: string;
 }
 
 const OldSimulationModalStyled = styled.div`
@@ -31,35 +48,69 @@ const CenterBox = styled.div`
     gap: 1.5vh;
 `;
 
-const GoToExampleButton = styled.button`
-    width: 100%;
-    min-height: 4vh;
-    height: auto;
-    font-weight: bolder;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: ${({ theme }) => theme.colors.coolGray};
-    border-radius: 0;
-`;
-
-// They are dummy data. I will change and update them soon.
 export default function OldSimulationModal({ onConfirm }: OldSimulationModalProps) {
     const [remove, setRemove] = useState<boolean>(false);
+    const [history, setHistory] = useState<History[]>([]);
 
     const removeModal = () => {
         setRemove(true);
         onConfirm();
     }
 
+    useEffect(() => {
+        getHistory();
+    }, []);
+
+    const getHistory = async () => {
+        try {
+            const [scenarioRes, targetRes] = await Promise.all([
+                fetch('http://localhost:4000/api/simulationTemplate', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json' 
+                    },
+                    credentials: 'include',
+                }),
+                fetch('http://localhost:4000/api/userProfiles', {
+                    method: 'GET',
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    credentials: 'include',
+                })
+            ]);
+            if (!scenarioRes.ok || !targetRes.ok) {
+                throw new Error('Failed to fetch data');
+            }
+            const scenarioData = await scenarioRes.json();
+            const targetData = await targetRes.json();
+            const scenarios: ScenarioRequest[] = scenarioData.simulationTemplate || [];
+            const targets: TargetInfoRequest[] = targetData.userProfiles || [];
+            const minLength = Math.min(scenarios.length, targets.length);
+            const merged: History[] = [];
+            for (let i = 0; i < minLength; i++) {
+                const s = scenarios[i];
+                const t = targets[i];
+                if (!s?.content || !t?.name || !t?.mbti) continue;
+                merged.push({
+                    scenario: s.content,
+                    name: t.name,
+                    mbti: t.mbti
+                });
+            }
+            setHistory(merged);
+        } catch (error) {
+            console.error('Error getting history:', error);
+        }
+    };
+
     return (
         <>
             {!remove && <OldSimulationModalStyled>
                 <CenterBox>
-                   <OldSimulationButton targetName = 'Jibeom ' targetMbti = 'ESTJ' scenarioContent = "I'm working on a project with Mr.Jibeom. I have to make a schedule and discuss the agenda at a meeting with him. I want to watch the simulation to see how he'll talk" />
-                    <OldSimulationButton targetName = 'Judy ' targetMbti = 'ESFP' scenarioContent = "I fought with Judy. I want to have a simulation how to be okay with Judy again." />
-                    <OldSimulationButton targetName = 'Choi ' targetMbti = 'INTP' scenarioContent = "I have a meeting with Mr.Choi next week. I want to take a simulation how I would discuss the agenda." />
-                    <GoToExampleButton onClick = { removeModal }> Go to example button </GoToExampleButton>
+                    {history.map((h) => (
+                        <OldSimulationButton targetName = { h.name } targetMbti = { h.mbti } scenarioContent = { h.scenario } />
+                    ))}
                     <GoBackButton />
                 </CenterBox>
             </OldSimulationModalStyled>}
