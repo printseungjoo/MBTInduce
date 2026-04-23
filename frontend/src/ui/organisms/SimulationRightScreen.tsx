@@ -4,6 +4,12 @@ import Title from '../atoms/Title'
 import WebsiteIntro from '../atoms/WebsiteIntro'
 import TargetProfile from '../atoms/TargetProfile'
 
+interface SimulationRightScreenProps {
+    selectedScenario: string;
+    selectedName: string;
+    selectedMbti: string;
+}
+
 const SimulationRightScreenStyled = styled.div`
     height: 100vh;
     display: flex;
@@ -18,18 +24,17 @@ const FlexColumnDiv = styled.div`
     gap: 2vh;
 `;
 
-// They are dummy data. I will change and update them soon.
-export default function SimulationRightScreen() {
+export default function SimulationRightScreen({ selectedScenario, selectedName, selectedMbti }: SimulationRightScreenProps) {
     return(
         <SimulationRightScreenStyled>
             <FlexColumnDiv>
                 <Title title = 'Scenario' />
-                <WebsiteIntro content = "I'm working on a project with Mr.Ryu. I have to make a schedule and discuss the agenda at a meeting with him. I want to watch the simulation to see how he'll talk." />
+                <WebsiteIntro content = { selectedScenario } />
             </FlexColumnDiv>
             <FlexColumnDiv>
                 <Title title = 'Conversation' />
                 <TargetProfile meOrNot = '(me)' name = 'Seungjoo' mbti = 'ESFP' />
-                <TargetProfile meOrNot = '' name = 'Jibeom' mbti = 'ESTJ' />
+                <TargetProfile meOrNot = '' name = { selectedName } mbti = { selectedMbti } />
             </FlexColumnDiv>
         </SimulationRightScreenStyled>
     )
