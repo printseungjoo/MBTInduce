@@ -9,6 +9,7 @@ interface InputProps {
 const InputStyled = styled.input`
     width: 46%;
     height: 4vh;
+    text-align: center;
 
     &::placeholder {
         text-align: center;

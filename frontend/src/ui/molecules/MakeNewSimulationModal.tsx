@@ -5,6 +5,16 @@ import CenterPurpleP from '../atoms/CenterPurpleP'
 import Input from '../atoms/Input'
 import GoBackButton from '../atoms/GoBackButton'
 
+interface ScenarioRequest {
+    content: string;
+}
+
+interface TargetInfoRequest {
+    name: string;
+    meOrNot: boolean;
+    mbti: string;
+}
+
 const InitialSimulationModalStyled = styled.div`
     position: fixed;
     top: 0;
@@ -61,6 +71,51 @@ export default function MakeNewSimulationModal() {
     const isMbtiValid = mbtiRegex.test(mbti);
     const isValid = isMbtiValid && name.trim() !== '' && scenario.trim() != '';
 
+    const sendScenario = async() => {
+        const simulationContent: ScenarioRequest = { content: scenario };
+        try {
+            const response = await fetch('http://localhost:4000/api/postSimulationTemplate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(simulationContent),
+            })
+            if (!response.ok) {
+                throw new Error('Failed to send scenario')
+            }
+            const data = await response.json()
+        } catch (error) {
+            console.error('Error transmitting scenario:', error);
+        }
+    }
+
+    const sendTargetInfo = async() => {
+        const targetInfo: TargetInfoRequest = { name: name, meOrNot: false, mbti: mbti };
+        try {
+            const response = await fetch('http://localhost:4000/api/postUserProfiles', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(targetInfo),
+            })
+            if (!response.ok) {
+                throw new Error('Failed to send targetInfo')
+            }
+            const data = await response.json();
+        } catch (error) {
+            console.error('Error transmitting targetInfo:', error);
+        }
+    }
+
+    const clickSubmitButton = () => {
+        sendScenario();
+        sendTargetInfo();
+    }
+
     return (
         <InitialSimulationModalStyled>
             <CenterBox>
@@ -72,7 +127,7 @@ export default function MakeNewSimulationModal() {
                     <Input placeholder = 'MBTI' value = { mbti } onChange = {(e: React.ChangeEvent<HTMLInputElement>) => setMbti(e.target.value)} />
                 </FlexDiv>
                 <GoBackButton />
-                <SubmitButton isValid = { isValid } disabled = { !isValid }> Submit </SubmitButton>
+                <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
             </CenterBox>
         </InitialSimulationModalStyled>
     )
