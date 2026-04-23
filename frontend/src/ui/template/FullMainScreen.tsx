@@ -10,6 +10,7 @@ import TextInputBox from '../molecules/TextInputBox'
 import UserChat from '../atoms/UserChat'
 import AiChat from '../atoms/AiChat'
 import InitialSimulationModal from '../molecules/InitialSimulationModal'
+import OldSimulationModal from '../molecules/OldSimulationModal'
 
 interface MbtiRange {
     eValue: number;
@@ -116,6 +117,10 @@ export default function FullMainScreen() {
     const [fValue, setFValue] = useState<number>(50);
     const [pValue, setPValue] = useState<number>(50);
     const [showSimulation, setShowSimulation] = useState<boolean>(false);
+    const [selectedScenario, setSelectedScenario] = useState<string>('');
+    const [selectedName, setSelectedName] = useState<string>('');
+    const [selectedMbti, setSelectedMbti] = useState<string>('');
+    const [showOldSimulationModal, setShowOldSimulationModal] = useState<boolean>(false);
 
     const location = useLocation();
 
@@ -126,6 +131,27 @@ export default function FullMainScreen() {
     useEffect(() => {
         getChatMessages();
     }, []);
+
+    useEffect(() => {
+        if (location.pathname === '/Simulation') {
+            setShowSimulation(false);
+            setShowOldSimulationModal(false);
+            setSelectedScenario('');
+            setSelectedName('');
+            setSelectedMbti('');
+        }
+    }, [location.pathname]);
+
+    const handleSelectHistory = (h: { scenario: string, name: string, mbti: string }) => {
+        setSelectedScenario(h.scenario);
+        setSelectedName(h.name);
+        setSelectedMbti(h.mbti);
+        setShowSimulation(true); 
+    };
+
+    const handleConfirm = () => {
+        setShowSimulation(true);
+    };
 
     async function getChatMessages() {
         try {
@@ -239,6 +265,7 @@ export default function FullMainScreen() {
     return (
         <FullScreen>
             {location.pathname === '/Simulation' && <InitialSimulationModal onConfirm={() => setShowSimulation(true)} />}
+            {location.pathname === '/Simulation' && (<OldSimulationModal onConfirm = { handleConfirm } onSelectHistory = { handleSelectHistory } />)}
             <NavigationDrawerPlus isOpen = { isOpen }>
                 <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
             </NavigationDrawerPlus>
@@ -264,7 +291,7 @@ export default function FullMainScreen() {
                     <TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } />
                 </FlexColumnDiv>
             </MainContent>
-            <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } />
+            <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } />
         </FullScreen>
     );
 }

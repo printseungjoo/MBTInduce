@@ -62,9 +62,9 @@ export default function MainChatRightScreen({ eValues, sValues, fValues, pValues
             if (!response.ok) {
                 throw new Error('Failed to send mbtiRange')
             }
-            const data = await response.json()
+            const data = await response.json();
         } catch (error) {
-            console.error('Error transmitting mbtiRange:', error)
+            console.error('Error transmitting mbtiRange:', error);
         }
     }
     

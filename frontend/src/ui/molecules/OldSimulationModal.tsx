@@ -6,6 +6,7 @@ import OldSimulationButton from '../atoms/OldSimulationButton'
 
 interface OldSimulationModalProps {
     onConfirm: () => void;
+    onSelectHistory: (history: History) => void;
 }
 
 interface ScenarioRequest {
@@ -48,13 +49,18 @@ const CenterBox = styled.div`
     gap: 1.5vh;
 `;
 
-export default function OldSimulationModal({ onConfirm }: OldSimulationModalProps) {
+export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSimulationModalProps) {
     const [remove, setRemove] = useState<boolean>(false);
     const [history, setHistory] = useState<History[]>([]);
 
     const removeModal = () => {
         setRemove(true);
         onConfirm();
+    }
+
+    const clickHistory = (selectedHistory: History) => {
+        onSelectHistory(selectedHistory);
+        removeModal();
     }
 
     useEffect(() => {
@@ -108,8 +114,10 @@ export default function OldSimulationModal({ onConfirm }: OldSimulationModalProp
         <>
             {!remove && <OldSimulationModalStyled>
                 <CenterBox>
-                    {history.map((h) => (
-                        <OldSimulationButton targetName = { h.name } targetMbti = { h.mbti } scenarioContent = { h.scenario } />
+                    {history.map((h, index) => (
+                        <div key = { index } onClick = {() => clickHistory(h)}>
+                            <OldSimulationButton targetName = { h.name } targetMbti = { h.mbti } scenarioContent = { h.scenario } />
+                        </div>
                     ))}
                     <GoBackButton />
                 </CenterBox>
