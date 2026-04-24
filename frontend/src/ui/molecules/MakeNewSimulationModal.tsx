@@ -15,6 +15,10 @@ interface TargetInfoRequest {
     mbti: string;
 }
 
+interface MakeNewSimulationModalProps {
+    onSubmitSuccess: () => void;
+}
+
 const InitialSimulationModalStyled = styled.div`
     position: fixed;
     top: 0;
@@ -62,7 +66,7 @@ const SubmitButton = styled.button<{isValid: boolean}>`
     border-radius: 0;
 `;
 
-export default function MakeNewSimulationModal() {
+export default function MakeNewSimulationModal({ onSubmitSuccess }: MakeNewSimulationModalProps) {
     const [mbti, setMbti] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [scenario, setScenario] = useState<string>('');
@@ -115,6 +119,7 @@ export default function MakeNewSimulationModal() {
         try {
             await sendScenario();
             await sendTargetInfo();
+            onSubmitSuccess();
         } catch (error) {
             console.error(error);
         }

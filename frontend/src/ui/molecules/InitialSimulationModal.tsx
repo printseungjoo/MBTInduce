@@ -46,7 +46,10 @@ export default function InitialSimulationRightScreen({ onConfirm, onSelectHistor
         setShowNew(true);
     };
     if (showNew) {
-        return <MakeNewSimulationModal />;
+        return <MakeNewSimulationModal onSubmitSuccess = {() => {
+            setShowNew(false);
+            setShowOld(true);
+        }} />;
     }
     const goToOldSimulationRightScreen = () => {
         setShowOld(true);
