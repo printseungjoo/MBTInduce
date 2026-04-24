@@ -73,8 +73,8 @@ export default function RangeBar({ leftMbtiLetter, rightMbtiLetter, value, onCha
     return (
         <>
             <Percentage>
-                <span> { value }% </span>
                 <span> {100 - value}% </span>
+                <span> { value }% </span>
             </Percentage>
             <RangeBarDiv>
                 <Center>
