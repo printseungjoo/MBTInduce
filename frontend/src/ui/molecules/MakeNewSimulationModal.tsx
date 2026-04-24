@@ -74,7 +74,7 @@ export default function MakeNewSimulationModal() {
     const sendScenario = async() => {
         const simulationContent: ScenarioRequest = { content: scenario };
         try {
-            const response = await fetch('http://localhost:4000/api/postSimulationTemplate', {
+            const response = await fetch('http://localhost:4000/api/simulationTemplate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export default function MakeNewSimulationModal() {
     const sendTargetInfo = async() => {
         const targetInfo: TargetInfoRequest = { name: name, meOrNot: false, mbti: mbti };
         try {
-            const response = await fetch('http://localhost:4000/api/postUserProfiles', {
+            const response = await fetch('http://localhost:4000/api/userProfiles', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -111,10 +111,14 @@ export default function MakeNewSimulationModal() {
         }
     }
 
-    const clickSubmitButton = () => {
-        sendScenario();
-        sendTargetInfo();
-    }
+    const clickSubmitButton = async () => {
+        try {
+            await sendScenario();
+            await sendTargetInfo();
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <InitialSimulationModalStyled>
