@@ -123,7 +123,6 @@ export default function FullMainScreen() {
     const [simulationChatMessages, setSimulationChatMessages] = useState<Record<string, ChatMessage[]>>({});
 
     const location = useLocation();
-
     const isSimulationPage = location.pathname === '/Simulation';
     const selectedSimulationKey = useMemo(() => {
         if (!selectedName || !selectedMbti || !selectedScenario) {
