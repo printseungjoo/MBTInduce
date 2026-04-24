@@ -264,8 +264,7 @@ export default function FullMainScreen() {
 
     return (
         <FullScreen>
-            {location.pathname === '/Simulation' && <InitialSimulationModal onConfirm={() => setShowSimulation(true)} />}
-            {location.pathname === '/Simulation' && (<OldSimulationModal onConfirm = { handleConfirm } onSelectHistory = { handleSelectHistory } />)}
+            {location.pathname === '/Simulation' && !showSimulation && (<InitialSimulationModal onConfirm = { handleConfirm } onSelectHistory = { handleSelectHistory } />)}
             <NavigationDrawerPlus isOpen = { isOpen }>
                 <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
             </NavigationDrawerPlus>

@@ -9,6 +9,11 @@ import OldSimulationModal from './OldSimulationModal'
 
 interface InitialSimulationRightScreenProps {
     onConfirm: () => void;
+    onSelectHistory: (history: {
+        scenario: string;
+        name: string;
+        mbti: string;
+    }) => void;
 }
 
 const InitialSimulationRightScreenStyled = styled.div`
@@ -34,7 +39,7 @@ const CenterBox = styled.div`
     gap: 1.5vh;
 `;
 
-export default function InitialSimulationRightScreen({ onConfirm }: InitialSimulationRightScreenProps) {
+export default function InitialSimulationRightScreen({ onConfirm, onSelectHistory }: InitialSimulationRightScreenProps) {
     const [showNew, setShowNew] = useState(false);
     const [showOld, setShowOld] = useState(false);
     const goToMakeNewSimulationRightScreen = () => {
@@ -47,7 +52,7 @@ export default function InitialSimulationRightScreen({ onConfirm }: InitialSimul
         setShowOld(true);
     };
     if (showOld) {
-        return <OldSimulationModal onConfirm={ onConfirm } /> 
+        return <OldSimulationModal onConfirm={ onConfirm } onSelectHistory = { onSelectHistory } /> 
     }
 
     return (
