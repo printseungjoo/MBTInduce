@@ -226,13 +226,13 @@ To protect user privacy:
 # 🫱🏻‍🫲🏼 Team
 
 
-### Seungjoo Ham
+### Seungjoo
 - Project Planning
 - Frontend Development  
 - UI / UX Design
 
 
-### Jibeom Ryu
+### Jibeom
 - Project Planning
 - Backend Development
 - AI Model Training & Tuning
@@ -280,3 +280,41 @@ To protect user privacy:
 
 MBTInduce aims to create a new AI interaction experience where users can explore different personality perspectives, improve communication understanding, and receive responses tailored to their preferred emotional or logical style.
 
+---
+
+# ⚙️ Getting Started
+
+### 1. Clone the repository
+git clone https://github.com/printseungjoo/MBTInduce.git  
+
+cd MBTInduce
+
+### 2. Install dependencies
+npm install  
+
+cd frontend && npm install  
+
+cd ../backend && npm install  
+
+cd ..
+
+### 3. Environment Setup
+The backend requires a `.env` file to work properly.
+If you need access to the `.env` file, please request it via email:
+printseungjoo@gmail.com  
+
+The request will be reviewed before the file is shared.
+
+### 4. Run the project
+From the root directory:
+npm run dev  
+
+This command runs both frontend and backend simultaneously.
+
+### Local Development
+- Frontend: http://localhost:5173  
+- Backend: http://localhost:4000
+
+### Notes
+- PostgreSQL must be running before starting the backend.
+- The backend will not work without a valid `.env` file.
