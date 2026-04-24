@@ -47,7 +47,7 @@ export default function InitialSimulationRightScreen({ onConfirm }: InitialSimul
         setShowOld(true);
     };
     if (showOld) {
-        return <OldSimulationModal onConfirm={ onConfirm } />  // 변경
+        return <OldSimulationModal onConfirm={ onConfirm } /> 
     }
 
     return (
