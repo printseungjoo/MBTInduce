@@ -24,6 +24,7 @@ const FlexColumnDiv = styled.div`
     gap: 2vh;
 `;
 
+// User data is dummy data. I will change and update it soon.
 export default function SimulationRightScreen({ selectedScenario, selectedName, selectedMbti }: SimulationRightScreenProps) {
     return(
         <SimulationRightScreenStyled>
