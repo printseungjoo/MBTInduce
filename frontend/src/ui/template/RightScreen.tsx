@@ -1,8 +1,9 @@
 import styled from '@emotion/styled'
 import { useLocation } from 'react-router-dom'
 
-import MainChatRightScreen from '../organisms/MainChatRightScreen';
-import SimulationRightScreen from '../organisms/SimulationRightScreen';
+import MainChatRightScreen from '../organisms/MainChatRightScreen'
+import SimulationRightScreen from '../organisms/SimulationRightScreen'
+import CalendarRightScreen from '../organisms/CalendarRightScreen'
 
 interface RightScreenProps {
     eValues: number;
@@ -49,6 +50,7 @@ export default function RightScreen({ eValues, sValues, fValues, pValues, setEVa
         <RightScreenStyled>
             {(location.pathname === '/MainChat' || location.pathname === '/' ) && <MainChatRightScreen eValues = { eValues } sValues = { sValues } fValues = { fValues } pValues = { pValues } setEValues = { setEValues } setSValues = { setSValues } setFValues = { setFValues } setPValues = { setPValues } />}
             {location.pathname === '/Simulation' && showSimulation && <SimulationRightScreen selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } />}
+            {location.pathname === '/Calendar' && <CalendarRightScreen />}
         </RightScreenStyled>
     )
 }
