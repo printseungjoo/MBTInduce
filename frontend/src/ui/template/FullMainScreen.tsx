@@ -344,7 +344,7 @@ export default function FullMainScreen() {
                             <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
                         </FlexDiv>
                     </HeaderDiv>
-                    <ChatMessagesDiv>
+                    {(location.pathname === '/MainChat' || location.pathname === '/Simulation') && <ChatMessagesDiv>
                         {!isSimulationModalOpen && currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
@@ -354,8 +354,8 @@ export default function FullMainScreen() {
                                 )}
                             </ChatRow>
                         ))}
-                    </ChatMessagesDiv>
-                    {!isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    </ChatMessagesDiv>}
+                    {(location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                 </FlexColumnDiv>
             </MainContent>
             <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } />
