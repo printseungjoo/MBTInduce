@@ -6,6 +6,15 @@ import Checkbox from '../atoms/Checkbox'
 import GenerateButton from '../atoms/GenerateButton'
 import ScheduleButton from '../atoms/ScheduleButton'
 
+interface SelectedRange {
+    startDate: Date | null;
+    endDate: Date | null;
+}
+
+interface CalendarRightScreenProps {
+    selectedRange: SelectedRange;
+}
+
 const SelectTimeP = styled.p`
     color: ${({ theme }) => theme.colors.lightWhite};
     font-size: 0.85rem;
@@ -39,15 +48,53 @@ const PurpleDiv = styled.div`
 
 const GenerateButtonPlus = styled(GenerateButton)`
     margin: 1.2vh 0;
-`
+`;
 
 // They are dummy data. I will change and update them soon.
-export default function CalendarRightScreen() {
+export default function CalendarRightScreen({ selectedRange }: CalendarRightScreenProps) {
+    function formatDate(date: Date | null) {
+        if (!date) return '';
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    function getOrderedDates(startDate: Date | null, endDate: Date | null) {
+        if (!startDate) {
+            return {
+                firstDate: null,
+                secondDate: null
+            };
+        }
+        if (!endDate) {
+            return {
+                firstDate: startDate,
+                secondDate: startDate
+            };
+        }
+        if (startDate.getTime() <= endDate.getTime()) {
+            return {
+                firstDate: startDate,
+                secondDate: endDate
+            };
+        }
+        return {
+            firstDate: endDate,
+            secondDate: startDate
+        };
+    }
+    const { firstDate, secondDate } = getOrderedDates(
+        selectedRange.startDate,
+        selectedRange.endDate
+    );
+    const start = formatDate(firstDate);
+    const end = formatDate(secondDate);
+
     return(
         <>
             <Title title = 'Time' />
-            <SelectTime date = '2026-02-04' />
-            <SelectTime date = '2026-02-06' />
+            {start && <SelectTime date = { start } />}
+            {end && <SelectTime date = { end } />}
             <SelectTimeP> Click and select the time </SelectTimeP>
             <Title title = 'Schedule' />
             <WriteSchedule />
