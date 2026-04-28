@@ -3,14 +3,22 @@ import { postMessageCore } from "./chat.controller.js";
 
 const MAIN_SESSION_TITLE = "Main Chat";
 
-async function getOrCreateMainChatSession(userId) {
+function getChatSessionTitle(pageType, simulationKey) {
+  if (pageType === "simulation") {
+    return `simulation:${simulationKey}`;
+  }
+  return "main";
+}
+
+async function getOrCreateChatSession(userId, pageType, simulationKey) {
+  const title = getChatSessionTitle(pageType, simulationKey);
   let session = await prisma.chatSession.findFirst({
-    where: { userId, title: MAIN_SESSION_TITLE, isArchived: false },
+    where: { userId, title, isArchived: false },
     orderBy: { updatedAt: "desc" },
   });
   if (!session) {
     session = await prisma.chatSession.create({
-      data: { userId, title: MAIN_SESSION_TITLE },
+      data: { userId, title },
     });
   }
   return session;
@@ -77,7 +85,13 @@ async function buildFrontendChatArray(userId, sessionId) {
  */
 export async function getMainChatFlat(req, res, next) {
   try {
-    const session = await getOrCreateMainChatSession(req.user.id);
+    const pageType = req.query.pageType || "main";
+    const simulationKey = req.query.simulationKey || "";
+    const session = await getOrCreateChatSession(
+      req.user.id,
+      pageType,
+      simulationKey
+    );
     const payload = await buildFrontendChatArray(req.user.id, session.id);
     return res.status(200).json(payload);
   } catch (err) {
@@ -90,7 +104,13 @@ export async function getMainChatFlat(req, res, next) {
  */
 export async function postMainChatFlat(req, res, next) {
   try {
-    const session = await getOrCreateMainChatSession(req.user.id);
+    const pageType = req.body?.pageType || "main";
+    const simulationKey = req.body?.simulationKey || "";
+    const session = await getOrCreateChatSession(
+      req.user.id,
+      pageType,
+      simulationKey
+    );
     await postMessageCore(req.user.id, session.id, req.body || {});
     const payload = await buildFrontendChatArray(req.user.id, session.id);
     return res.status(200).json(payload);

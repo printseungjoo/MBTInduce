@@ -54,9 +54,30 @@ model User {
   simulationTemplates SimulationTemplate[]
   userProfiles UserProfile[]
   simulationChatMessages SimulationChatMessage[]
+  calendarEvents        CalendarEvent[]
 
   @@index([status])
   @@index([role])
+}
+
+model CalendarEvent {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  startAt      DateTime
+  endAt        DateTime
+  allDay       Boolean  @default(false)
+  mbti         String?
+  planningNote String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([startAt])
+  @@index([endAt])
 }
 
 model Account {

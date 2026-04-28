@@ -14,6 +14,7 @@ import { chatCompatRouter } from "./routes/chat.compat.routes.js";
 import { extraRouter } from "./routes/extra.routes.js";
 import { simulationRouter } from "./routes/simulation.routes.js";
 import { showBothRouter } from "./routes/showBoth.routes.js";
+import { calendarEventRouter } from "./routes/calendarEvent.routes.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.js";
 
 const app = express();
@@ -58,6 +59,7 @@ app.use("/api/showBoth", showBothRouter);
 app.use("/api/chat", chatCompatRouter);
 app.use("/api/chatMessage", chatRouter);
 app.use("/api/simulation", simulationRouter);
+app.use("/api/calendarEvent", calendarEventRouter);
 app.use("/api", extraRouter);
 
 app.use(notFoundHandler);
