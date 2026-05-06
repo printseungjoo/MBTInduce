@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { useTheme } from '@emotion/react'
 import { Calendar, dateFnsLocalizer, type SlotInfo } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
+import { useState, useEffect } from 'react'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
 interface SelectedRange {
@@ -12,6 +13,27 @@ interface SelectedRange {
 interface CalendarScreenProps {
     selectedRange: SelectedRange;
     setSelectedRange: React.Dispatch<React.SetStateAction<SelectedRange>>;
+}
+
+interface BigCalendarEvent {
+    id: string;
+    title: string;
+    start: Date;
+    end: Date;
+    allDay: boolean;
+}
+
+interface CalendarEventResponse {
+    id: string;
+    title: string;
+    description: string | null;
+    startAt: string;
+    endAt: string;
+    allDay: boolean;
+    mbti: string | null;
+    planningNote: string | null;
+    createdAt: string;
+    updatedAt: string;
 }
 
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales: {} });
@@ -41,6 +63,39 @@ const CenterDiv = styled.div`
 `;
 
 export default function CalendarScreen({ selectedRange, setSelectedRange }: CalendarScreenProps) {
+    const [events, setEvents] = useState<BigCalendarEvent[]>([]);
+
+    useEffect(() => {
+        loadCalendarEvents();
+    }, []);
+
+    async function loadCalendarEvents() {
+        try {
+            const response = await fetch('http://localhost:4000/api/calendarEvent', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to get calendar events');
+            }
+            const result = await response.json();
+            const calendarEvents: CalendarEventResponse[] = result.data.events;
+            const convertedEvents = calendarEvents.map((event) => ({
+                id: event.id,
+                title: event.title,
+                start: new Date(event.startAt),
+                end: new Date(event.endAt),
+                allDay: event.allDay,
+            }));
+            setEvents(convertedEvents);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const { startDate, endDate } = selectedRange;
     const theme = useTheme();
     function normalize(date: Date) {
@@ -83,7 +138,7 @@ export default function CalendarScreen({ selectedRange, setSelectedRange }: Cale
     return (
         <CenterDiv>
             <CalendarStyled>
-                <Calendar localizer = { localizer } selectable onSelectSlot = { handleSelectSlot } dayPropGetter = { dayPropGetter } defaultView = "month" views = {['month']} />
+                <Calendar localizer = { localizer } selectable onSelectSlot = { handleSelectSlot } dayPropGetter = { dayPropGetter } defaultView = "month" views = {['month']} events = { events } />
             </CalendarStyled>
         </CenterDiv>
     );
