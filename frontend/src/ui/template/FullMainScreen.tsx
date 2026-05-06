@@ -352,7 +352,7 @@ export default function FullMainScreen() {
                             <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
                         </FlexDiv>
                     </HeaderDiv>
-                    {(location.pathname === '/MainChat' || location.pathname === '/Simulation') && <ChatMessagesDiv>
+                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && <ChatMessagesDiv>
                         {!isSimulationModalOpen && currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
@@ -363,7 +363,7 @@ export default function FullMainScreen() {
                             </ChatRow>
                         ))}
                     </ChatMessagesDiv>}
-                    {(location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                     {location.pathname === '/Calendar' && <CalendarScreen selectedRange = { selectedRange } setSelectedRange = { setSelectedRange } />}
                 </FlexColumnDiv>
             </MainContent>
