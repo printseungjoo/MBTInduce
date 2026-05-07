@@ -74,9 +74,18 @@ const GenerateButtonPlus = styled(GenerateButton)`
     margin: 1.2vh 0;
 `;
 
+const NoEventText = styled.p`
+    color: ${({ theme }) => theme.colors.lightWhite};
+    font-size: 0.9rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
 export default function CalendarRightScreen({ selectedRange }: CalendarRightScreenProps) {
     const [schedule, setSchedule] = useState('');
-    const [selectedOption, setSelectedOption] = useState<DisturbOption | null>(null);
+    const [selectedOption, setSelectedOption] = useState<DisturbOption | ''>('');
     const [events, setEvents] = useState<BigCalendarEvent[]>([]);
     
     useEffect(() => {
@@ -184,7 +193,7 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             }
             alert('Schedule submitted successfully.');
             setSchedule('');
-            setSelectedOption(null);
+            setSelectedOption('');
         } catch (error) {
             console.error(error);
             alert('Server connection failed.');
@@ -216,19 +225,22 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             <Title title = 'Schedule' />
             <WriteSchedule value = { schedule } onChange = {(event) => setSchedule(event.target.value)} />
             <div onClick = {() => setSelectedOption('You can disturb')}>
-                <Checkbox text = 'You can disturb' />
+                <Checkbox text = 'You can disturb' checked = {selectedOption === 'You can disturb'} onClick = {() => setSelectedOption('You can disturb')} />
             </div>
             <div onClick = {() => setSelectedOption('Do not disturb whole day')}>
-                <Checkbox text = 'Do not disturb whole day' />
+                <Checkbox text = 'Do not disturb whole day' checked = {selectedOption === 'Do not disturb whole day'} onClick = {() => setSelectedOption('Do not disturb whole day')} />
             </div>
             <div onClick = {() => setSelectedOption('Do not disturb only at this time')}>
-                <Checkbox text = 'Do not disturb only at this time' />
+                <Checkbox text = 'Do not disturb only at this time' checked = {selectedOption === 'Do not disturb only at this time'} onClick = {() => setSelectedOption('Do not disturb only at this time')} />
             </div>
             <GenerateButtonPlus content = 'Submit' onClick = { submitSchedule } />
             <PurpleDiv>
-                {events.map((event) => (
+                {events.length === 0 ? (
+                    <NoEventText>No recorded events</NoEventText>
+                ) : (
+                    events.map((event) => (
                     <ScheduleButton schedule = { event.title } date = { formatDisplayDate(event.start) } startTime = { formatDisplayTime(event.start) } endTime = { formatDisplayTime(event.end) } />
-                ))}
+                )))}
             </PurpleDiv>
             <GenerateButtonPlus content = 'Delete' />
         </>
