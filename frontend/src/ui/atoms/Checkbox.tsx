@@ -2,6 +2,8 @@ import styled from '@emotion/styled'
 
 interface CheckboxProps {
     text: string;
+    checked: boolean;
+    onClick?: () => void;
 }
 
 const CheckboxDiv = styled.div`
@@ -17,10 +19,10 @@ const CheckboxLabel = styled.label`
     font-size: 0.85rem;
 `;
 
-export default function Checkbox({ text }: CheckboxProps) {
+export default function Checkbox({ text, checked }: CheckboxProps) {
     return(
         <CheckboxDiv>
-            <CheckboxInput type = 'checkbox' id = 'scales' />
+            <CheckboxInput type = 'checkbox' id = 'scales' checked = { checked } readOnly />
             <CheckboxLabel htmlFor = 'scales'> { text } </CheckboxLabel>
         </CheckboxDiv>
     )
