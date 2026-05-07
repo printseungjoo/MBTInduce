@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Title from '../atoms/Title'
 import SelectTime from '../molecules/SelectTime'
@@ -14,6 +14,27 @@ interface SelectedRange {
 
 interface CalendarRightScreenProps {
     selectedRange: SelectedRange;
+}
+
+interface CalendarEventResponse {
+    id: string;
+    title: string;
+    description: string | null;
+    startAt: string;
+    endAt: string;
+    allDay: boolean;
+    mbti: string | null;
+    planningNote: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+interface BigCalendarEvent {
+    id: string;
+    title: string;
+    start: Date;
+    end: Date;
+    allDay: boolean;
 }
 
 type DisturbOption = 'You can disturb' | 'Do not disturb whole day' | 'Do not disturb only at this time';
@@ -53,10 +74,41 @@ const GenerateButtonPlus = styled(GenerateButton)`
     margin: 1.2vh 0;
 `;
 
-// They are dummy data. I will change and update them soon.
 export default function CalendarRightScreen({ selectedRange }: CalendarRightScreenProps) {
     const [schedule, setSchedule] = useState('');
     const [selectedOption, setSelectedOption] = useState<DisturbOption | null>(null);
+    const [events, setEvents] = useState<BigCalendarEvent[]>([]);
+    
+    useEffect(() => {
+        loadCalendarEvents();
+    }, []);
+    
+    async function loadCalendarEvents() {
+        try {
+            const response = await fetch('http://localhost:4000/api/calendarEvent', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to get calendar events');
+            }
+            const result = await response.json();
+            const calendarEvents: CalendarEventResponse[] = result.data.events;
+            const convertedEvents = calendarEvents.map((event) => ({
+                id: event.id,
+                title: event.title,
+                start: new Date(event.startAt),
+                end: new Date(event.endAt),
+                allDay: event.allDay,
+            }));
+            setEvents(convertedEvents);
+        } catch (error) {
+            console.error(error);
+        }
+    }
     
     function formatDate(date: Date | null) {
         if (!date) return '';
@@ -94,7 +146,7 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
         endDate.setHours(23, 59, 59, 999);
         return endDate;
     }
-    
+
     async function submitSchedule() {
         if (!firstDate || !secondDate) {
             alert('Please select a date.');
@@ -145,6 +197,16 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
     const start = formatDate(firstDate);
     const end = formatDate(secondDate);
 
+    function formatDisplayDate(date: Date) {
+        return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}/${date.getFullYear()}`;
+    }
+    function formatDisplayTime(date: Date) {
+        return date.toLocaleTimeString([], {
+            hour: 'numeric',
+            minute: '2-digit',
+        });
+    }
+
     return(
         <>
             <Title title = 'Time' />
@@ -164,9 +226,9 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             </div>
             <GenerateButtonPlus content = 'Submit' onClick = { submitSchedule } />
             <PurpleDiv>
-                <ScheduleButton schedule = 'Late Same Night Event' date = '04/17/2015' startTime = '9pm' endTime = '10pm' />
-                <ScheduleButton schedule = 'Late Same Night Event' date = '04/17/2015' startTime = '9pm' endTime = '10pm' />
-                <ScheduleButton schedule = 'Late Same Night Event' date = '04/17/2015' startTime = '9pm' endTime = '10pm' />
+                {events.map((event) => (
+                    <ScheduleButton schedule = { event.title } date = { formatDisplayDate(event.start) } startTime = { formatDisplayTime(event.start) } endTime = { formatDisplayTime(event.end) } />
+                ))}
             </PurpleDiv>
             <GenerateButtonPlus content = 'Delete' />
         </>
