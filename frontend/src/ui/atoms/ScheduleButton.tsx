@@ -5,9 +5,10 @@ interface ScheduleButtonProps {
     date: string;
     startTime: string;
     endTime: string;
+    onClick?: () => void;
 }
 
-const ScheduleButtonStyled = styled.div`
+const ScheduleButtonStyled = styled.button`
     background-color: ${({ theme }) => theme.colors.softLavender};
     width: 90%;
     box-sizing: border-box;
@@ -26,11 +27,13 @@ const DateAndTime = styled.div`
     display: flex;
     color: ${({ theme }) => theme.colors.lightWhite};
     font-size: 0.75rem;
+    display: flex;
+    justify-content: center;
 `;
 
-export default function ScheduleButton({ schedule, date, startTime, endTime }: ScheduleButtonProps) {
+export default function ScheduleButton({ schedule, date, startTime, endTime, onClick }: ScheduleButtonProps) {
     return(
-        <ScheduleButtonStyled>
+        <ScheduleButtonStyled  onClick = { onClick }>
             <Schedule>
                 { schedule }
             </Schedule>

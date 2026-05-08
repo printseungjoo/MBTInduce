@@ -87,6 +87,7 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
     const [schedule, setSchedule] = useState('');
     const [selectedOption, setSelectedOption] = useState<DisturbOption | ''>('');
     const [events, setEvents] = useState<BigCalendarEvent[]>([]);
+    const [selectedEventId, setSelectedEventId] = useState('');
     
     useEffect(() => {
         loadCalendarEvents();
@@ -189,6 +190,8 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             alert('Schedule submitted successfully.');
             setSchedule('');
             setSelectedOption('');
+            setSelectedEventId('');
+            window.location.reload();
         } catch (error) {
             console.error(error);
             alert('Server connection failed.');
@@ -211,6 +214,33 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
         });
     }
 
+    async function deleteSchedule() {
+        if (!selectedEventId) {
+            alert('Please select a schedule to delete.');
+            return;
+        }
+        try {
+            const response = await fetch(`http://localhost:4000/api/calendarEvent/${selectedEventId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                alert(data.message || 'Failed to delete schedule.');
+                return;
+            }
+            alert('Schedule deleted successfully.');
+            setSelectedEventId('');
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+            alert('Server connection failed.');
+        }
+    }
+    
     return(
         <>
             <Title title = 'Time' />
@@ -234,10 +264,10 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
                     <NoEventText>No recorded events</NoEventText>
                 ) : (
                     events.map((event) => (
-                    <ScheduleButton schedule = { event.title } date = { formatDisplayDate(event.start) } startTime = { formatDisplayTime(event.start) } endTime = { formatDisplayTime(event.end) } />
+                    <ScheduleButton key = { event.id } schedule = { event.title } date = { formatDisplayDate(event.start) } startTime = { formatDisplayTime(event.start) } endTime = { formatDisplayTime(event.end) } onClick = { () => setSelectedEventId(event.id) } />
                 )))}
             </PurpleDiv>
-            <GenerateButtonPlus content = 'Delete' />
+            <GenerateButtonPlus content = 'Delete' onClick = { deleteSchedule } />
         </>
     )
 }
