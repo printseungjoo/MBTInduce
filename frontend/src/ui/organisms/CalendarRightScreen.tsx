@@ -174,7 +174,7 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             description: selectedOption,
             startAt: firstDate.toISOString(),
             endAt: getEndDate(secondDate).toISOString(),
-            allDay: selectedOption,
+            allDay: selectedOption === 'Do not disturb whole day',
             planningNote: selectedOption
         };
         try {
