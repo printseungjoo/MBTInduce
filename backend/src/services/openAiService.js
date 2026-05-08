@@ -50,6 +50,50 @@ export async function getChatCompletion(messages) {
 }
 
 /**
+ * Chat Completions with JSON object output (for structured parsing).
+ * @param {Array<{ role: string; content: string }>} messages
+ * @returns {Promise<Record<string, unknown>>}
+ */
+export async function getChatCompletionJson(messages) {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY is not configured");
+  }
+
+  const model = getModel();
+  const temperature = Number(process.env.OPENAI_TEMPERATURE);
+  const maxTokensRaw = process.env.OPENAI_MAX_TOKENS;
+
+  const { data } = await axios.post(
+    OPENAI_URL,
+    {
+      model,
+      messages,
+      temperature: Number.isFinite(temperature) ? temperature : 0.5,
+      ...(maxTokensRaw ? { max_tokens: Number(maxTokensRaw) } : { max_tokens: 1024 }),
+      response_format: { type: "json_object" },
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      timeout: 120000,
+    }
+  );
+
+  const text = data?.choices?.[0]?.message?.content;
+  if (!text || typeof text !== "string") {
+    throw new Error("OpenAI returned empty content");
+  }
+  try {
+    return JSON.parse(text.trim());
+  } catch {
+    throw new Error("OpenAI returned non-JSON content");
+  }
+}
+
+/**
  * Legacy helper: one concatenated prompt string (e.g. from buildPrompt).
  * @param {{ message: string; traits?: unknown }} param0
  */
