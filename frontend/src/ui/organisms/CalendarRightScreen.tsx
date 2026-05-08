@@ -150,11 +150,6 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             secondDate: startDate
         };
     }
-    function getEndDate(date: Date) {
-        const endDate = new Date(date);
-        endDate.setHours(23, 59, 59, 999);
-        return endDate;
-    }
 
     async function submitSchedule() {
         if (!firstDate || !secondDate) {
@@ -172,8 +167,8 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
         const requestBody = {
             title: schedule,
             description: selectedOption,
-            startAt: firstDate.toISOString(),
-            endAt: getEndDate(secondDate).toISOString(),
+            startAt: formatDate(firstDate),
+            endAt: formatDate(secondDate),
             allDay: selectedOption === 'Do not disturb whole day',
             planningNote: selectedOption
         };
