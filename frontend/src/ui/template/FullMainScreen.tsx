@@ -10,6 +10,7 @@ import TextInputBox from '../molecules/TextInputBox'
 import UserChat from '../atoms/UserChat'
 import AiChat from '../atoms/AiChat'
 import InitialSimulationModal from '../molecules/InitialSimulationModal'
+import CalendarScreen from '../organisms/CalendarScreen'
 
 interface MbtiRange {
     eValue: number;
@@ -25,6 +26,11 @@ interface ChatMessage {
     mbtiRange: MbtiRange;
     createdAt: string;
     rate?: number;
+}
+
+interface SelectedRange {
+  startDate: Date | null;
+  endDate: Date | null;
 }
 
 const FullScreen = styled.div`
@@ -121,6 +127,10 @@ export default function FullMainScreen() {
     const [showOldSimulationModal, setShowOldSimulationModal] = useState<boolean>(false);
     const [mainChatMessages, setMainChatMessages] = useState<ChatMessage[]>([]);
     const [simulationChatMessages, setSimulationChatMessages] = useState<Record<string, ChatMessage[]>>({});
+    const [selectedRange, setSelectedRange] = useState<SelectedRange>({
+        startDate: null,
+        endDate: null,
+    });
 
     const location = useLocation();
     const isSimulationPage = location.pathname === '/Simulation';
@@ -314,9 +324,7 @@ export default function FullMainScreen() {
             if (isSimulationPage) {
                 setSimulationChatMessages((prev) => ({
                     ...prev,
-                    [selectedSimulationKey]: (prev[selectedSimulationKey] ?? []).map((chatMessage) =>
-                        chatMessage.id === messageId ? { ...chatMessage, rate } : chatMessage
-                    ),
+                    [selectedSimulationKey]: (prev[selectedSimulationKey] ?? []).map((chatMessage) => chatMessage.id === messageId ? { ...chatMessage, rate } : chatMessage)
                 }));
                 return;
             }
@@ -344,7 +352,7 @@ export default function FullMainScreen() {
                             <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
                         </FlexDiv>
                     </HeaderDiv>
-                    <ChatMessagesDiv>
+                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && <ChatMessagesDiv>
                         {!isSimulationModalOpen && currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
@@ -354,11 +362,12 @@ export default function FullMainScreen() {
                                 )}
                             </ChatRow>
                         ))}
-                    </ChatMessagesDiv>
-                    {!isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    </ChatMessagesDiv>}
+                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    {location.pathname === '/Calendar' && <CalendarScreen selectedRange = { selectedRange } setSelectedRange = { setSelectedRange } />}
                 </FlexColumnDiv>
             </MainContent>
-            <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } />
+            <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } />
         </FullScreen>
     );
 }
