@@ -59,6 +59,20 @@ export async function deleteSimulationTemplate(userId, id) {
   return true;
 }
 
+export async function patchSimulationTemplate(userId, id, payload) {
+  const row = await prisma.simulationTemplate.findFirst({ where: { id, userId } });
+  if (!row) return null;
+
+  const updated = await prisma.simulationTemplate.update({
+    where: { id },
+    data: {
+      content: payload.content ?? undefined,
+    },
+  });
+
+  return mapTemplate(updated);
+}
+
 export async function getUserProfiles(userId) {
   const rows = await prisma.userProfile.findMany({
     where: { userId },
@@ -84,6 +98,22 @@ export async function deleteUserProfile(userId, id) {
   if (!row) return false;
   await prisma.userProfile.delete({ where: { id } });
   return true;
+}
+
+export async function patchUserProfile(userId, id, payload) {
+  const row = await prisma.userProfile.findFirst({ where: { id, userId } });
+  if (!row) return null;
+
+  const updated = await prisma.userProfile.update({
+    where: { id },
+    data: {
+      name: payload.name ?? undefined,
+      meOrNot: typeof payload.meOrNot === "boolean" ? payload.meOrNot : undefined,
+      mbti: payload.mbti !== undefined ? String(payload.mbti).toUpperCase() : undefined,
+    },
+  });
+
+  return mapProfile(updated);
 }
 
 export async function getChatMessageList(userId) {
