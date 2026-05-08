@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Fix: Removed `userId` from `/api/calendarEvent` response payloads to avoid exposing unnecessary user identifiers to the frontend.
 <<<<<<< Updated upstream
 =======
 - feat: add calendar event management — Prisma `CalendarEvent` model (migration `add_calendar_event_model`), REST `/api/calendarEvent` (list with optional `start`/`end`/`view`, get by id, create, patch, delete), shared validators, `{ success, data | message }` JSON envelope.
