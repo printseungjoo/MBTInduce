@@ -88,6 +88,8 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
     const [selectedOption, setSelectedOption] = useState<DisturbOption | ''>('');
     const [events, setEvents] = useState<BigCalendarEvent[]>([]);
     const [selectedEventId, setSelectedEventId] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
     
     useEffect(() => {
         loadCalendarEvents();
@@ -157,6 +159,10 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             alert('Please select a date.');
             return;
         }
+        if (!startTime || !endTime) {
+            alert('Please select start or end time.');
+            return;
+        }
         if (!schedule.trim()) {
             alert('Please write a schedule.');
             return;
@@ -165,7 +171,7 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             alert('Please select one checkbox.');
             return;
         }
-        
+
         const isAllDay = selectedOption === 'Do not disturb whole day';
 
         function subtractOneDay(dateStr: string) {
@@ -254,8 +260,8 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
     return(
         <>
             <Title title = 'Time' />
-            {start && <SelectTime date = { start } />}
-            {end && <SelectTime date = { end } />}
+            {start && <SelectTime date = { start } onTimeChange = { setStartTime } />}
+            {end && <SelectTime date = { end } onTimeChange = { setEndTime } />}
             <SelectTimeP> Click and select the time </SelectTimeP>
             <Title title = 'Schedule' />
             <WriteSchedule value = { schedule } onChange = {(event) => setSchedule(event.target.value)} />
