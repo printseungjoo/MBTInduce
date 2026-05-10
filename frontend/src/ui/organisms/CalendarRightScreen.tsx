@@ -129,6 +129,15 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+    
+    function formatDateTime(date: Date | null, time: string) {
+        if (!date) return '';
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}T${time}:00`;
+    }
+
     function getOrderedDates(startDate: Date | null, endDate: Date | null) {
         if (!startDate) {
             return {
@@ -172,20 +181,12 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             return;
         }
 
-        const isAllDay = selectedOption === 'Do not disturb whole day';
-
-        function subtractOneDay(dateStr: string) {
-            const d = new Date(dateStr);
-            d.setDate(d.getDate() - 1);
-            return formatDate(d);
-        }
-
         const requestBody = {
             title: schedule,
             description: selectedOption,
-            startAt: formatDate(firstDate),
-            endAt: isAllDay ? subtractOneDay(formatDate(secondDate)) : formatDate(secondDate),
-            allDay: isAllDay,
+            startAt: formatDateTime(firstDate, startTime),
+            endAt: formatDateTime(secondDate, endTime),
+            allDay: false,
             planningNote: selectedOption
         };
 
