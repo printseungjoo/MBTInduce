@@ -165,14 +165,24 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             alert('Please select one checkbox.');
             return;
         }
+        
+        const isAllDay = selectedOption === 'Do not disturb whole day';
+
+        function subtractOneDay(dateStr: string) {
+            const d = new Date(dateStr);
+            d.setDate(d.getDate() - 1);
+            return formatDate(d);
+        }
+
         const requestBody = {
             title: schedule,
             description: selectedOption,
             startAt: formatDate(firstDate),
-            endAt: formatDate(secondDate),
-            allDay: selectedOption === 'Do not disturb whole day',
+            endAt: isAllDay ? subtractOneDay(formatDate(secondDate)) : formatDate(secondDate),
+            allDay: isAllDay,
             planningNote: selectedOption
         };
+
         try {
             const response = await fetch('http://localhost:4000/api/calendarEvent', {
                 method: 'POST',
