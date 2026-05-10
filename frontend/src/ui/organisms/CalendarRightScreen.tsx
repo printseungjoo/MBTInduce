@@ -54,6 +54,8 @@ const WriteSchedule = styled.textarea`
     overflow-y: auto;
     margin-top: 1.5vh;
     margin-bottom: 1.5vh;
+    box-sizing: border-box;
+    padding: 1vh 0.5vw;
 `;
 
 const PurpleDiv = styled.div`
