@@ -54,6 +54,8 @@ const WriteSchedule = styled.textarea`
     overflow-y: auto;
     margin-top: 1.5vh;
     margin-bottom: 1.5vh;
+    box-sizing: border-box;
+    padding: 1vh 0.5vw;
 `;
 
 const PurpleDiv = styled.div`
@@ -87,6 +89,9 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
     const [schedule, setSchedule] = useState('');
     const [selectedOption, setSelectedOption] = useState<DisturbOption | ''>('');
     const [events, setEvents] = useState<BigCalendarEvent[]>([]);
+    const [selectedEventId, setSelectedEventId] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
     
     useEffect(() => {
         loadCalendarEvents();
@@ -126,6 +131,15 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+    
+    function formatDateTime(date: Date | null, time: string) {
+        if (!date) return '';
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}T${time}:00`;
+    }
+
     function getOrderedDates(startDate: Date | null, endDate: Date | null) {
         if (!startDate) {
             return {
@@ -150,15 +164,14 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             secondDate: startDate
         };
     }
-    function getEndDate(date: Date) {
-        const endDate = new Date(date);
-        endDate.setHours(23, 59, 59, 999);
-        return endDate;
-    }
 
     async function submitSchedule() {
         if (!firstDate || !secondDate) {
             alert('Please select a date.');
+            return;
+        }
+        if (!startTime || !endTime) {
+            alert('Please select start or end time.');
             return;
         }
         if (!schedule.trim()) {
@@ -169,14 +182,16 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             alert('Please select one checkbox.');
             return;
         }
+
         const requestBody = {
             title: schedule,
             description: selectedOption,
-            startAt: firstDate.toISOString(),
-            endAt: getEndDate(secondDate).toISOString(),
-            allDay: selectedOption === 'Do not disturb whole day',
+            startAt: formatDateTime(firstDate, startTime),
+            endAt: formatDateTime(secondDate, endTime),
+            allDay: false,
             planningNote: selectedOption
         };
+
         try {
             const response = await fetch('http://localhost:4000/api/calendarEvent', {
                 method: 'POST',
@@ -194,6 +209,8 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             alert('Schedule submitted successfully.');
             setSchedule('');
             setSelectedOption('');
+            setSelectedEventId('');
+            window.location.reload();
         } catch (error) {
             console.error(error);
             alert('Server connection failed.');
@@ -216,11 +233,38 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
         });
     }
 
+    async function deleteSchedule() {
+        if (!selectedEventId) {
+            alert('Please select a schedule to delete.');
+            return;
+        }
+        try {
+            const response = await fetch(`http://localhost:4000/api/calendarEvent/${selectedEventId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                alert(data.message || 'Failed to delete schedule.');
+                return;
+            }
+            alert('Schedule deleted successfully.');
+            setSelectedEventId('');
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+            alert('Server connection failed.');
+        }
+    }
+    
     return(
         <>
             <Title title = 'Time' />
-            {start && <SelectTime date = { start } />}
-            {end && <SelectTime date = { end } />}
+            {start && <SelectTime date = { start } onTimeChange = { setStartTime } />}
+            {end && <SelectTime date = { end } onTimeChange = { setEndTime } />}
             <SelectTimeP> Click and select the time </SelectTimeP>
             <Title title = 'Schedule' />
             <WriteSchedule value = { schedule } onChange = {(event) => setSchedule(event.target.value)} />
@@ -239,10 +283,10 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
                     <NoEventText>No recorded events</NoEventText>
                 ) : (
                     events.map((event) => (
-                    <ScheduleButton schedule = { event.title } date = { formatDisplayDate(event.start) } startTime = { formatDisplayTime(event.start) } endTime = { formatDisplayTime(event.end) } />
+                    <ScheduleButton key = { event.id } schedule = { event.title } date = { formatDisplayDate(event.start) } startTime = { formatDisplayTime(event.start) } endTime = { formatDisplayTime(event.end) } onClick = { () => setSelectedEventId(event.id) } />
                 )))}
             </PurpleDiv>
-            <GenerateButtonPlus content = 'Delete' />
+            <GenerateButtonPlus content = 'Delete' onClick = { deleteSchedule } />
         </>
     )
 }
