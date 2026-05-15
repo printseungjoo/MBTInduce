@@ -7,6 +7,7 @@ export const getURL = (): clickedNameGeneric => {
         'Simulation': 'Simulation',
         'Calendar': 'Calendar',
         'LogIn': 'Log In',
+        'History': 'History'
     };
     return map[path] ?? 'Main Chat';
 }

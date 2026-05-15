@@ -11,6 +11,7 @@ import UserChat from '../atoms/UserChat'
 import AiChat from '../atoms/AiChat'
 import InitialSimulationModal from '../molecules/InitialSimulationModal'
 import CalendarScreen from '../organisms/CalendarScreen'
+import HistoryScreen from '../organisms/HistoryScreen'
 
 interface MbtiRange {
     eValue: number;
@@ -40,10 +41,15 @@ const FullScreen = styled.div`
     overflow: hidden;
 `;
 
-const MainContent = styled.div<{ isOpen: boolean }>`
+const MainContent = styled.div<{ isOpen: boolean; hasRightScreen: boolean }>`
     margin-left: ${({ isOpen }) => isOpen ? '20%' : '0'};
     transition: margin-left 0.3s ease;
-    width: ${({ isOpen }) => isOpen ? '60%' : '80%'};
+    width: ${({ isOpen, hasRightScreen }) => {
+        if (isOpen && hasRightScreen) return '60%';
+        if (isOpen && !hasRightScreen) return '80%';
+        if (!isOpen && hasRightScreen) return '80%';
+        return '100%';
+    }};
     height: 100vh;
     box-sizing: border-box;
     padding: 1.5vh 1vw;
@@ -133,6 +139,7 @@ export default function FullMainScreen() {
     });
 
     const location = useLocation();
+    const hasRightScreen = location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Calendar' || location.pathname === '/Simulation';
     const isSimulationPage = location.pathname === '/Simulation';
     const selectedSimulationKey = useMemo(() => {
         if (!selectedName || !selectedMbti || !selectedScenario) {
@@ -344,7 +351,7 @@ export default function FullMainScreen() {
             <NavigationDrawerPlus isOpen = { isOpen }>
                 <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
             </NavigationDrawerPlus>
-            <MainContent isOpen = { isOpen }>
+            <MainContent isOpen = { isOpen } hasRightScreen = { hasRightScreen }>
                 <FlexColumnDiv>
                     <HeaderDiv>
                         <FlexDiv>
@@ -365,9 +372,10 @@ export default function FullMainScreen() {
                     </ChatMessagesDiv>}
                     {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                     {location.pathname === '/Calendar' && <CalendarScreen selectedRange = { selectedRange } setSelectedRange = { setSelectedRange } />}
+                    {location.pathname === '/History' && <HistoryScreen />}
                 </FlexColumnDiv>
             </MainContent>
-            <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } />
+            {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } />}
         </FullScreen>
     );
 }

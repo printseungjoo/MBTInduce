@@ -47,6 +47,7 @@ export default function NavigationDrawer({ className, isOpen, children }: Naviga
         '/Simulation': 'Simulation',
         '/Calendar': 'Calendar',
         '/LogIn': 'Log In',
+        '/History': 'History'
     };
 
     const clickedName = pathMap[location.pathname] ?? 'Main Chat';
@@ -64,6 +65,7 @@ export default function NavigationDrawer({ className, isOpen, children }: Naviga
             <PageButton name = '👥  Simulation' clicked = {clickedName === 'Simulation'} text = 'Simulation' />
             <PageButton name = '📅  Calendar' clicked = {clickedName === 'Calendar'} text = 'Calendar' />
             <PageButton name = '👣 Log In' clicked = {clickedName === 'Log In'} text = 'LogIn' />
+            <PageButton name = '📄 History' clicked = {clickedName === 'History'} text = 'History' />
             <WebsiteIntro content='MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.' />
         </NavigationDrawerStyled>
     )
