@@ -1,11 +1,12 @@
 import styled from '@emotion/styled'
 
 import DeleteButton from '../atoms/DeleteButton'
+import EditButton from '../atoms/EditButton'
 
 interface HistoryDivProps {
     title: string;
     description: string;
-    date: string;
+    date: string | undefined;
     etc: string;
 }
 
@@ -21,12 +22,21 @@ const HistoryDivStyled = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1vh;
-    margin: 2.5vh 0;
+    margin: 1.5vh 0;
 `;
 
 const FlexDiv = styled.div`
     display: flex;
     justify-content: space-between;
+`;
+
+const NextDiv = styled.div`
+    display: flex;
+    gap: 1vw;
+`;
+
+const Etc = styled.p`
+    color: ${({ theme }) => theme.colors.coolGray};
 `;
 
 const Title = styled.p`
@@ -38,28 +48,33 @@ const Description = styled.p`
     color: ${({ theme }) => theme.colors.softLavender};
 `;
 
-const DateEtcDiv = styled.div`
+const DateStyled = styled.p`
     color: ${({ theme }) => theme.colors.coolGray};
-    display: flex;
-    gap: 1vw;
-`;
+`
 
 export default function HistoryDiv({ title, description, date, etc }: HistoryDivProps) {
     return(
         <HistoryDivStyled>
             <FlexDiv>
-                <Title>
-                    { title }
-                </Title>
-                <DeleteButton />
+                <NextDiv>
+                    <Title>
+                        { title }
+                    </Title>
+                    <Etc>
+                        { etc }
+                    </Etc>
+                </NextDiv>
+                <NextDiv>
+                    <EditButton />
+                    <DeleteButton />
+                </NextDiv>
             </FlexDiv>
             <Description>
                 { description }
             </Description>
-            <DateEtcDiv>
-                <span> { date } </span>
-                <span> { etc } </span>
-            </DateEtcDiv>
+            <DateStyled>
+                { date }
+            </DateStyled>
         </HistoryDivStyled>
     )
 }

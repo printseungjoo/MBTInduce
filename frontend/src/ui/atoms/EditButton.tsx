@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 
-const DeleteButtonStyled = styled.button`
-    background-color: ${({ theme }) => theme.colors.mutedRose};
+const EditButtonStyled = styled.button`
+    background-color: ${({ theme }) => theme.colors.softLavender};
     border-radius: 7px;
     color: ${({ theme }) => theme.colors.royalPurple};
     border: 0;
@@ -20,10 +20,10 @@ const DeleteButtonStyled = styled.button`
     }
 `;
 
-export default function DeleteButton() {
+export default function EditButton() {
     return(
-        <DeleteButtonStyled>
-            Delete
-        </DeleteButtonStyled>
+        <EditButtonStyled>
+            Edit
+        </EditButtonStyled>
     )
 }

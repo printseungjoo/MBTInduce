@@ -1,9 +1,22 @@
 import styled from '@emotion/styled'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import HistoryDiv from '../molecules/HistoryDiv'
-
 import HistoryOptionButton from '../atoms/HistoryOptionButton'
+
+interface SimulationTemplate {
+    id: string;
+    content: string;
+    createdAt?: string;
+}
+
+interface UserProfile {
+    id: string;
+    name: string;
+    meOrNot: boolean;
+    mbti: string;
+    createdAt?: string;
+}
 
 const Option = styled.div`
     width: 100%;
@@ -13,11 +26,39 @@ const Option = styled.div`
     border-bottom: 1px solid ${({ theme }) => theme.colors.royalPurple};
     margin-top: 1vh;
     padding-left: 2vw;
+    margin-bottom: 1vh;
 `;
 
-// This is dummy data. I will change and update it soon.
 export default function HistoryScreen() {
     const [optionSelected, setOptionSelected] = useState('Chat History');
+    const [simulationTemplates, setSimulationTemplates] = useState<SimulationTemplate[]>([]);
+    const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]);
+
+    async function getSimulationData() {
+        try {
+            const templateResponse = await fetch('http://localhost:4000/api/simulation/simulationTemplate', {
+                method: 'GET',
+                credentials: 'include',
+            });
+            const profileResponse = await fetch('http://localhost:4000/api/simulation/userProfiles', {
+                method: 'GET',
+                credentials: 'include',
+            });
+            if (!templateResponse.ok || !profileResponse.ok) {
+                throw new Error('Failed to fetch simulation data');
+            }
+            const templateData = await templateResponse.json();
+            const profileData = await profileResponse.json();
+            setSimulationTemplates(templateData.simulationTemplate);
+            setUserProfiles(profileData.userProfiles);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        getSimulationData();
+    }, [])
 
     return(
         <>
@@ -26,7 +67,11 @@ export default function HistoryScreen() {
                 <HistoryOptionButton name = 'Simulation History' clicked = {() => setOptionSelected('Simulation History')} selected = {optionSelected === 'Simulation History'} />
                 <HistoryOptionButton name = 'Schedule' clicked = {() => setOptionSelected('Schedule')} selected = {optionSelected === 'Schedule'} />
             </Option>
-            <HistoryDiv title = 'Big argument with best friend. Don’t know if Seungjoo should text her first' description = 'It sounds like this situation is really weighing on you. Arguments with people we care about can be painful because the relationship matters so much. If you feel ready, sending a simple message could be a good first step. It ...' date = '2025.03.15' etc = 'F 94%' />
+            {simulationTemplates.map((s, index) => {
+                const user = userProfiles[index];
+                return(
+                    <HistoryDiv key = { s.id } title = { user?.name || '' } description = { s.content } date = { s.createdAt || '' } etc = { user?.mbti || '' }/>)
+            })}
         </>
     )
 }
