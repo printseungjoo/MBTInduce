@@ -12,6 +12,7 @@ import AiChat from '../atoms/AiChat'
 import InitialSimulationModal from '../molecules/InitialSimulationModal'
 import CalendarScreen from '../organisms/CalendarScreen'
 import HistoryScreen from '../organisms/HistoryScreen'
+import InitialMainChatModal from '../molecules/InitialMainChatModal'
 
 interface MbtiRange {
     eValue: number;
@@ -32,6 +33,18 @@ interface ChatMessage {
 interface SelectedRange {
   startDate: Date | null;
   endDate: Date | null;
+}
+
+interface ChatSession {
+    id: string;
+    userId: string;
+    title: string | null;
+    isArchived: boolean;
+    createdAt: string;
+    updatedAt: string;
+    _count: {
+        messages: number;
+    };
 }
 
 const FullScreen = styled.div`
@@ -137,6 +150,8 @@ export default function FullMainScreen() {
         startDate: null,
         endDate: null,
     });
+    const [selectedChatSession, setSelectedChatSession] = useState<ChatSession | null>(null);
+    const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
 
     const location = useLocation();
     const hasRightScreen = location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Calendar' || location.pathname === '/Simulation';
@@ -158,12 +173,6 @@ export default function FullMainScreen() {
     function isClicked() {
         setIsOpen(!isOpen);
     }
-
-    useEffect(() => {
-        if (!isSimulationPage) {
-            getChatMessages();
-        }
-    }, [isSimulationPage]);
 
     useEffect(() => {
         if (isReadySimulation && selectedSimulationKey) {
@@ -261,7 +270,7 @@ export default function FullMainScreen() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/chat`, {
+            const response = await fetch(`${API_BASE_URL}/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -348,6 +357,7 @@ export default function FullMainScreen() {
     return (
         <FullScreen>
             {location.pathname === '/Simulation' && !showSimulation && (<InitialSimulationModal onConfirm = { handleConfirm } onSelectHistory = { handleSelectHistory } />)}
+            {location.pathname === '/MainChat' && !showSimulation && (<InitialMainChatModal onConfirm = { handleConfirm } onSelectHistory={(history) => { setSelectedChatSession(history) }} />)}
             <NavigationDrawerPlus isOpen = { isOpen }>
                 <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
             </NavigationDrawerPlus>
