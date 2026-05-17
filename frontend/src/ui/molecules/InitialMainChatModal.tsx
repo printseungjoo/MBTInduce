@@ -19,7 +19,7 @@ interface ChatSession {
     isArchived: boolean;
     createdAt: string;
     updatedAt: string;
-    _count: {
+    _count?: {
         messages: number;
     };
 }
@@ -54,9 +54,10 @@ export default function InitialMainChatModal({ onConfirm, onSelectHistory }: Ini
         setShowNew(true);
     };
     if (showNew) {
-        return <MakeNewMainChatModal onSubmitSuccess = {() => {
+        return <MakeNewMainChatModal onSubmitSuccess = {(session) => {
             setShowNew(false);
-            setShowOld(true);
+            onSelectHistory(session);
+            onConfirm();
         }} />;
     }
     const goToOldMainChatModal = () => {

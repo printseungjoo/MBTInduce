@@ -42,7 +42,7 @@ interface ChatSession {
     isArchived: boolean;
     createdAt: string;
     updatedAt: string;
-    _count: {
+    _count?: {
         messages: number;
     };
 }
@@ -292,7 +292,7 @@ export default function FullMainScreen() {
             if (!response.ok) {
                 throw new Error('Failed to post chatMessage');
             }
-            const data: ChatMessage[] = await response.json();
+            const data = await response.json();
             if (isSimulationPage) {
                 setSimulationChatMessages((prev) => ({
                     ...prev,
@@ -300,7 +300,20 @@ export default function FullMainScreen() {
                 }));
                 return;
             }
-            setMainChatMessages(data);
+            const assistantMessage: ChatMessage = {
+                id: data.assistantMessage.id,
+                role: 'ai',
+                content: data.assistantMessage.content,
+                mbtiRange: {
+                    eValue,
+                    sValue,
+                    fValue,
+                    pValue
+                },
+                createdAt: data.assistantMessage.createdAt,
+                rate: 0,
+            };
+            setMainChatMessages((prev) => [...prev, assistantMessage]);
         } catch (error) {
             console.error(error);
             const errorMessage: ChatMessage = {
@@ -354,10 +367,39 @@ export default function FullMainScreen() {
         }
     }
 
+    async function getMainChatSessionMessages(sessionId: string) {
+        const response = await fetch(`${API_BASE_URL}/api/chatMessage/sessions/${sessionId}`, {
+            method: 'GET',
+            credentials: 'include',
+        });
+        if (!response.ok) {
+            throw new Error('Failed to get main chat session messages');
+        }
+        const data = await response.json();
+        const messages: ChatMessage[] = data.messages.map((message: any) => ({
+            id: message.id,
+            role: message.role === 'USER' ? 'user' : 'ai',
+            content: message.content,
+            mbtiRange: {
+                eValue,
+                sValue,
+                fValue,
+                pValue,
+            },
+            createdAt: message.createdAt,
+            rate: 0,
+        }));
+        setMainChatMessages(messages);
+    }
+
     return (
         <FullScreen>
             {location.pathname === '/Simulation' && !showSimulation && (<InitialSimulationModal onConfirm = { handleConfirm } onSelectHistory = { handleSelectHistory } />)}
-            {location.pathname === '/MainChat' && !showSimulation && (<InitialMainChatModal onConfirm = { handleConfirm } onSelectHistory={(history) => { setSelectedChatSession(history) }} />)}
+            {location.pathname === '/MainChat' && !showSimulation && (<InitialMainChatModal onConfirm = { handleConfirm } onSelectHistory={(history) => { 
+                setSelectedMainChatSessionId(history.id);
+                getMainChatSessionMessages(history.id);
+                }} 
+            />)}
             <NavigationDrawerPlus isOpen = { isOpen }>
                 <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
             </NavigationDrawerPlus>

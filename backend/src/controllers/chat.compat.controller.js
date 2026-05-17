@@ -7,7 +7,6 @@ function getChatSessionTitle(pageType, simulationKey) {
   if (pageType === "simulation") {
     return `simulation:${simulationKey}`;
   }
-  return "main";
 }
 
 async function getOrCreateChatSession(userId, pageType, simulationKey) {

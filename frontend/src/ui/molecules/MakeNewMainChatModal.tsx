@@ -4,8 +4,20 @@ import { useState } from 'react'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
 
+interface ChatSession {
+    id: string;
+    userId: string;
+    title: string | null;
+    isArchived: boolean;
+    createdAt: string;
+    updatedAt: string;
+    _count?: {
+        messages: number;
+    };
+}
+
 interface MakeNewMainChatModalProps {
-    onSubmitSuccess: () => void;
+    onSubmitSuccess: (session: ChatSession) => void;
 }
 
 const InitialMainChatModalStyled = styled.div`
@@ -82,7 +94,7 @@ export default function MakeNewMainChatModal({ onSubmitSuccess }: MakeNewMainCha
         try {
             const session = await createChatSession(briefChatInfo);
             if (!session) return;
-            onSubmitSuccess();
+            onSubmitSuccess(session);
         } catch (error) {
             console.error(error);
         }
