@@ -267,25 +267,6 @@ To protect user privacy:
 - Sensitive user conversations are **not collected or stored**
 - Only anonymous analytics data is used for system improvement
 
-
----
-
-
-# 🫱🏻‍🫲🏼 Team
-
-
-### Seungjoo
-- Project Planning
-- Frontend Development  
-- UI / UX Design
-
-
-### Jibeom
-- Project Planning
-- Backend Development
-- AI Model Training & Tuning
-
-
 ---
 
 
@@ -380,3 +361,20 @@ If you find a bug, please report it by creating a new GitHub Issue.
 3. Write a clear title
 4. Describe the bug using the format below
 5. Submit the issue
+
+---
+
+
+# 🫱🏻‍🫲🏼 Team
+
+
+### Seungjoo
+- Project Planning
+- Frontend Development  
+- UI / UX Design
+
+
+### Jibeom
+- Project Planning
+- Backend Development
+- AI Model Training & Tuning
