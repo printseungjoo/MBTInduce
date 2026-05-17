@@ -322,7 +322,7 @@ To protect user privacy:
 
 ---
 
-# Frontend Development Plan
+# 🗣️ Frontend Development Plan
 
 | Feature | Description | Estimated Date |
 |---|---|---|
@@ -339,7 +339,7 @@ To protect user privacy:
 
 ---
 
-# Backend Development Plan
+# 🗣️ Backend Development Plan
 
 | Feature | Description | Estimated Date |
 |---|---|---|
@@ -354,3 +354,29 @@ To protect user privacy:
 | 9. AI Service Layer | GPT tuning and AI service optimization | ~5/25 |
 | 10. Testing | Backend testing and debugging | ~5/26 |
 
+---
+
+# ✅ Bug Tracking and Reporting
+
+We use **GitHub Issues** to track bugs, errors, and unfinished fixes for this project.
+
+## Where to Check Outstanding Bugs
+
+Outstanding bugs can be checked in the **Issues** tab of this repository:
+
+[GitHub Issues](https://github.com/printseungjoo/MBTInduce/issues)
+
+Open issues represent bugs or problems that still need to be fixed.  
+Closed issues represent bugs that have already been resolved.
+
+## How to Report a Bug
+
+If you find a bug, please report it by creating a new GitHub Issue.
+
+### Steps to Report a Bug
+
+1. Go to the [Issues page](https://github.com/printseungjoo/MBTInduce/issues)
+2. Click **New Issue**
+3. Write a clear title
+4. Describe the bug using the format below
+5. Submit the issue
