@@ -18,6 +18,27 @@ interface UserProfile {
     createdAt?: string;
 }
 
+interface BigCalendarEvent {
+    id: string;
+    title: string;
+    start: Date;
+    end: Date;
+    allDay: boolean;
+}
+
+interface CalendarEventResponse {
+    id: string;
+    title: string;
+    description: string | null;
+    startAt: string;
+    endAt: string;
+    allDay: boolean;
+    mbti: string | null;
+    planningNote: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
 const Option = styled.div`
     width: 100%;
     position: relative;
@@ -33,6 +54,17 @@ export default function HistoryScreen() {
     const [optionSelected, setOptionSelected] = useState('Chat History');
     const [simulationTemplates, setSimulationTemplates] = useState<SimulationTemplate[]>([]);
     const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]);
+    const [events, setEvents] = useState<BigCalendarEvent[]>([]);
+
+    function formatDisplayDate(date: Date) {
+        return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}/${date.getFullYear()}`;
+    }
+    function formatDisplayTime(date: Date) {
+        return date.toLocaleTimeString([], {
+            hour: 'numeric',
+            minute: '2-digit',
+        });
+    }
 
     async function getSimulationData() {
         try {
@@ -56,8 +88,36 @@ export default function HistoryScreen() {
         }
     }
 
+    async function loadCalendarEvents() {
+        try {
+            const response = await fetch('http://localhost:4000/api/calendarEvent', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to get calendar events');
+            }
+            const result = await response.json();
+            const calendarEvents: CalendarEventResponse[] = result.data.events;
+            const convertedEvents = calendarEvents.map((event) => ({
+                id: event.id,
+                title: event.title,
+                start: new Date(event.startAt),
+                end: new Date(event.endAt),
+                allDay: event.allDay,
+            }));
+            setEvents(convertedEvents);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     useEffect(() => {
         getSimulationData();
+        loadCalendarEvents();
     }, [])
 
     return(
@@ -67,10 +127,15 @@ export default function HistoryScreen() {
                 <HistoryOptionButton name = 'Simulation History' clicked = {() => setOptionSelected('Simulation History')} selected = {optionSelected === 'Simulation History'} />
                 <HistoryOptionButton name = 'Schedule' clicked = {() => setOptionSelected('Schedule')} selected = {optionSelected === 'Schedule'} />
             </Option>
-            {simulationTemplates.map((s, index) => {
+            {optionSelected === 'Simulation History' && simulationTemplates.map((s, index) => {
                 const user = userProfiles[index];
                 return(
                     <HistoryDiv key = { s.id } title = { user?.name || '' } description = { s.content } date = { s.createdAt || '' } etc = { user?.mbti || '' }/>)
+            })}
+            {optionSelected === 'Schedule' && events.map((e) => {
+                return(
+                    <HistoryDiv key = { e.id } title = { e.title } description = { formatDisplayDate(e.start) + ' ' + formatDisplayTime(e.start) + ' - ' + formatDisplayDate(e.end) + ' ' + formatDisplayTime(e.end)} date = { '' } etc = { '' }/>
+                )
             })}
         </>
     )
