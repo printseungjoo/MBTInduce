@@ -39,6 +39,18 @@ interface CalendarEventResponse {
     updatedAt: string;
 }
 
+interface ChatSession {
+    id: string;
+    userId: string;
+    title: string | null;
+    isArchived: boolean;
+    createdAt: string;
+    updatedAt: string;
+    _count: {
+        messages: number;
+    };
+}
+
 const Option = styled.div`
     width: 100%;
     position: relative;
@@ -55,6 +67,7 @@ export default function HistoryScreen() {
     const [simulationTemplates, setSimulationTemplates] = useState<SimulationTemplate[]>([]);
     const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]);
     const [events, setEvents] = useState<BigCalendarEvent[]>([]);
+    const [chatSessions, setChatSessions] = useState<ChatSession[] | null>(null);
 
     function formatDisplayDate(date: Date) {
         return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}/${date.getFullYear()}`;
@@ -115,7 +128,24 @@ export default function HistoryScreen() {
         }
     }
 
+    async function getChatSessions() {
+        try {
+            const response = await fetch('http://localhost:4000/api/chatMessage/sessions', {
+                method: 'GET',
+                credentials: 'include',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to get chat sessions');
+            }
+            const data = await response.json();
+            setChatSessions(data.sessions);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     useEffect(() => {
+        getChatSessions();
         getSimulationData();
         loadCalendarEvents();
     }, [])
@@ -127,6 +157,11 @@ export default function HistoryScreen() {
                 <HistoryOptionButton name = 'Simulation History' clicked = {() => setOptionSelected('Simulation History')} selected = {optionSelected === 'Simulation History'} />
                 <HistoryOptionButton name = 'Schedule' clicked = {() => setOptionSelected('Schedule')} selected = {optionSelected === 'Schedule'} />
             </Option>
+            {optionSelected === 'Chat History' && chatSessions?.map((c) => {
+                return(
+                    <HistoryDiv key = { c.id } title = { 'Chat' } description = { c.title || '' } date = { '' } etc = { '' }/>
+                )
+            })}
             {optionSelected === 'Simulation History' && simulationTemplates.map((s, index) => {
                 const user = userProfiles[index];
                 return(
