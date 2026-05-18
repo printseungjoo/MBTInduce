@@ -1,29 +1,33 @@
-# MBTInduce
+# MBTInduce Test Branch
 
+This branch is used as an integration and verification branch before merging changes into `main`.
 
-MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits.  
-Users can choose specific MBTI characteristics and control how strongly those traits influence the AI's answers.
+## Purpose
 
 The platform helps users receive responses that match the emotional tone or logical style they want, and also allows them to simulate conversations with specific MBTI personalities.
 
----
+This helps prevent unexpected errors from being introduced into the production-ready branch.
 
-## ⚠️ Problem Statement
+## Why This Branch Exists
 
-Current AI chat services typically provide responses based on a single generalized model.  
-While this approach works well for many cases, it does not consider that people often want different types of responses depending on their personality or emotional needs.
+The main reason for this branch is safety.
 
-For example, some users may prefer empathetic and supportive responses, while others may prefer logical and objective advice. However, most AI systems generate answers without allowing users to control these perspectives.
+If changes are merged directly into `main` without prior integration testing, structural issues, broken connections between frontend and backend, or runtime errors may be introduced.  
+To avoid that, this branch is used to:
 
-In addition, people are often curious about how individuals with different personality types might react in certain situations. Existing AI tools do not provide an easy way to simulate conversations or responses based on specific personality traits.
+- merge frontend and backend changes first  
+- verify that the integrated project works correctly  
+- test the overall folder structure and execution flow  
+- reduce the risk of breaking the `main` branch  
 
-Because of this limitation, users cannot easily:
+After confirming that everything works as expected in `test`, the changes are merged into `main`.
 
-- Guide the tone or reasoning style of AI responses  
-- Compare answers from different personality perspectives  
-- Simulate conversations with specific personality types  
+## Branch Role
 
-MBTInduce addresses this problem by allowing users to influence AI responses using MBTI personality traits and simulate interactions from different personality perspectives.
+- `frontend`: frontend development branch  
+- `backend`: backend development branch  
+- `test`: integration and testing branch  
+- `main`: final stable branch  
 
 ---
 
