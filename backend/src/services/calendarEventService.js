@@ -13,6 +13,7 @@ function mapRow(e) {
     allDay: e.allDay,
     mbti: e.mbti,
     planningNote: e.planningNote,
+    userId: e.userId,
     createdAt: e.createdAt.toISOString(),
     updatedAt: e.updatedAt.toISOString(),
   };
