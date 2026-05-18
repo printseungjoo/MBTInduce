@@ -7,6 +7,8 @@ import {
   deleteUserProfile,
   getChatMessageList,
   getSimulationTemplateList,
+  patchSimulationTemplate,
+  patchUserProfile,
   getUserProfiles,
   patchChatMessage,
 } from "../services/simulation.service.js";

@@ -25,29 +25,53 @@ const InvisibleCheckbox = styled.input<{isOpen?: boolean}>`
         left: 0;
     }
 
+<<<<<<< HEAD
     & + label > span:nth-child(1) {
         top: 0;
     }
 
     & + label > span:nth-child(2) {
+=======
+    & + label > span:nth-of-type(1) {
+        top: 0;
+    }
+
+    & + label > span:nth-of-type(2) {
+>>>>>>> test
         top: 50%;
         transform: translateY(-50%);
     }
 
+<<<<<<< HEAD
     & + label > span:nth-child(3) {
         bottom: 0;
     }
 
     &:checked + label > span:nth-child(1) {
+=======
+    & + label > span:nth-of-type(3) {
+        bottom: 0;
+    }
+
+    &:checked + label > span:nth-of-type(1) {
+>>>>>>> test
         top: 50%;
         transform: translateY(-50%) rotate(45deg);
     }
 
+<<<<<<< HEAD
     &:checked + label > span:nth-child(2) {
         opacity: 0;
     }
 
     &:checked + label > span:nth-child(3) {
+=======
+    &:checked + label > span:nth-of-type(2) {
+        opacity: 0;
+    }
+
+    &:checked + label > span:nth-of-type(3) {
+>>>>>>> test
         bottom: 50%;
         transform: translateY(50%) rotate(-45deg);
     }

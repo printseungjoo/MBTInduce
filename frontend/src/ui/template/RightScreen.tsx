@@ -1,8 +1,19 @@
 import styled from '@emotion/styled'
 import { useLocation } from 'react-router-dom'
 
+<<<<<<< HEAD
 import MainChatRightScreen from '../organisms/MainChatRightScreen';
 import SimulationRightScreen from '../organisms/SimulationRightScreen';
+=======
+import MainChatRightScreen from '../organisms/MainChatRightScreen'
+import SimulationRightScreen from '../organisms/SimulationRightScreen'
+import CalendarRightScreen from '../organisms/CalendarRightScreen'
+
+interface SelectedRange {
+    startDate: Date | null;
+    endDate: Date | null;
+}
+>>>>>>> test
 
 interface RightScreenProps {
     eValues: number;
@@ -17,6 +28,10 @@ interface RightScreenProps {
     selectedName: string;
     selectedMbti: string;
     showSimulation: boolean;
+<<<<<<< HEAD
+=======
+    selectedRange: SelectedRange;
+>>>>>>> test
 }
 
 const RightScreenStyled = styled.div`
@@ -42,13 +57,21 @@ const RightScreenStyled = styled.div`
     }
 `;
 
+<<<<<<< HEAD
 export default function RightScreen({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues, selectedScenario, selectedName, selectedMbti, showSimulation }: RightScreenProps) {
+=======
+export default function RightScreen({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues, selectedScenario, selectedName, selectedMbti, showSimulation, selectedRange }: RightScreenProps) {
+>>>>>>> test
     const location = useLocation()
 
     return(
         <RightScreenStyled>
             {(location.pathname === '/MainChat' || location.pathname === '/' ) && <MainChatRightScreen eValues = { eValues } sValues = { sValues } fValues = { fValues } pValues = { pValues } setEValues = { setEValues } setSValues = { setSValues } setFValues = { setFValues } setPValues = { setPValues } />}
             {location.pathname === '/Simulation' && showSimulation && <SimulationRightScreen selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } />}
+<<<<<<< HEAD
+=======
+            {location.pathname === '/Calendar' && <CalendarRightScreen selectedRange = { selectedRange } />}
+>>>>>>> test
         </RightScreenStyled>
     )
 }
