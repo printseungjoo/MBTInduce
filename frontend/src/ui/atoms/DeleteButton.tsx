@@ -1,5 +1,9 @@
 import styled from '@emotion/styled'
 
+interface DeleteButtonProps {
+    onClick?: () => void;
+}
+
 const DeleteButtonStyled = styled.button`
     background-color: ${({ theme }) => theme.colors.mutedRose};
     border-radius: 7px;
@@ -20,9 +24,9 @@ const DeleteButtonStyled = styled.button`
     }
 `;
 
-export default function DeleteButton() {
+export default function DeleteButton({ onClick }: DeleteButtonProps) {
     return(
-        <DeleteButtonStyled>
+        <DeleteButtonStyled onClick = { onClick }>
             Delete
         </DeleteButtonStyled>
     )

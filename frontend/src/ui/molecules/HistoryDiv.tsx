@@ -8,6 +8,7 @@ interface HistoryDivProps {
     description: string;
     date: string | undefined;
     etc: string;
+    onClick?: () => void;
 }
 
 const HistoryDivStyled = styled.div`
@@ -30,7 +31,7 @@ const FlexDiv = styled.div`
     justify-content: space-between;
 `;
 
-const NextDiv = styled.div`
+const NextDiv = styled.div` 
     display: flex;
     gap: 1vw;
 `;
@@ -52,7 +53,7 @@ const DateStyled = styled.p`
     color: ${({ theme }) => theme.colors.coolGray};
 `
 
-export default function HistoryDiv({ title, description, date, etc }: HistoryDivProps) {
+export default function HistoryDiv({ title, description, date, etc, onClick}: HistoryDivProps) {
     return(
         <HistoryDivStyled>
             <FlexDiv>
@@ -66,7 +67,7 @@ export default function HistoryDiv({ title, description, date, etc }: HistoryDiv
                 </NextDiv>
                 <NextDiv>
                     <EditButton />
-                    <DeleteButton />
+                    <DeleteButton onClick = { onClick } />
                 </NextDiv>
             </FlexDiv>
             <Description>
