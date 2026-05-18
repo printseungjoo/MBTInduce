@@ -10,6 +10,10 @@ import TextInputBox from '../molecules/TextInputBox'
 import UserChat from '../atoms/UserChat'
 import AiChat from '../atoms/AiChat'
 import InitialSimulationModal from '../molecules/InitialSimulationModal'
+<<<<<<< HEAD
+=======
+import CalendarScreen from '../organisms/CalendarScreen'
+>>>>>>> test
 
 interface MbtiRange {
     eValue: number;
@@ -27,6 +31,14 @@ interface ChatMessage {
     rate?: number;
 }
 
+<<<<<<< HEAD
+=======
+interface SelectedRange {
+  startDate: Date | null;
+  endDate: Date | null;
+}
+
+>>>>>>> test
 const FullScreen = styled.div`
     width: 100vw;
     height: 100vh;
@@ -121,6 +133,13 @@ export default function FullMainScreen() {
     const [showOldSimulationModal, setShowOldSimulationModal] = useState<boolean>(false);
     const [mainChatMessages, setMainChatMessages] = useState<ChatMessage[]>([]);
     const [simulationChatMessages, setSimulationChatMessages] = useState<Record<string, ChatMessage[]>>({});
+<<<<<<< HEAD
+=======
+    const [selectedRange, setSelectedRange] = useState<SelectedRange>({
+        startDate: null,
+        endDate: null,
+    });
+>>>>>>> test
 
     const location = useLocation();
     const isSimulationPage = location.pathname === '/Simulation';
@@ -314,9 +333,13 @@ export default function FullMainScreen() {
             if (isSimulationPage) {
                 setSimulationChatMessages((prev) => ({
                     ...prev,
+<<<<<<< HEAD
                     [selectedSimulationKey]: (prev[selectedSimulationKey] ?? []).map((chatMessage) =>
                         chatMessage.id === messageId ? { ...chatMessage, rate } : chatMessage
                     ),
+=======
+                    [selectedSimulationKey]: (prev[selectedSimulationKey] ?? []).map((chatMessage) => chatMessage.id === messageId ? { ...chatMessage, rate } : chatMessage)
+>>>>>>> test
                 }));
                 return;
             }
@@ -344,7 +367,11 @@ export default function FullMainScreen() {
                             <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
                         </FlexDiv>
                     </HeaderDiv>
+<<<<<<< HEAD
                     <ChatMessagesDiv>
+=======
+                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && <ChatMessagesDiv>
+>>>>>>> test
                         {!isSimulationModalOpen && currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
@@ -354,11 +381,20 @@ export default function FullMainScreen() {
                                 )}
                             </ChatRow>
                         ))}
+<<<<<<< HEAD
                     </ChatMessagesDiv>
                     {!isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                 </FlexColumnDiv>
             </MainContent>
             <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } />
+=======
+                    </ChatMessagesDiv>}
+                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    {location.pathname === '/Calendar' && <CalendarScreen selectedRange = { selectedRange } setSelectedRange = { setSelectedRange } />}
+                </FlexColumnDiv>
+            </MainContent>
+            <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } />
+>>>>>>> test
         </FullScreen>
     );
 }
