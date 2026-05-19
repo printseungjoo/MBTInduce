@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import HistoryDiv from '../molecules/HistoryDiv'
 import HistoryOptionButton from '../atoms/HistoryOptionButton'
 import EditMainChat from '../molecules/EditMainChat'
+import InitialEditSimulation from '../molecules/InitialEditSimulation'
 
 interface SimulationTemplate {
     id: string;
@@ -71,6 +72,8 @@ export default function HistoryScreen() {
     const [chatSessions, setChatSessions] = useState<ChatSession[] | null>(null);
     const [isMainEditOpen, setIsMainEditOpen] = useState<boolean>(false);
     const [editingChatId, setEditingChatId] = useState<string | null>(null);
+    const [isSimulationEditOpen, setIsSimulationEditOpen] = useState<boolean>(false);
+    const [editingSimulationId, setEditingSimulationId] = useState<{userName: string; userMbti: string; simulationContent: string} | null>(null);
 
     function formatDisplayDate(date: Date) {
         return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}/${date.getFullYear()}`;
@@ -236,6 +239,11 @@ export default function HistoryScreen() {
         setIsMainEditOpen(true);
     }
 
+    const goToEditSimulation = (userName: string, userMbti: string, simulationContent: string) => {
+        setEditingSimulationId({userName, userMbti, simulationContent});
+        setIsSimulationEditOpen(true);
+    }
+
     return(
         <>
             <Option>
@@ -255,8 +263,9 @@ export default function HistoryScreen() {
             {optionSelected === 'Simulation History' && simulationTemplates.map((s, index) => {
                 const user = userProfiles[index];
                 return(
-                    <HistoryDiv key = { s.id } title = { user?.name || '' } description = { s.content } date = { s.createdAt || '' } etc = { user?.mbti || '' } onClick = {() => { deleteSimulationSession(s.id, user.id) }}/>)
+                    <HistoryDiv key = { s.id } title = { user?.name || '' } description = { s.content } date = { s.createdAt || '' } etc = { user?.mbti || '' } onClick = {() => { deleteSimulationSession(s.id, user.id) }} onEditClick = {() => { goToEditSimulation(user.name, user.mbti, s.content) }}/>)
             })}
+            {isSimulationEditOpen && editingSimulationId && (<InitialEditSimulation userName = { editingSimulationId.userName } userMbti = { editingSimulationId.userMbti } simulationContent = { editingSimulationId.simulationContent } />)}
             {optionSelected === 'Schedule' && events.map((e) => {
                 return(
                     <HistoryDiv key = { e.id } title = { e.title } description = { formatDisplayDate(e.start) + ' ' + formatDisplayTime(e.start) + ' - ' + formatDisplayDate(e.end) + ' ' + formatDisplayTime(e.end)} date = { '' } etc = { '' } onClick = {() => { deleteSchedule(e.id) }}/>
