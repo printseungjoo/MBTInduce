@@ -1,5 +1,9 @@
 import styled from '@emotion/styled'
 
+interface EditButtonProps {
+    onClick?: () => void;
+}
+
 const EditButtonStyled = styled.button`
     background-color: ${({ theme }) => theme.colors.softLavender};
     border-radius: 7px;
@@ -20,9 +24,9 @@ const EditButtonStyled = styled.button`
     }
 `;
 
-export default function EditButton() {
+export default function EditButton({ onClick }: EditButtonProps) {
     return(
-        <EditButtonStyled>
+        <EditButtonStyled onClick = { onClick }>
             Edit
         </EditButtonStyled>
     )

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 
 import HistoryDiv from '../molecules/HistoryDiv'
 import HistoryOptionButton from '../atoms/HistoryOptionButton'
+import EditMainChat from '../molecules/EditMainChat'
 
 interface SimulationTemplate {
     id: string;
@@ -68,6 +69,8 @@ export default function HistoryScreen() {
     const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]);
     const [events, setEvents] = useState<BigCalendarEvent[]>([]);
     const [chatSessions, setChatSessions] = useState<ChatSession[] | null>(null);
+    const [isMainEditOpen, setIsMainEditOpen] = useState<boolean>(false);
+    const [editingChatId, setEditingChatId] = useState<string | null>(null);
 
     function formatDisplayDate(date: Date) {
         return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}/${date.getFullYear()}`;
@@ -228,6 +231,11 @@ export default function HistoryScreen() {
         loadCalendarEvents();
     }, [])
 
+    const goToEditMainChat = (chatId: string) => {
+        setEditingChatId(chatId);
+        setIsMainEditOpen(true);
+    }
+
     return(
         <>
             <Option>
@@ -237,9 +245,13 @@ export default function HistoryScreen() {
             </Option>
             {optionSelected === 'Chat History' && chatSessions?.map((c) => {
                 return(
-                    <HistoryDiv key = { c.id } title = { 'Chat' } description = { c.title || '' } date = { '' } etc = { '' } onClick = {() => { deleteChatSession(c.id) }}/>
+                    <HistoryDiv key = { c.id } title = { 'Chat' } description = { c.title || '' } date = { '' } etc = { '' } onClick = {() => { deleteChatSession(c.id) }} onEditClick = {() => { goToEditMainChat(c.id) }}/>
                 )
             })}
+            {isMainEditOpen && editingChatId && (<EditMainChat changedChatId = { editingChatId } onSubmitSuccess = { () => {
+                setIsMainEditOpen(false) ;
+                setEditingChatId(null);
+            }}/>)}
             {optionSelected === 'Simulation History' && simulationTemplates.map((s, index) => {
                 const user = userProfiles[index];
                 return(
