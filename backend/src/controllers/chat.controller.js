@@ -1,6 +1,8 @@
 import { prisma } from "../lib/prisma.js";
 import { lettersFromWeights, mbtiToWeightedInstruction, normalizeMbtiWeights } from "../lib/mbtiPrompt.js";
+import { deleteChatSessionById, updateChatSessionTitle } from "../services/chat.service.js";
 import { getChatCompletion } from "../services/openAiService.js";
+import { validateChatSessionPatchBody } from "../validators/chat.validator.js";
 
 async function ensureSessionOwner(sessionId, userId) {
   const chatSession = await prisma.chatSession.findFirst({
@@ -60,6 +62,36 @@ export async function getChatSessionDetail(req, res, next) {
     });
 
     return res.status(200).json({ session: chatSession, messages });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteChatSession(req, res, next) {
+  try {
+    const deleted = await deleteChatSessionById(req.user.id, req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ message: "Chat session not found" });
+    }
+    return res.status(200).json({ id: req.params.id });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function patchChatSession(req, res, next) {
+  try {
+    const parsed = validateChatSessionPatchBody(req.body);
+    if (!parsed.ok) {
+      return res.status(400).json({ message: parsed.message });
+    }
+
+    const session = await updateChatSessionTitle(req.user.id, req.params.id, parsed.value.title);
+    if (!session) {
+      return res.status(404).json({ message: "Chat session not found" });
+    }
+
+    return res.status(200).json({ session });
   } catch (error) {
     next(error);
   }
