@@ -4,21 +4,8 @@ import { useState } from 'react'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
 
-interface ChatSession {
-    id: string;
-    userId: string;
-    title: string | null;
-    isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
-    _count?: {
-        messages: number;
-    };
-}
-
 interface EditMainChatProps {
     changedChatId: string;
-    onSubmitSuccess: (session: ChatSession) => void;
 }
 
 const EditMainChatModalStyled = styled.div`
@@ -63,7 +50,7 @@ const SubmitButton = styled.button<{isValid: boolean}>`
     border-radius: 0;
 `;
 
-export default function EditMainChat({ onSubmitSuccess, changedChatId }: EditMainChatProps) {
+export default function EditMainChat({ changedChatId }: EditMainChatProps) {
     const [changedChatInfo, setChangedChatInfo] = useState<string>('');
 
     async function editChatSession(targetId: string, changedTitle: string) {
@@ -79,7 +66,7 @@ export default function EditMainChat({ onSubmitSuccess, changedChatId }: EditMai
                 })
             });
             if (!response.ok) {
-                throw new Error('Failed to create chat session');
+                throw new Error('Failed to patch chat title');
             }
             const data = await response.json();
             return data.session;
@@ -95,7 +82,8 @@ export default function EditMainChat({ onSubmitSuccess, changedChatId }: EditMai
         try {
             const session = await editChatSession(changedChatId, changedChatInfo);
             if (!session) return;
-            onSubmitSuccess(session);
+            window.alert('It is successfully changed.')
+            window.location.reload();
         } catch (error) {
             console.error(error);
         }

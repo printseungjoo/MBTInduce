@@ -4,10 +4,14 @@ import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
 import EditOptionButton from '../atoms/EditOptionButton'
 
+type EditTarget = 'userName' | 'userMbti' | 'simulationContent';
+
 interface InitialEditSimulationProps {
     userName: string; 
     userMbti: string; 
     simulationContent: string;
+    simulationId: string;
+    onSelectEditTarget: (target: EditTarget, content: string, id: string) => void;
 }
 
 const EditMainChatModalStyled = styled.div`
@@ -33,14 +37,14 @@ const CenterBox = styled.div`
     gap: 1.5vh;
 `;
 
-export default function InitialEditSimulation({ userName, userMbti, simulationContent }: InitialEditSimulationProps) {
+export default function InitialEditSimulation({ userName, userMbti, simulationContent, simulationId, onSelectEditTarget }: InitialEditSimulationProps) {
     return (
         <EditMainChatModalStyled>
             <CenterBox>
                 <CenterPurpleP content = 'Click what you want to change' />
-                <EditOptionButton content = { userName }/>
-                <EditOptionButton content = { userMbti }/>
-                <EditOptionButton content = { simulationContent }/>
+                <EditOptionButton content = { userName } onSelect = { onSelectEditTarget } target = 'userName' id = { simulationId }/>
+                <EditOptionButton content = { userMbti } onSelect = { onSelectEditTarget } target = 'userMbti' id = { simulationId }/>
+                <EditOptionButton content = { simulationContent } onSelect = { onSelectEditTarget } target = 'simulationContent' id = { simulationId }/>
                 <GoBackButton />
             </CenterBox>
         </EditMainChatModalStyled>
