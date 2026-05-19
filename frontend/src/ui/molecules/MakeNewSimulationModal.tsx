@@ -89,7 +89,6 @@ export default function MakeNewSimulationModal({ onSubmitSuccess }: MakeNewSimul
             if (!response.ok) {
                 throw new Error('Failed to send scenario')
             }
-            const data = await response.json()
         } catch (error) {
             console.error('Error transmitting scenario:', error);
         }
@@ -109,7 +108,6 @@ export default function MakeNewSimulationModal({ onSubmitSuccess }: MakeNewSimul
             if (!response.ok) {
                 throw new Error('Failed to send targetInfo')
             }
-            const data = await response.json();
         } catch (error) {
             console.error('Error transmitting targetInfo:', error);
         }

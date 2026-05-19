@@ -6,8 +6,11 @@ import HistoryOptionButton from '../atoms/HistoryOptionButton'
 import EditMainChat from '../molecules/EditMainChat'
 import InitialEditSimulation from '../molecules/InitialEditSimulation'
 import EditSimulation from '../molecules/EditSimulation'
+import InitialEditSchedule from '../molecules/InitialEditSchedule'
+import EditSchedule from '../molecules/EditSchedule'
 
 type EditTarget = 'userName' | 'userMbti' | 'simulationContent';
+type EditScheduleTarget = 'title' | 'start' | 'end';
 
 interface SimulationTemplate {
     id: string;
@@ -80,6 +83,11 @@ export default function HistoryScreen() {
     const [selectedEditTarget, setSelectedEditTarget] = useState<EditTarget | null>(null);
     const [selectedEditContent, setSelectedEditContent] = useState<string>('');
     const [selectedSimulationId, setSelectedSimulationId] = useState<string>('');
+    const [isScheduleEditOpen, setIsScheduleEditOpen] = useState<boolean>(false);
+    const [editingScheduleId, setEditingScheduleId] = useState<{scheduleId: string; scheduleTitle: string; scheduleStart: Date; scheduleEnd: Date} | null>(null);
+    const [selectedScheduleTarget, setSelectedScheduleTarget] = useState<EditScheduleTarget | null>(null);
+    const [selectedScheduleContent, setSelectedScheduleContent] = useState<string | Date>('');
+    const [selectedScheduleId, setSelectedScheduleId] = useState<string>('');
 
     function formatDisplayDate(date: Date) {
         return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}/${date.getFullYear()}`;
@@ -250,10 +258,21 @@ export default function HistoryScreen() {
         setIsSimulationEditOpen(true);
     }
 
+    const goToEditSchedule = (scheduleId: string, scheduleTitle: string, scheduleStart: Date, scheduleEnd: Date) => {
+        setEditingScheduleId({scheduleId, scheduleTitle, scheduleStart, scheduleEnd});
+        setIsScheduleEditOpen(true);
+    }
+
     const handleSelectEditTarget = (target: EditTarget, content: string, id: string) => {
         setSelectedEditTarget(target);
         setSelectedEditContent(content);
         setSelectedSimulationId(id);
+    }
+
+    const handleSelectScheduleEditTarget = (target: EditScheduleTarget, content: string | Date, id: string) => {
+        setSelectedScheduleTarget(target);
+        setSelectedScheduleContent(content);
+        setSelectedScheduleId(id);
     }
 
     return(
@@ -278,9 +297,11 @@ export default function HistoryScreen() {
             {isSimulationEditOpen && selectedEditTarget && (<EditSimulation content = { selectedEditContent } target = { selectedEditTarget } id = { selectedSimulationId }/>)}
             {optionSelected === 'Schedule' && events.map((e) => {
                 return(
-                    <HistoryDiv key = { e.id } title = { e.title } description = { formatDisplayDate(e.start) + ' ' + formatDisplayTime(e.start) + ' - ' + formatDisplayDate(e.end) + ' ' + formatDisplayTime(e.end)} date = { '' } etc = { '' } onClick = {() => { deleteSchedule(e.id) }}/>
+                    <HistoryDiv key = { e.id } title = { e.title } description = { formatDisplayDate(e.start) + ' ' + formatDisplayTime(e.start) + ' - ' + formatDisplayDate(e.end) + ' ' + formatDisplayTime(e.end)} date = { '' } etc = { '' } onClick = {() => { deleteSchedule(e.id) }} onEditClick = {() => { goToEditSchedule(e.id, e.title, e.start, e.end) }}/>
                 )
             })}
+            {isScheduleEditOpen && editingScheduleId && (<InitialEditSchedule id = { editingScheduleId.scheduleId } title = { editingScheduleId.scheduleTitle } start = { editingScheduleId.scheduleStart } end = { editingScheduleId.scheduleEnd } onSelectEditTarget = { handleSelectScheduleEditTarget } />)}
+            {isScheduleEditOpen && selectedScheduleTarget && (<EditSchedule id = { selectedScheduleId } target = { selectedScheduleTarget } content = { String(selectedScheduleContent) }/>)}
         </>
     )
 }
