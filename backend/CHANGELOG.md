@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Feature: Added `POST /api/profile` (`postProfile`) for local sign-up with the same body and response as `POST /api/auth/signup`; shared `completeLocalSignup` keeps both endpoints in sync.
+- Fix: Export `patchSimulationTemplateHandler` and `patchUserProfiles` in `simulation.controller.js` so `PATCH /api/simulation/simulationTemplate/:id` and `PATCH /api/simulation/userProfiles/:id` match registered routes; scenario body field remains `content` for frontend.
+- Feature: Admin backend APIs — `GET /api/admin/statistics`, `GET /api/admin/feedback` (pagination; `rating` filter uses `ResponseRating`), CRUD `/api/admin/question-templates` (backed by `PromptTemplate`); `requireAuth` + `requireAdmin`; legacy `/api/admin/dashboard` and `/api/admin/templates` unchanged.
 - Feature: Chat session rename — `PATCH /api/chatMessage/sessions/:id` with body `{ "title": "..." }` (owner-only, trimmed, max 200 chars) for History chat list Edit UX.
 - Feature: Chat session delete — `DELETE /api/chatMessage/sessions/:id` (owner-only, cascades messages/ratings; history `chatSessionId` set null); `DELETE /api/chat?pageType=main|simulation&simulationKey=...` returns empty message array for frontend compat.
 - feat: link `HistoryRecord` to Main Chat via optional `chatSessionId` FK to `ChatSession` (`ON DELETE SET NULL`); `POST /api/history` accepts optional `chatSessionId` (must belong to current user); migration `20260511180000_add_history_chat_session_fk`.
