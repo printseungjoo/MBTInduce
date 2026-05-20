@@ -7,6 +7,9 @@ import { passport } from "./config/passport.js";
 
 import { aiRouter } from "./routes/aiRoutes.js";
 import { authRouter } from "./routes/auth.routes.js";
+import { authApiRouter } from "./routes/auth.api.routes.js";
+import { profileRouter } from "./routes/profile.routes.js";
+import { historyRouter } from "./routes/history.routes.js";
 import { userRouter } from "./routes/userRoutes.js";
 import { mbtiRouter } from "./routes/mbti.routes.js";
 import { chatRouter } from "./routes/chat.routes.js";
@@ -52,6 +55,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRouter);
+app.use("/api/auth", authApiRouter);
+app.use("/api/profile", profileRouter);
+app.use("/api/history", historyRouter);
 app.use("/api/ai", aiRouter);
 app.use("/api", userRouter);
 app.use("/api/mbti", mbtiRouter);
