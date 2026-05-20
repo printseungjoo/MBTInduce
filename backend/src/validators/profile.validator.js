@@ -1,7 +1,15 @@
 import { isValidMbtiType } from "../lib/mbtiTypes.js";
+import { validateSignupBody } from "./auth.validator.js";
 
 function bad(message) {
   return { ok: false, message };
+}
+
+/**
+ * POST /api/profile — local sign-up: email, password, nickname, optional mbti.
+ */
+export function validateProfilePostBody(body) {
+  return validateSignupBody(body);
 }
 
 /**
