@@ -1,11 +1,11 @@
 import './App.css'
 
-import FullMainScreen from './ui/template/FullMainScreen'
+import StartPageBeforeLogin from './ui/template/StartPageBeforeLogin'
 
 function App() {
   return (
     <div>
-      <FullMainScreen />
+      <StartPageBeforeLogin />
     </div>    
   )
 }
