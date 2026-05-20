@@ -1,12 +1,15 @@
 import './App.css'
 
+import { Routes, Route } from 'react-router-dom'
 import StartPageBeforeLogin from './ui/template/StartPageBeforeLogin'
+import SignUpScreen from './ui/organisms/SignUpScreen'
 
 function App() {
   return (
-    <div>
-      <StartPageBeforeLogin />
-    </div>    
+    <Routes>
+      <Route path = "/" element = {<StartPageBeforeLogin />} />
+      <Route path = "/signup" element = {<SignUpScreen />} />
+    </Routes> 
   )
 }
 
