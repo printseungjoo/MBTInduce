@@ -166,7 +166,7 @@ export default function HistoryScreen() {
 
     async function deleteChatSession(selectedChatId: string) {
         try {
-            const response = await fetch(`http://localhost:4000/api/chat/sessions/${selectedChatId}`, {
+            const response = await fetch(`http://localhost:4000/api/chatMessage/sessions/${selectedChatId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
