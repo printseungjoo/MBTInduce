@@ -20,6 +20,13 @@ function loginPromise(req, user) {
   });
 }
 
+export async function completeLocalSignup(req, res, signupValue) {
+  const user = await createLocalUser(signupValue);
+  await loginPromise(req, user);
+  const data = await getProfilePayloadByUserId(user.id);
+  return ok(res, 201, data);
+}
+
 export async function postSignup(req, res, next) {
   try {
     const parsed = validateSignupBody(req.body);
@@ -27,11 +34,7 @@ export async function postSignup(req, res, next) {
       return fail(res, 400, parsed.message);
     }
 
-    const user = await createLocalUser(parsed.value);
-    await loginPromise(req, user);
-
-    const data = await getProfilePayloadByUserId(user.id);
-    return ok(res, 201, data);
+    return await completeLocalSignup(req, res, parsed.value);
   } catch (err) {
     if (err.statusCode) {
       return fail(res, err.statusCode, err.message);
