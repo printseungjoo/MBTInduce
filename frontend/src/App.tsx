@@ -47,6 +47,14 @@ function App() {
         }
       />
       <Route
+        path="/Start"
+        element={
+          <ProtectedRoute>
+            <FullMainScreen />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/MainChat"
         element={
           <ProtectedRoute>

@@ -36,17 +36,16 @@ const Subtitle = styled.p`
     color: ${({ theme }) => theme.colors.lightWhite};
 `;
 
-type clickedNameGeneric = 'Main Chat' | 'Simulation' | 'Calendar' | 'Log In' | 'History'
+type clickedNameGeneric = 'Start Page' | 'Main Chat' | 'Simulation' | 'Calendar' | 'History'
 
 export default function NavigationDrawer({ className, isOpen, children }: NavigationDrawerProps) {
     const location = useLocation();
 
     const pathMap: Record<string, clickedNameGeneric> = {
-        '/': 'Main Chat',
+        '/Start': 'Start Page',
         '/MainChat': 'Main Chat',
         '/Simulation': 'Simulation',
         '/Calendar': 'Calendar',
-        '/LogIn': 'Log In',
         '/History': 'History'
     };
 
@@ -61,10 +60,10 @@ export default function NavigationDrawer({ className, isOpen, children }: Naviga
                 </FlexDiv>
                 <Subtitle> MBTI Chat-GPT AI Agent </Subtitle>
             </PaddingLeftWithLine>
-            <PageButton name = '💬  Main Chat' clicked = {clickedName === 'Main Chat'} text = 'MainChat' />
-            <PageButton name = '👥  Simulation' clicked = {clickedName === 'Simulation'} text = 'Simulation' />
-            <PageButton name = '📅  Calendar' clicked = {clickedName === 'Calendar'} text = 'Calendar' />
-            <PageButton name = '👣 Log In' clicked = {clickedName === 'Log In'} text = 'LogIn' />
+            <PageButton name = '👋🏻 Start Page' clicked = {clickedName === 'Start Page'} text = 'Start' />
+            <PageButton name = '💬 Main Chat' clicked = {clickedName === 'Main Chat'} text = 'MainChat' />
+            <PageButton name = '👥 Simulation' clicked = {clickedName === 'Simulation'} text = 'Simulation' />
+            <PageButton name = '📅 Calendar' clicked = {clickedName === 'Calendar'} text = 'Calendar' />
             <PageButton name = '📄 History' clicked = {clickedName === 'History'} text = 'History' />
             <WebsiteIntro content='MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.' />
         </NavigationDrawerStyled>
