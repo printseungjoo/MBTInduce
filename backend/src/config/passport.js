@@ -17,6 +17,7 @@ passport.deserializeUser(async (id, done) => {
         profileImage: true,
         role: true,
         status: true,
+        onboardingCompleted: true
       },
     });
 

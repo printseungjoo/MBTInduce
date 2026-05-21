@@ -92,6 +92,7 @@ const ProfileInput = styled.input`
     border-radius: 7px;
     background-color: ${({ theme }) => theme.colors.royalPurple};
     width: 100%;
+    height: 4.5vh;
     color: ${({ theme }) => theme.colors.lightWhite};
     box-sizing: border-box;
     padding: 0 0.5vw;
@@ -136,11 +137,10 @@ export default function SignUpScreen() {
         }
     }
 
-    // I will put email and password here later.
-    async function postProfileInfo(mbtiValue: string) {
+    async function patchProfileInfo(mbtiValue: string) {
         try {
             const response = await fetch(`http://localhost:4000/api/profile`, {
-                method: 'POST',
+                method: 'PATCH',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
@@ -151,7 +151,7 @@ export default function SignUpScreen() {
                 })
             });
             if (!response.ok) {
-                throw new Error('Failed to post profile info');
+                throw new Error('Failed to save profile info');
             }
             const data = await response.json();
             return data.data;
@@ -161,11 +161,18 @@ export default function SignUpScreen() {
     }
 
     const navigate = useNavigate();
-    let mbtiValue: string;
-    const isSaved = () => {
-        mbtiValue = `${ ei }${ sn }${ ft }${ pj }`;
-        postProfileInfo(mbtiValue);
-        window.alert('It is successfully saved.')
+    async function isSaved(){
+        if (!ei || !sn || !ft || !pj) {
+            window.alert('Please select all MBTI letters.');
+            return;
+        }
+        const mbtiValue = `${ei}${sn}${ft}${pj}`;
+        const saved = await patchProfileInfo(mbtiValue);
+        if (!saved) {
+            window.alert('Failed to save profile.');
+            return;
+        }
+        window.alert('It is successfully saved.');
         navigate('/');
     }
 
@@ -181,7 +188,6 @@ export default function SignUpScreen() {
                     <WriteProfileP> Edit nickname </WriteProfileP>
                     <FlexDiv>
                         <ProfileInput value = { nickname } onChange = {(e) => setNickname(e.target.value)} />
-                        <SaveButton />
                     </FlexDiv>
                     <WriteProfileP> MBTI </WriteProfileP>
                     <FlexDiv>
