@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import SaveButton from '../atoms/SaveButton'
@@ -10,6 +10,12 @@ type EI = 'E' | 'I'
 type SN = 'S' | 'N'
 type FT = 'F' | 'T'
 type PJ = 'P' | 'J'
+type profileInfo = {
+    id: string,
+    email: string,
+    nickname: string,
+    mbti: string
+}
 
 const SignUpScreenStyled = styled.div`
     height: 100vh;
@@ -102,14 +108,66 @@ const SaveButtonPlus = styled(SaveButton)`
     width: 100%;
 `;
 
-// it is dummy datum. I will update it soon.
 export default function SignUpScreen() {
     const [ei, setEi] = useState<EI | null>(null);
     const [sn, setSn] = useState<SN | null>(null);
     const [ft, setFt] = useState<FT | null>(null);
     const [pj, setPj] = useState<PJ | null>(null);
+    const [nickname, setNickname] = useState<string>('');
+    const [profileInformation, setProfileInformation] = useState<profileInfo | null>(null);
+
+    useEffect(() => {
+        getEmail();
+    }, []);
+
+    async function getEmail() {
+        try {
+            const response = await fetch(`http://localhost:4000/api/profile`, {
+                method: 'GET',
+                credentials: 'include',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to get email');
+            }
+            const data = await response.json();
+            setProfileInformation(data.data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    // I will put email and password here later.
+    async function postProfileInfo(mbtiValue: string) {
+        try {
+            const response = await fetch(`http://localhost:4000/api/profile`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nickname,
+                    mbti: mbtiValue
+                })
+            });
+            if (!response.ok) {
+                throw new Error('Failed to post profile info');
+            }
+            const data = await response.json();
+            return data.data;
+        } catch(error) {
+            console.error(error);
+        }
+    }
 
     const navigate = useNavigate();
+    let mbtiValue: string;
+    const isSaved = () => {
+        mbtiValue = `${ ei }${ sn }${ ft }${ pj }`;
+        postProfileInfo(mbtiValue);
+        window.alert('It is successfully saved.')
+        navigate('/');
+    }
 
     return(
         <SignUpScreenStyled>
@@ -117,12 +175,12 @@ export default function SignUpScreen() {
             <MainContent>
                 <Profile>
                     <ProfileLogo src="/ProfileLogo.png" alt="Profile Logo" />
-                    <Email> dummy email </Email>
+                    <Email> { profileInformation?.email } </Email>
                 </Profile>
                 <WriteProfile>
                     <WriteProfileP> Edit nickname </WriteProfileP>
                     <FlexDiv>
-                        <ProfileInput />
+                        <ProfileInput value = { nickname } onChange = {(e) => setNickname(e.target.value)} />
                         <SaveButton />
                     </FlexDiv>
                     <WriteProfileP> MBTI </WriteProfileP>
@@ -136,7 +194,7 @@ export default function SignUpScreen() {
                     </FlexDiv>
                     <Mbti> { ei }{ sn }{ ft }{ pj } </Mbti>
                     <GenerateButtonPlus content = 'Go to start page' onClick = {() => navigate('/')}/>
-                    <SaveButtonPlus />
+                    <SaveButtonPlus onClick = { isSaved } />
                 </WriteProfile>
             </MainContent>
         </SignUpScreenStyled>
