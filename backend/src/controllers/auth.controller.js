@@ -26,7 +26,7 @@ export async function handleGoogleCallbackSuccess(req, res) {
   }
   if (mode === "login") {
     if (user.onboardingCompleted) {
-      return res.redirect("http://localhost:5173/MainChat");
+      return res.redirect("http://localhost:5173/Start");
     }
     return res.redirect("http://localhost:5173/SignUp");
   }

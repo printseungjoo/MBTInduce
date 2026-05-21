@@ -13,6 +13,7 @@ import InitialSimulationModal from '../molecules/InitialSimulationModal'
 import CalendarScreen from '../organisms/CalendarScreen'
 import HistoryScreen from '../organisms/HistoryScreen'
 import InitialMainChatModal from '../molecules/InitialMainChatModal'
+import StartPageAfterLogin from '../organisms/StartPageAfterLogin'
 
 interface MbtiRange {
     eValue: number;
@@ -411,6 +412,7 @@ export default function FullMainScreen() {
                             <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
                         </FlexDiv>
                     </HeaderDiv>
+                    {location.pathname === '/Start' && <StartPageAfterLogin />};
                     {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && <ChatMessagesDiv>
                         {!isSimulationModalOpen && currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
