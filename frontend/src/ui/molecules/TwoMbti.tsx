@@ -1,8 +1,10 @@
 import styled from '@emotion/styled'
+import { useState } from 'react'
 
 interface TwoMbtiProps {
     first: string;
     second: string;
+    target: (t: boolean) => void;
 }
 
 const TwoMbtiStyled = styled.div`
@@ -13,12 +15,12 @@ const TwoMbtiStyled = styled.div`
     width: 50%;
 `;
 
-const OneMbtiStyled = styled.button`
+const FirstMbtiStyled = styled.button<{isFirstSelected: boolean}>`
     color: ${({ theme }) => theme.colors.lightWhite};
     font-weight: bolder;
     text-align: center;
     border: 1px solid transparent;
-    background-color: transparent;
+    background-color: ${({ theme, isFirstSelected }) => isFirstSelected ? theme.colors.mutedViolet : 'transparent'};
     width: 50%;
 `;
 
@@ -29,16 +31,36 @@ const PurpleLine = styled.h3`
     font-weight: lighter;
 `;
 
-export default function TwoMbti({ first, second }: TwoMbtiProps) {
+const SecondMbtiStyled = styled.button<{ isSecondSelected: boolean }>`
+    color: ${({ theme }) => theme.colors.lightWhite};
+    font-weight: bolder;
+    text-align: center;
+    border: 1px solid transparent;
+    background-color: ${({ theme, isSecondSelected }) => isSecondSelected ? theme.colors.mutedViolet : 'transparent'};
+    width: 50%;
+`;
+
+export default function TwoMbti({ first, second, target }: TwoMbtiProps) {
+    const [isFirstSelected, setIsFirstSelected] = useState<boolean>(false);
+    const [isSecondSelected, setIsSecondSelected] = useState<boolean>(false);
+
     return(
         <TwoMbtiStyled>
-            <OneMbtiStyled>
+            <FirstMbtiStyled isFirstSelected = { isFirstSelected } onClick = {() => {
+                setIsFirstSelected(true);
+                setIsSecondSelected(false);
+                target(true);
+            }}>
                 { first }
-            </OneMbtiStyled>
+            </FirstMbtiStyled>
             <PurpleLine> | </PurpleLine>
-            <OneMbtiStyled>
+            <SecondMbtiStyled isSecondSelected = { isSecondSelected } onClick = {() => {
+                setIsFirstSelected(false);
+                setIsSecondSelected(true);
+                target(false);
+            }}>
                 { second }
-            </OneMbtiStyled>
+            </SecondMbtiStyled>
         </TwoMbtiStyled>
     )
 }

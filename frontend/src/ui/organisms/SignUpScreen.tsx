@@ -1,8 +1,15 @@
 import styled from '@emotion/styled'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import SaveButton from '../atoms/SaveButton'
 import TwoMbti from '../molecules/TwoMbti'
 import GenerateButton from '../atoms/GenerateButton'
+
+type EI = 'E' | 'I'
+type SN = 'S' | 'N'
+type FT = 'F' | 'T'
+type PJ = 'P' | 'J'
 
 const SignUpScreenStyled = styled.div`
     height: 100vh;
@@ -79,6 +86,16 @@ const ProfileInput = styled.input`
     border-radius: 7px;
     background-color: ${({ theme }) => theme.colors.royalPurple};
     width: 100%;
+    color: ${({ theme }) => theme.colors.lightWhite};
+    box-sizing: border-box;
+    padding: 0 0.5vw;
+`;
+
+const Mbti = styled.p`
+    font-weight: bolder;
+    color: ${({ theme }) => theme.colors.softLavender};
+    text-align: center;
+    font-size: 1.5rem;
 `;
 
 const SaveButtonPlus = styled(SaveButton)`
@@ -87,6 +104,13 @@ const SaveButtonPlus = styled(SaveButton)`
 
 // it is dummy datum. I will update it soon.
 export default function SignUpScreen() {
+    const [ei, setEi] = useState<EI | null>(null);
+    const [sn, setSn] = useState<SN | null>(null);
+    const [ft, setFt] = useState<FT | null>(null);
+    const [pj, setPj] = useState<PJ | null>(null);
+
+    const navigate = useNavigate();
+
     return(
         <SignUpScreenStyled>
             <Title> Sign Up </Title>
@@ -103,14 +127,15 @@ export default function SignUpScreen() {
                     </FlexDiv>
                     <WriteProfileP> MBTI </WriteProfileP>
                     <FlexDiv>
-                        <TwoMbti first = 'E' second = 'I' />
-                        <TwoMbti first = 'S' second = 'N' />
+                        <TwoMbti first = 'E' second = 'I' target = {(t) => t ? setEi('E') : setEi('I')} />
+                        <TwoMbti first = 'S' second = 'N' target = {(t) => t ? setSn('S') : setSn('N')}/>
                     </FlexDiv>
                     <FlexDiv>
-                        <TwoMbti first = 'F' second = 'T' />
-                        <TwoMbti first = 'P' second = 'J' />
+                        <TwoMbti first = 'F' second = 'T' target = {(t) => t ? setFt('F') : setFt('T')}/>
+                        <TwoMbti first = 'P' second = 'J' target = {(t) => t ? setPj('P') : setPj('J')}/>
                     </FlexDiv>
-                    <GenerateButtonPlus content = 'Go to start page'/>
+                    <Mbti> { ei }{ sn }{ ft }{ pj } </Mbti>
+                    <GenerateButtonPlus content = 'Go to start page' onClick = {() => navigate('/')}/>
                     <SaveButtonPlus />
                 </WriteProfile>
             </MainContent>
