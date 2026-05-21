@@ -76,7 +76,7 @@ export default function StartPageBeforeLogin() {
             <SubTitle> MBTI Chat-GPT AI Agent </SubTitle>
             <SubTitlePurple> Chat with AI that adapts to your personality type and preferences </SubTitlePurple>
             <FlexDiv>
-                <GenerateButtonPlus content = 'Sign Up' onClick = {() => navigate('/signup')}  />
+                <GenerateButtonPlus content = 'Sign Up' onClick = {() => navigate('/SignUp')}  />
                 <GenerateButtonPlus content = 'Log In' />
             </FlexDiv>
             <FlexLinkDiv>

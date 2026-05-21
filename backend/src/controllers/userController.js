@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma.js";
+import { clearAuthSession } from "./auth.controller.js";
 
 export async function getMe(req, res, next) {
   try {
@@ -61,12 +62,8 @@ export async function deleteMe(req, res, next) {
       },
     });
 
-    req.logout(() => {
-      req.session.destroy(() => {
-        res.clearCookie("mbtinduce.sid");
-        return res.status(200).json({ message: "Account deleted" });
-      });
-    });
+    await clearAuthSession(req, res);
+    return res.status(200).json({ message: "Account deleted" });
   } catch (error) {
     next(error);
   }
