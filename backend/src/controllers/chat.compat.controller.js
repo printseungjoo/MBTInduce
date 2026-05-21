@@ -1,21 +1,15 @@
 import { prisma } from "../lib/prisma.js";
+import {
+  deleteChatSessionByContext,
+  findActiveChatSession,
+  resolveChatSessionTitle,
+} from "../services/chat.service.js";
 import { postMessageCore } from "./chat.controller.js";
 
-const MAIN_SESSION_TITLE = "Main Chat";
-
-function getChatSessionTitle(pageType, simulationKey) {
-  if (pageType === "simulation") {
-    return `simulation:${simulationKey}`;
-  }
-}
-
 async function getOrCreateChatSession(userId, pageType, simulationKey) {
-  const title = getChatSessionTitle(pageType, simulationKey);
-  let session = await prisma.chatSession.findFirst({
-    where: { userId, title, isArchived: false },
-    orderBy: { updatedAt: "desc" },
-  });
+  let session = await findActiveChatSession(userId, pageType, simulationKey);
   if (!session) {
+    const title = resolveChatSessionTitle(pageType, simulationKey);
     session = await prisma.chatSession.create({
       data: { userId, title },
     });
@@ -168,6 +162,29 @@ export async function patchMainChatMessageRate(req, res, next) {
 
     const payload = await buildFrontendChatArray(req.user.id, message.chatSessionId);
     return res.status(200).json(payload);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * DELETE /api/chat — delete active session for pageType context; returns empty ChatMessage[]
+ */
+export async function deleteMainChatFlat(req, res, next) {
+  try {
+    const pageType = req.query.pageType || "main";
+    const simulationKey = req.query.simulationKey || "";
+
+    if (pageType === "simulation" && !simulationKey) {
+      return res.status(400).json({ message: "simulationKey is required when pageType is simulation" });
+    }
+
+    const deleted = await deleteChatSessionByContext(req.user.id, pageType, simulationKey);
+    if (!deleted) {
+      return res.status(404).json({ message: "Chat session not found" });
+    }
+
+    return res.status(200).json([]);
   } catch (err) {
     next(err);
   }
