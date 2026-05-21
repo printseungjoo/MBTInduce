@@ -1,5 +1,4 @@
 import styled from '@emotion/styled'
-import { useNavigate } from 'react-router-dom'
 
 import GenerateButton from '../atoms/GenerateButton'
 
@@ -64,7 +63,13 @@ const LinkA = styled.a`
 
 // I will put the links later.
 export default function StartPageBeforeLogin() {
-    const navigate = useNavigate();
+    const goToGoogleSignUp = () => {
+        window.location.href = 'http://localhost:4000/auth/google?mode=signup';
+    };
+
+    const goToGoogleLogin = () => {
+        window.location.href = 'http://localhost:4000/auth/google?mode=login';
+    };
 
     return(
         <StartPageBeforeLoginStyled>
@@ -76,8 +81,8 @@ export default function StartPageBeforeLogin() {
             <SubTitle> MBTI Chat-GPT AI Agent </SubTitle>
             <SubTitlePurple> Chat with AI that adapts to your personality type and preferences </SubTitlePurple>
             <FlexDiv>
-                <GenerateButtonPlus content = 'Sign Up' onClick = {() => navigate('/SignUp')}  />
-                <GenerateButtonPlus content = 'Log In' />
+                <GenerateButtonPlus content = 'Sign Up' onClick = { goToGoogleSignUp } />
+                <GenerateButtonPlus content = 'Log In' onClick = { goToGoogleLogin } />
             </FlexDiv>
             <FlexLinkDiv>
                 <LinkA> Tutorial </LinkA>

@@ -19,8 +19,18 @@ export function clearAuthSession(req, res) {
 }
 
 export async function handleGoogleCallbackSuccess(req, res) {
-  const redirectUrl = process.env.AUTH_SUCCESS_REDIRECT || "http://localhost:5173";
-  return res.redirect(redirectUrl);
+  const mode = req.query.state;
+  const user = req.user;
+  if (mode === "signup") {
+    return res.redirect("http://localhost:5173/SignUp");
+  }
+  if (mode === "login") {
+    if (user.onboardingCompleted) {
+      return res.redirect("http://localhost:5173/MainChat");
+    }
+    return res.redirect("http://localhost:5173/SignUp");
+  }
+  return res.redirect("http://localhost:5173");
 }
 
 export async function handleGoogleCallbackFailure(req, res) {
