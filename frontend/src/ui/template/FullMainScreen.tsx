@@ -14,6 +14,7 @@ import CalendarScreen from '../organisms/CalendarScreen'
 import HistoryScreen from '../organisms/HistoryScreen'
 import InitialMainChatModal from '../molecules/InitialMainChatModal'
 import StartPageAfterLogin from '../organisms/StartPageAfterLogin'
+import MypageScreen from '../organisms/MypageScreen'
 
 interface MbtiRange {
     eValue: number;
@@ -427,6 +428,7 @@ export default function FullMainScreen() {
                     {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                     {location.pathname === '/Calendar' && <CalendarScreen selectedRange = { selectedRange } setSelectedRange = { setSelectedRange } />}
                     {location.pathname === '/History' && <HistoryScreen />}
+                    {location.pathname === '/Mypage' && <MypageScreen />}
                 </FlexColumnDiv>
             </MainContent>
             {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } />}
