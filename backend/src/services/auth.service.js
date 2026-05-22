@@ -30,6 +30,7 @@ export async function createLocalUser({ email, password, nickname, mbti }) {
         profileImage: true,
         role: true,
         status: true,
+        onboardingCompleted: true
       },
     });
 
