@@ -158,7 +158,8 @@ export default function HistoryScreen() {
                 throw new Error('Failed to get chat sessions');
             }
             const data = await response.json();
-            setChatSessions(data.sessions);
+            const mainOnlySessions = data.sessions.filter((session: ChatSession) => !session.title?.startsWith('simulation:'));
+            setChatSessions(mainOnlySessions);
         } catch (error) {
             console.error(error);
         }
