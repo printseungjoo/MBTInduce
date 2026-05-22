@@ -194,7 +194,7 @@ export default function MypageScreen() {
             return;
         }
         window.alert('It is successfully saved.');
-        navigate('/');
+        navigate('/Start');
     }
 
     async function handleLogout() {
