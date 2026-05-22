@@ -137,7 +137,7 @@ export default function SignUpScreen() {
         }
     }
 
-    async function patchProfileInfo(mbtiValue: string) {
+    async function patchProfileInfo(nickname: string, mbtiValue: string) {
         try {
             const response = await fetch(`http://localhost:4000/api/profile`, {
                 method: 'PATCH',
@@ -146,7 +146,7 @@ export default function SignUpScreen() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    nickname,
+                    nickname: nickname,
                     mbti: mbtiValue
                 })
             });
@@ -167,7 +167,7 @@ export default function SignUpScreen() {
             return;
         }
         const mbtiValue = `${ei}${sn}${ft}${pj}`;
-        const saved = await patchProfileInfo(mbtiValue);
+        const saved = await patchProfileInfo(nickname, mbtiValue);
         if (!saved) {
             window.alert('Failed to save profile.');
             return;
