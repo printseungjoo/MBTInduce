@@ -36,7 +36,7 @@ const Subtitle = styled.p`
     color: ${({ theme }) => theme.colors.lightWhite};
 `;
 
-type clickedNameGeneric = 'Start Page' | 'Main Chat' | 'Simulation' | 'Calendar' | 'History'
+type clickedNameGeneric = 'Start Page' | 'Main Chat' | 'Simulation' | 'Calendar' | 'History' | 'My Page'
 
 export default function NavigationDrawer({ className, isOpen, children }: NavigationDrawerProps) {
     const location = useLocation();
@@ -46,7 +46,8 @@ export default function NavigationDrawer({ className, isOpen, children }: Naviga
         '/MainChat': 'Main Chat',
         '/Simulation': 'Simulation',
         '/Calendar': 'Calendar',
-        '/History': 'History'
+        '/History': 'History',
+        '/Mypage': 'My Page'
     };
 
     const clickedName = pathMap[location.pathname] ?? 'Main Chat';
@@ -65,6 +66,7 @@ export default function NavigationDrawer({ className, isOpen, children }: Naviga
             <PageButton name = '👥 Simulation' clicked = {clickedName === 'Simulation'} text = 'Simulation' />
             <PageButton name = '📅 Calendar' clicked = {clickedName === 'Calendar'} text = 'Calendar' />
             <PageButton name = '📄 History' clicked = {clickedName === 'History'} text = 'History' />
+            <PageButton name = '👤 My Page' clicked = {clickedName === 'My Page'} text = 'Mypage' />
             <WebsiteIntro content='MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.' />
         </NavigationDrawerStyled>
     )

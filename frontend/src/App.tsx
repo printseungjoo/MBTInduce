@@ -86,6 +86,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/Mypage"
+        element={
+          <ProtectedRoute>
+            <FullMainScreen />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   )
 }

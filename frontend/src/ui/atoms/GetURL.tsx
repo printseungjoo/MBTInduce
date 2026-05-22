@@ -1,4 +1,4 @@
-type clickedNameGeneric = 'Start Page' | 'Main Chat' | 'Simulation' | 'Calendar' | 'History'
+type clickedNameGeneric = 'Start Page' | 'Main Chat' | 'Simulation' | 'Calendar' | 'History' | 'My Page'
 
 export const getURL = (): clickedNameGeneric => {
     const path = window.location.pathname.replace('/', '');
@@ -7,7 +7,8 @@ export const getURL = (): clickedNameGeneric => {
         'MainChat': 'Main Chat',
         'Simulation': 'Simulation',
         'Calendar': 'Calendar',
-        'History': 'History'
+        'History': 'History',
+        'Mypage': 'My Page'
     };
     return map[path] ?? 'Main Chat';
 }
