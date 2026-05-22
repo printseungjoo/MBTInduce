@@ -197,6 +197,44 @@ export default function MypageScreen() {
         navigate('/');
     }
 
+    async function handleLogout() {
+        try {
+            const response = await fetch('http://localhost:4000/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to logout');
+            }
+            window.alert('Logged out successfully.');
+            navigate('/');
+        } catch (error) {
+            console.error(error);
+            window.alert('Logout failed.');
+        }
+    }
+
+    async function handleWithdraw() {
+        const confirmed = window.confirm('Are you sure you want to delete your account?');
+        if (!confirmed) {
+            return;
+        }
+        try {
+            const response = await fetch('http://localhost:4000/auth/withdraw', {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to withdraw account');
+            }
+            window.alert('Your account has been deleted.');
+            navigate('/');
+        } catch (error) {
+            console.error(error);
+            window.alert('Account deletion failed.');
+        }
+    }
+
     return(
         <MypageScreenStyled>
             <MainContent>
@@ -222,8 +260,8 @@ export default function MypageScreen() {
                     </FlexDiv>
                     <Mbti> { ei }{ sn }{ ft }{ pj } </Mbti>
                     <GenerateButtonPlus content = 'Go to start page' onClick = {() => navigate('/')}/>
-                    <RedButton> Logout </RedButton>
-                    <RedButton> Withdrawl </RedButton>
+                    <RedButton onClick = { handleLogout }> Logout </RedButton>
+                    <RedButton onClick = { handleWithdraw }> Withdrawal </RedButton>
                     <SaveButtonPlus onClick = { isSaved } />
                 </WriteProfile>
             </MainContent>
