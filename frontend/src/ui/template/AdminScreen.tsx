@@ -5,6 +5,7 @@ import LogoutButton from '../atoms/LogoutButton'
 import AdminLeftDiv from '../atoms/AdminLeftDiv'
 import AdminAverageRatingDiv from '../atoms/AdminAverageRatingDiv'
 import AdminMiddleDiv from '../molecules/AdminMiddleDiv'
+import AdminRightMainChatDiv from '../molecules/AdminRightMainChatDiv'
 
 type StatisticsType = {
     totalUsers: number;
@@ -57,6 +58,14 @@ const MiddleDiv = styled.div`
     height: 80vh;
 `;
 
+const RightDiv = styled.div`
+    width: 40%;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+`;
+
 export default function AdminScreen() {
     const [statistics, setStatistics] = useState<StatisticsType | null>(null);
 
@@ -96,6 +105,10 @@ export default function AdminScreen() {
                 <MiddleDiv>
                     <AdminMiddleDiv />
                 </MiddleDiv>
+                <RightDiv>
+                    <AdminRightMainChatDiv />
+                    <AdminRightMainChatDiv />
+                </RightDiv>
             </MainContentFlexDiv>
         </AdminScreenStyled>
     )
