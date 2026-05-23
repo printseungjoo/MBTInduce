@@ -383,6 +383,12 @@ If you find a bug, please report it by creating a new GitHub Issue.
 
 ---
 
+# 📡 API Documentation
+
+[MBTInduce API (Google Doc)](https://docs.google.com/document/d/1cfbuPG2nsKaCHA7x5rJtaO5bWX-61feJREjMbKB7Ofo/edit?usp=sharing)
+
+
+---
 
 # 🫱🏻‍🫲🏼 Team
 
