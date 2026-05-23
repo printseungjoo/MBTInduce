@@ -7,6 +7,7 @@ import type { ReactNode } from 'react'
 import StartPageBeforeLogin from './ui/template/StartPageBeforeLogin'
 import SignUpScreen from './ui/organisms/SignUpScreen'
 import FullMainScreen from './ui/template/FullMainScreen'
+import AdminScreen from './ui/template/AdminScreen'
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<'loading' | 'ok' | 'fail'>('loading');
@@ -92,6 +93,12 @@ function App() {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/Admin"
+        element={
+          <AdminScreen />
         }
       />
     </Routes>
