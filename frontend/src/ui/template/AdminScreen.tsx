@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import LogoutButton from '../atoms/LogoutButton'
 import AdminLeftDiv from '../atoms/AdminLeftDiv'
 import AdminAverageRatingDiv from '../atoms/AdminAverageRatingDiv'
+import AdminMiddleDiv from '../molecules/AdminMiddleDiv'
 
 type StatisticsType = {
     totalUsers: number;
@@ -38,14 +39,22 @@ const Subtitle = styled.p`
 const MainContentFlexDiv = styled.div`
     display: flex;
     margin-top: 4vh;
+    gap: 2.5vw;
 `;
 
 const LeftDivs = styled.div`
     display: flex;
     flex-direction: column;
-    width: 25%;
+    width: 20%;
     height: 80vh;
     gap: 3vh;
+`;
+
+const MiddleDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 35%;
+    height: 80vh;
 `;
 
 export default function AdminScreen() {
@@ -58,7 +67,7 @@ export default function AdminScreen() {
                 credentials: 'include'
             });
             if(!response.ok) {
-                throw new Error('Failed to get user number');
+                throw new Error('Failed to get left statistics');
             }
             const data = await response.json();
             setStatistics(data.data);
@@ -84,6 +93,9 @@ export default function AdminScreen() {
                     <AdminAverageRatingDiv title = 'Average Ratings' number = { statistics?.totalRatings } />
                     <AdminLeftDiv title = 'Total Messages' number = { statistics?.totalQuestions ? statistics?.totalQuestions*2 : statistics?.totalQuestions } />
                 </LeftDivs>
+                <MiddleDiv>
+                    <AdminMiddleDiv />
+                </MiddleDiv>
             </MainContentFlexDiv>
         </AdminScreenStyled>
     )
