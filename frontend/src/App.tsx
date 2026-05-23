@@ -35,6 +35,41 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   return children;
 }
 
+function AdminRoute({ children }: { children: ReactNode }) {
+  const [status, setStatus] = useState<'loading' | 'ok' | 'fail'>('loading');
+  useEffect(() => {
+    async function checkAdmin() {
+      try {
+        const response = await fetch('http://localhost:4000/api/auth/me', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          setStatus('fail');
+          return;
+        }
+        const data = await response.json();
+        if (data.user?.isAdmin) {
+          setStatus('ok');
+        } else {
+          setStatus('fail');
+        }
+      } catch (error) {
+        console.error(error);
+        setStatus('fail');
+      }
+    }
+    checkAdmin();
+  }, []);
+  if (status === 'loading') {
+    return null;
+  }
+  if (status === 'fail') {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+}
+
 function App() {
   return (
     <Routes>
@@ -98,7 +133,9 @@ function App() {
       <Route
         path="/Admin"
         element={
-          <AdminScreen />
+          <AdminRoute>
+            <AdminScreen />
+          </AdminRoute>
         }
       />
     </Routes>

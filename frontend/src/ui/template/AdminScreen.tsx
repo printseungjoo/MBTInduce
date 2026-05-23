@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import LogoutButton from '../atoms/LogoutButton'
 import AdminLeftDiv from '../atoms/AdminLeftDiv'
@@ -19,7 +20,7 @@ type StatisticsType = {
 
 const AdminScreenStyled = styled.div`
     box-sizing: border-box;
-    margin: 3.3vh 2vw;
+    margin: 13vh 2vw;    
 `;
 
 const MainTitle = styled.h1`
@@ -69,6 +70,8 @@ const RightDiv = styled.div`
 export default function AdminScreen() {
     const [statistics, setStatistics] = useState<StatisticsType | null>(null);
 
+    const navigate = useNavigate();
+
     async function getStatistics() {
         try {
             const response = await fetch('http://localhost:4000/api/admin/statistics', {
@@ -84,6 +87,23 @@ export default function AdminScreen() {
             console.error(error);
         }
     }
+    
+    async function handleLogout() {
+        try {
+            const response = await fetch('http://localhost:4000/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to logout');
+            }
+            window.alert('Logged out successfully.');
+            navigate('/');
+        } catch (error) {
+            console.error(error);
+            window.alert('Logout failed.');
+        }
+    }
 
     useEffect(() => {
         getStatistics();
@@ -94,7 +114,7 @@ export default function AdminScreen() {
             <MainTitle> MBTInduce </MainTitle>
             <FlexDiv>
                 <Subtitle> Admin Panel </Subtitle>
-                <LogoutButton />
+                <LogoutButton onClick = {() => handleLogout()} />
             </FlexDiv>
             <MainContentFlexDiv>
                 <LeftDivs>

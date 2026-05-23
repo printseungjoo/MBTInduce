@@ -1,5 +1,9 @@
 import styled from '@emotion/styled'
 
+interface LogoutButtonProps {
+    onClick: () => void;
+}
+
 const LogoutButtonStyled = styled.button`
     background-color: ${({ theme }) => theme.colors.mutedRose};
     color: ${({ theme }) => theme.colors.lightWhite};
@@ -11,9 +15,9 @@ const LogoutButtonStyled = styled.button`
     margin-top: 0.7vh;
 `;
 
-export default function LogoutButton() {
+export default function LogoutButton({ onClick }: LogoutButtonProps) {
     return(
-        <LogoutButtonStyled>
+        <LogoutButtonStyled onClick = { onClick }>
             Logout
         </LogoutButtonStyled>
     )
