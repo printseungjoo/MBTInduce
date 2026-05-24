@@ -7,6 +7,7 @@ import AdminLeftDiv from '../atoms/AdminLeftDiv'
 import AdminAverageRatingDiv from '../atoms/AdminAverageRatingDiv'
 import AdminMiddleDiv from '../molecules/AdminMiddleDiv'
 import AdminRightMainChatDiv from '../molecules/AdminRightMainChatDiv'
+import AdminRightSimulationDiv from '../molecules/AdminRightSimulationDiv'
 
 type StatisticsType = {
     totalUsers: number;
@@ -127,7 +128,7 @@ export default function AdminScreen() {
                 </MiddleDiv>
                 <RightDiv>
                     <AdminRightMainChatDiv />
-                    <AdminRightMainChatDiv />
+                    <AdminRightSimulationDiv />
                 </RightDiv>
             </MainContentFlexDiv>
         </AdminScreenStyled>
