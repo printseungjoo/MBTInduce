@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react'
 import SimulationTemplateButton from '../atoms/SimulationTemplateButton'
 
 type TemplateType = {
+    id: string;
     title: string;
     content: string;
     category: string;
     isActive: boolean;
-    createdById: string;
 }
 
 const AdminRightSimulationDivStyled = styled.div`
@@ -106,7 +106,7 @@ export default function AdminRightSimulationDiv() {
             <PurpleP> Simulation Question Template </PurpleP>
             <Templates>
                 {templates.map((t) => {
-                    return <SimulationTemplateButton id = { t.createdById } content = { t.content } />
+                    return <SimulationTemplateButton id = { t.id } content = { t.content } />
                 })}
             </Templates>
             <FlexDiv>

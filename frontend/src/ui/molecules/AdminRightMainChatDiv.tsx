@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react'
 import MainChatTemplateButton from '../atoms/MainChatTemplateButton'
 
 type TemplateType = {
+    id: string;
     title: string;
     content: string;
     category: string;
     isActive: boolean;
-    createdById: string;
 }
 
 const AdminRightMainChatDivStyled = styled.div`
@@ -106,7 +106,7 @@ export default function AdminRightMainChatDiv() {
             <PurpleP> Main Chat Question Template </PurpleP>
             <Templates>
                 {templates.map((t) => {
-                    return <MainChatTemplateButton id = { t.createdById } content = { t.content } />
+                    return <MainChatTemplateButton id = { t.id } content = { t.content } />
                 })}
             </Templates>
             <FlexDiv>
