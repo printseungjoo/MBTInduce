@@ -36,10 +36,12 @@ enum SimulationRole {
 model User {
   id           String           @id @default(cuid())
   email        String           @unique
+  passwordHash String?
   nickname     String?
   profileImage String?
   role         UserRole         @default(USER)
   status       UserStatus       @default(ACTIVE)
+  onboardingCompleted Boolean   @default(false)
   lastLoginAt  DateTime?
   deletedAt    DateTime?
   createdAt    DateTime         @default(now())
@@ -55,9 +57,31 @@ model User {
   userProfiles UserProfile[]
   simulationChatMessages SimulationChatMessage[]
   calendarEvents        CalendarEvent[]
+  historyRecords        HistoryRecord[]
 
   @@index([status])
   @@index([role])
+}
+
+model HistoryRecord {
+  id          String   @id @default(cuid())
+  userId      String?
+  chatSessionId String?
+  title       String
+  preview     String?
+  content     String
+  mbti        String?
+  sourceType  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatSession ChatSession? @relation(fields: [chatSessionId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([chatSessionId])
+  @@index([createdAt])
+  @@index([mbti])
 }
 
 model CalendarEvent {
@@ -131,6 +155,7 @@ model ChatSession {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages    Message[]
   ratings     ResponseRating[]
+  historyRecords HistoryRecord[]
 
   @@index([userId, createdAt])
 }

@@ -1,8 +1,36 @@
 import { prisma } from "../lib/prisma.js";
 
+/** Ends Passport session, destroys express-session store row, clears cookie. */
+export function clearAuthSession(req, res) {
+  return new Promise((resolve, reject) => {
+    req.logout((logoutError) => {
+      if (logoutError) {
+        return reject(logoutError);
+      }
+      req.session.destroy((sessionError) => {
+        if (sessionError) {
+          return reject(sessionError);
+        }
+        res.clearCookie("mbtinduce.sid");
+        resolve();
+      });
+    });
+  });
+}
+
 export async function handleGoogleCallbackSuccess(req, res) {
-  const redirectUrl = process.env.AUTH_SUCCESS_REDIRECT || "http://localhost:5173";
-  return res.redirect(redirectUrl);
+  const mode = req.query.state;
+  const user = req.user;
+  if (mode === "signup") {
+    return res.redirect("http://localhost:5173/SignUp");
+  }
+  if (mode === "login") {
+    if (user.onboardingCompleted) {
+      return res.redirect("http://localhost:5173/Start");
+    }
+    return res.redirect("http://localhost:5173/SignUp");
+  }
+  return res.redirect("http://localhost:5173");
 }
 
 export async function handleGoogleCallbackFailure(req, res) {
@@ -12,20 +40,8 @@ export async function handleGoogleCallbackFailure(req, res) {
 
 export async function logout(req, res, next) {
   try {
-    req.logout((logoutError) => {
-      if (logoutError) {
-        return next(logoutError);
-      }
-
-      req.session.destroy((sessionError) => {
-        if (sessionError) {
-          return next(sessionError);
-        }
-
-        res.clearCookie("mbtinduce.sid");
-        return res.status(200).json({ message: "Logged out" });
-      });
-    });
+    await clearAuthSession(req, res);
+    return res.status(200).json({ message: "Logged out" });
   } catch (error) {
     next(error);
   }
@@ -51,12 +67,8 @@ export async function deleteMyAccount(req, res, next) {
       });
     }
 
-    req.logout(() => {
-      req.session.destroy(() => {
-        res.clearCookie("mbtinduce.sid");
-        return res.status(200).json({ message: "Account deleted" });
-      });
-    });
+    await clearAuthSession(req, res);
+    return res.status(200).json({ message: "Account deleted" });
   } catch (error) {
     next(error);
   }

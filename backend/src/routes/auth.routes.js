@@ -17,11 +17,14 @@ function ensureGoogleOAuthConfigured(req, res, next) {
   return next();
 }
 
-router.get(
-  "/google",
-  ensureGoogleOAuthConfigured,
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+router.get("/google", ensureGoogleOAuthConfigured, (req, res, next) => {
+  const mode = req.query.mode === "login" ? "login" : "signup";
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "select_account",
+    state: mode,
+  })(req, res, next);
+});
 
 router.get(
   "/google/callback",

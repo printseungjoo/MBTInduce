@@ -5,7 +5,7 @@ import Title from '../atoms/Title'
 import SelectTime from '../molecules/SelectTime'
 import Checkbox from '../atoms/Checkbox'
 import GenerateButton from '../atoms/GenerateButton'
-import ScheduleButton from '../atoms/ScheduleButton'
+import WebsiteIntro from '../atoms/WebsiteIntro'
 
 interface SelectedRange {
     startDate: Date | null;
@@ -58,31 +58,12 @@ const WriteSchedule = styled.textarea`
     padding: 1vh 0.5vw;
 `;
 
-const PurpleDiv = styled.div`
-    height: 22vh;
-    background-color: ${({ theme }) => theme.colors.royalPurple};
-    margin: 2vh 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-y: auto;
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-`;
-
 const GenerateButtonPlus = styled(GenerateButton)`
     margin: 1.2vh 0;
 `;
 
-const NoEventText = styled.p`
-    color: ${({ theme }) => theme.colors.lightWhite};
-    font-size: 0.9rem;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+const WebsiteIntroPlus = styled(WebsiteIntro)`
+    margin-top: 1.5vh;
 `;
 
 export default function CalendarRightScreen({ selectedRange }: CalendarRightScreenProps) {
@@ -222,43 +203,6 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
     );
     const start = formatDate(firstDate);
     const end = formatDate(secondDate);
-
-    function formatDisplayDate(date: Date) {
-        return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}/${date.getFullYear()}`;
-    }
-    function formatDisplayTime(date: Date) {
-        return date.toLocaleTimeString([], {
-            hour: 'numeric',
-            minute: '2-digit',
-        });
-    }
-
-    async function deleteSchedule() {
-        if (!selectedEventId) {
-            alert('Please select a schedule to delete.');
-            return;
-        }
-        try {
-            const response = await fetch(`http://localhost:4000/api/calendarEvent/${selectedEventId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                alert(data.message || 'Failed to delete schedule.');
-                return;
-            }
-            alert('Schedule deleted successfully.');
-            setSelectedEventId('');
-            window.location.reload();
-        } catch (error) {
-            console.error(error);
-            alert('Server connection failed.');
-        }
-    }
     
     return(
         <>
@@ -278,15 +222,7 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
                 <Checkbox text = 'Do not disturb only at this time' checked = {selectedOption === 'Do not disturb only at this time'} onClick = {() => setSelectedOption('Do not disturb only at this time')} />
             </div>
             <GenerateButtonPlus content = 'Submit' onClick = { submitSchedule } />
-            <PurpleDiv>
-                {events.length === 0 ? (
-                    <NoEventText>No recorded events</NoEventText>
-                ) : (
-                    events.map((event) => (
-                    <ScheduleButton key = { event.id } schedule = { event.title } date = { formatDisplayDate(event.start) } startTime = { formatDisplayTime(event.start) } endTime = { formatDisplayTime(event.end) } onClick = { () => setSelectedEventId(event.id) } />
-                )))}
-            </PurpleDiv>
-            <GenerateButtonPlus content = 'Delete' onClick = { deleteSchedule } />
+            <WebsiteIntroPlus content = 'When you ask main chat to make a schedule, it suggests a schedule that avoids it which you recorded on this page. You can adjust the degree of schedule adjustment through the checkbox. You can edit or delete the schedule on the history page.' />
         </>
     )
 }
