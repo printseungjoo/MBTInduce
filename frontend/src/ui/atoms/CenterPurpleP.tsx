@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 
 interface CenterPurplePProps {
-    content: string;
+    content: string | null;
     className?: string;
 }
 

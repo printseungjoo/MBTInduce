@@ -4,7 +4,7 @@ import { isValidMbtiType, mbtiTypeToPreferenceLetters, preferenceLettersToMbtiTy
 export async function getProfilePayloadByUserId(userId) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, email: true, nickname: true },
+    select: { id: true, email: true, nickname: true, onboardingCompleted: true },
   });
   if (!user) return null;
 
@@ -17,6 +17,7 @@ export async function getProfilePayloadByUserId(userId) {
     id: user.id,
     email: user.email,
     nickname: user.nickname ?? null,
+    onboardingCompleted: user.onboardingCompleted,
     mbti,
   };
 }
@@ -67,7 +68,10 @@ export async function updateProfile(userId, { nickname, mbti }) {
   if (typeof nickname === "string") {
     await prisma.user.update({
       where: { id: userId },
-      data: { nickname: nickname.trim() },
+      data: { 
+        nickname: nickname.trim(),
+        onboardingCompleted: true
+    },
     });
   }
 
