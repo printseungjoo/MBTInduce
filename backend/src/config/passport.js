@@ -17,6 +17,7 @@ passport.deserializeUser(async (id, done) => {
         profileImage: true,
         role: true,
         status: true,
+        onboardingCompleted: true
       },
     });
 
@@ -70,7 +71,6 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
             data: {
               lastLoginAt: new Date(),
               email,
-              nickname,
               profileImage,
             },
           });
