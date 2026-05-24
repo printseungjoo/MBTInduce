@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Feature: Split admin question templates by `PromptTemplate.kind` — `/api/admin/main-chat-question-templates` and `/api/admin/simulation-question-templates`; migration adds `QuestionTemplateKind` enum.
+- Feature: `GET /api/admin/statistics` adds `ratingStatistics` with `ratingCounts` (1–5) for admin rating distribution UI.
+- Feature: `ADMIN_EMAILS` env var — comma-separated emails receive `ADMIN` on signup/login; OAuth success redirects admins to `AUTH_ADMIN_SUCCESS_REDIRECT` (default `{AUTH_SUCCESS_REDIRECT}/admin`).
+- Docs: Full API specification documented in repository root `docs/api.md`.
 - Feature: Added `POST /api/profile` (`postProfile`) for local sign-up with the same body and response as `POST /api/auth/signup`; shared `completeLocalSignup` keeps both endpoints in sync.
 - Fix: Export `patchSimulationTemplateHandler` and `patchUserProfiles` in `simulation.controller.js` so `PATCH /api/simulation/simulationTemplate/:id` and `PATCH /api/simulation/userProfiles/:id` match registered routes; scenario body field remains `content` for frontend.
 - Feature: Admin backend APIs — `GET /api/admin/statistics`, `GET /api/admin/feedback` (pagination; `rating` filter uses `ResponseRating`), CRUD `/api/admin/question-templates` (backed by `PromptTemplate`); `requireAuth` + `requireAdmin`; legacy `/api/admin/dashboard` and `/api/admin/templates` unchanged.

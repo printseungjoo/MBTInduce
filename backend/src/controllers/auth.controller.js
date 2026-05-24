@@ -19,7 +19,10 @@ export function clearAuthSession(req, res) {
 }
 
 export async function handleGoogleCallbackSuccess(req, res) {
-  const redirectUrl = process.env.AUTH_SUCCESS_REDIRECT || "http://localhost:5173";
+  const defaultUrl = process.env.AUTH_SUCCESS_REDIRECT || "http://localhost:5173";
+  const adminUrl =
+    process.env.AUTH_ADMIN_SUCCESS_REDIRECT || `${defaultUrl.replace(/\/$/, "")}/admin`;
+  const redirectUrl = req.user?.role === "ADMIN" ? adminUrl : defaultUrl;
   return res.redirect(redirectUrl);
 }
 

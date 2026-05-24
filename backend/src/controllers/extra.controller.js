@@ -40,7 +40,19 @@ export async function createFeedback(req, res, next) {
 export async function getTemplates(req, res, next) {
   try {
     const templates = await prisma.promptTemplate.findMany({
-      where: { isActive: true },
+      where: { isActive: true, kind: "MAIN_CHAT" },
+      orderBy: { createdAt: "desc" },
+    });
+    return res.status(200).json({ templates });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getSimulationQuestionTemplates(req, res, next) {
+  try {
+    const templates = await prisma.promptTemplate.findMany({
+      where: { isActive: true, kind: "SIMULATION" },
       orderBy: { createdAt: "desc" },
     });
     return res.status(200).json({ templates });
@@ -79,7 +91,13 @@ export async function createTemplate(req, res, next) {
     }
 
     const template = await prisma.promptTemplate.create({
-      data: { title, content, category: category || null, createdById: req.user.id },
+      data: {
+        title,
+        content,
+        category: category || null,
+        kind: "MAIN_CHAT",
+        createdById: req.user.id,
+      },
     });
     return res.status(201).json({ template });
   } catch (error) {

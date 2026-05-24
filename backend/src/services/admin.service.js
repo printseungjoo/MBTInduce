@@ -1,15 +1,32 @@
 import { prisma } from "../lib/prisma.js";
 
+export const QuestionTemplateKind = {
+  MAIN_CHAT: "MAIN_CHAT",
+  SIMULATION: "SIMULATION",
+};
+
 function mapPromptTemplate(row) {
   return {
     id: row.id,
     title: row.title,
     category: row.category,
     content: row.content,
+    kind: row.kind,
     isActive: row.isActive,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
+}
+
+/** @param {{ score: number, _count: { score: number } }[]} groups */
+function buildRatingCounts(groups) {
+  const ratingCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  for (const row of groups) {
+    if (row.score >= 1 && row.score <= 5) {
+      ratingCounts[row.score] = row._count.score;
+    }
+  }
+  return ratingCounts;
 }
 
 export async function getAdminStatistics() {
@@ -18,6 +35,7 @@ export async function getAdminStatistics() {
     totalQuestions,
     totalRatings,
     avgRatingResult,
+    ratingGroups,
     totalChatSessions,
     totalHistoryRecords,
     totalCalendarEvents,
@@ -26,16 +44,25 @@ export async function getAdminStatistics() {
     prisma.message.count({ where: { role: "USER" } }),
     prisma.responseRating.count(),
     prisma.responseRating.aggregate({ _avg: { score: true } }),
+    prisma.responseRating.groupBy({ by: ["score"], _count: { score: true } }),
     prisma.chatSession.count(),
     prisma.historyRecord.count(),
     prisma.calendarEvent.count(),
   ]);
 
+  const averageRating = avgRatingResult._avg.score ?? 0;
+  const ratingCounts = buildRatingCounts(ratingGroups);
+
   return {
     totalUsers,
     totalQuestions,
     totalRatings,
-    averageRating: avgRatingResult._avg.score ?? 0,
+    averageRating,
+    ratingStatistics: {
+      averageRating,
+      totalRatings,
+      ratingCounts,
+    },
     totalChatSessions,
     totalHistoryRecords,
     totalCalendarEvents,
@@ -107,19 +134,21 @@ export async function listAdminFeedback({ page, limit, rating }) {
   };
 }
 
-export async function listQuestionTemplates() {
+export async function listQuestionTemplatesByKind(kind) {
   const rows = await prisma.promptTemplate.findMany({
+    where: { kind },
     orderBy: { createdAt: "desc" },
   });
   return rows.map(mapPromptTemplate);
 }
 
-export async function createQuestionTemplate(data, createdById) {
+export async function createQuestionTemplateByKind(kind, data, createdById) {
   const row = await prisma.promptTemplate.create({
     data: {
       title: data.title,
       content: data.content,
       category: data.category,
+      kind,
       isActive: data.isActive,
       createdById,
     },
@@ -127,7 +156,12 @@ export async function createQuestionTemplate(data, createdById) {
   return mapPromptTemplate(row);
 }
 
-export async function updateQuestionTemplate(id, data) {
+export async function updateQuestionTemplateByKind(id, kind, data) {
+  const existing = await prisma.promptTemplate.findFirst({
+    where: { id, kind },
+  });
+  if (!existing) return null;
+
   const row = await prisma.promptTemplate.update({
     where: { id },
     data,
@@ -135,6 +169,32 @@ export async function updateQuestionTemplate(id, data) {
   return mapPromptTemplate(row);
 }
 
-export async function deleteQuestionTemplate(id) {
+export async function deleteQuestionTemplateByKind(id, kind) {
+  const existing = await prisma.promptTemplate.findFirst({
+    where: { id, kind },
+  });
+  if (!existing) return false;
+
   await prisma.promptTemplate.delete({ where: { id } });
+  return true;
+}
+
+/** @deprecated Use listQuestionTemplatesByKind(QuestionTemplateKind.MAIN_CHAT) */
+export async function listQuestionTemplates() {
+  return listQuestionTemplatesByKind(QuestionTemplateKind.MAIN_CHAT);
+}
+
+/** @deprecated Use createQuestionTemplateByKind */
+export async function createQuestionTemplate(data, createdById) {
+  return createQuestionTemplateByKind(QuestionTemplateKind.MAIN_CHAT, data, createdById);
+}
+
+/** @deprecated Use updateQuestionTemplateByKind */
+export async function updateQuestionTemplate(id, data) {
+  return updateQuestionTemplateByKind(id, QuestionTemplateKind.MAIN_CHAT, data);
+}
+
+/** @deprecated Use deleteQuestionTemplateByKind */
+export async function deleteQuestionTemplate(id) {
+  return deleteQuestionTemplateByKind(id, QuestionTemplateKind.MAIN_CHAT);
 }

@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { prisma } from "../lib/prisma.js";
+import { isAdminEmail, resolveRoleForEmail } from "../lib/adminEmails.js";
 import { ensureDefaultMbtiPreference, upsertMbtiPreferenceFromType } from "./profile.service.js";
 
 const BCRYPT_ROUNDS = 10;
@@ -19,7 +20,7 @@ export async function createLocalUser({ email, password, nickname, mbti }) {
         email,
         passwordHash,
         nickname,
-        role: "USER",
+        role: resolveRoleForEmail(email),
         status: "ACTIVE",
         lastLoginAt: new Date(),
       },
@@ -81,11 +82,23 @@ export async function authenticateLocalUser(email, password) {
     throw clientError(401, "Invalid email or password");
   }
 
-  await prisma.user.update({
+  const loginUpdate = { lastLoginAt: new Date() };
+  if (isAdminEmail(email) && user.role !== "ADMIN") {
+    loginUpdate.role = "ADMIN";
+  }
+
+  const updatedUser = await prisma.user.update({
     where: { id: user.id },
-    data: { lastLoginAt: new Date() },
+    data: loginUpdate,
+    select: {
+      id: true,
+      email: true,
+      nickname: true,
+      profileImage: true,
+      role: true,
+      status: true,
+    },
   });
 
-  const { passwordHash: _p, ...sessionUser } = user;
-  return sessionUser;
+  return updatedUser;
 }
