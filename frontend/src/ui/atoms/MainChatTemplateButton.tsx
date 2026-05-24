@@ -52,7 +52,7 @@ export default function MainChatTemplateButton({ id, content }: MainChatTemplate
 
     async function deleteTemplates() {
         try {
-            const response = await fetch(`http://localhost:4000/api/admin/main-chat-question-templates/$${id}`, {
+            const response = await fetch(`http://localhost:4000/api/admin/main-chat-question-templates/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
