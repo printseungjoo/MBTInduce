@@ -55,7 +55,7 @@ export default function InitialSimulationRightScreen({ onConfirm, onSelectHistor
         setShowOld(true);
     };
     if (showOld) {
-        return <OldSimulationModal onConfirm={ onConfirm } onSelectHistory = { onSelectHistory } /> 
+        return <OldSimulationModal onConfirm = { onConfirm } onSelectHistory = { onSelectHistory } /> 
     }
 
     return (
@@ -63,7 +63,7 @@ export default function InitialSimulationRightScreen({ onConfirm, onSelectHistor
             <CenterBox>
                 <GenerateButton content = 'Make new' onClick = { goToMakeNewSimulationRightScreen } />
                 <GenerateButton content = 'Bringing up old conversations' onClick = { goToOldSimulationRightScreen } />
-                <CenterPurpleP content = ' Users can simulate conversations with a selected MBTI personality. The AI generates dialogue responses as if the selected MBTI personality were participating in the conversation. This feature works like a role-play simulation system.' />
+                <CenterPurpleP content = 'You can simulate conversations with a selected MBTI personality. The AI generates dialogue responses as if the selected MBTI personality were participating in the conversation. This feature works like a role-play simulation system.' />
                 <GoBackButton />
             </CenterBox>
         </InitialSimulationRightScreenStyled>
