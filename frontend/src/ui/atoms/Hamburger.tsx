@@ -1,60 +1,53 @@
 import styled from '@emotion/styled'
 
-const InvisibleCheckbox = styled.input<{isOpen?: boolean}>`
-    display: none;
+const HamburgerButton = styled.button<{ isOpen?: boolean }>`
+    position: relative;
+    display: block;
+    width: 2rem;
+    height: 1.4rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
 
-    & + label {
-        position: relative; 
-        display: block;
-        width: ${({ isOpen }) => isOpen ? '5vw' : '2.5vw'};
-        height: 3vh;
-        left: ${({ isOpen }) => isOpen ? '3.5vw' : '1vw'};
-        top: ${({ isOpen }) => isOpen ? '1.3vh' : '0.3vh'};
-        cursor: pointer;
-    }
-
-    & + label > span {
+    span {
         position: absolute;
+        left: 0;
         display: block;
         width: 100%;
-        height: 0.5vh;
-        border-radius: 10px;
+        height: 0.35vh;
         background: ${({ theme }) => theme.colors.paleLavender};
         transition: all 0.35s;
-        z-index: 2;
-        left: 0;
+        border-radius: 0;
     }
 
-    & + label > span:nth-child(1) {
-        top: 0;
+    span:nth-child(1) {
+        top: ${({ isOpen }) => isOpen ? '50%' : '0.15rem'};
+        transform: ${({ isOpen }) => isOpen ? 'translateY(-50%) rotate(45deg)' : 'none'};
     }
 
-    & + label > span:nth-child(2) {
+    span:nth-child(2) {
         top: 50%;
         transform: translateY(-50%);
+        opacity: ${({ isOpen }) => isOpen ? '0' : '1'};
     }
 
-    & + label > span:nth-child(3) {
-        bottom: 0;
+    span:nth-child(3) {
+        bottom: ${({ isOpen }) => isOpen ? '50%' : '0.15rem'};
+        transform: ${({ isOpen }) => isOpen ? 'translateY(50%) rotate(-45deg)' : 'none'};
     }
 
-    &:checked + label > span:nth-child(1) {
-        top: 50%;
-        transform: translateY(-50%) rotate(45deg);
-    }
+    @media screen and (max-width: 767px) {
+        width: 2rem;
+        height: 1.4rem;
 
-    &:checked + label > span:nth-child(2) {
-        opacity: 0;
+        span {
+            height: 0.16rem;
+        }
     }
-
-    &:checked + label > span:nth-child(3) {
-        bottom: 50%;
-        transform: translateY(50%) rotate(-45deg);
-    }
-`;
-
-const HamburgerSticks = styled.label`
-    display: block;
 `;
 
 interface HamburgerProps {
@@ -62,15 +55,12 @@ interface HamburgerProps {
     isOpen?: boolean;
 }
 
-export default function Hamburger({ isClicked, isOpen }: HamburgerProps) {
+export default function Hamburger({ isClicked, isOpen = false }: HamburgerProps) {
     return (
-        <>
-            <InvisibleCheckbox type='checkbox' id='icon' onChange={ isClicked } isOpen = { isOpen } />
-            <HamburgerSticks htmlFor='icon'>
-                <span></span>
-                <span></span>
-                <span></span>
-            </HamburgerSticks>
-        </>
+        <HamburgerButton type = 'button' onClick = { isClicked } isOpen = { isOpen }>
+            <span></span>
+            <span></span>
+            <span></span>
+        </HamburgerButton>
     )
 }

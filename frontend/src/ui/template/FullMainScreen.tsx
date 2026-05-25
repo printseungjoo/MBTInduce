@@ -74,6 +74,12 @@ const MainContent = styled.div<{ isOpen: boolean; hasRightScreen: boolean }>`
     justify-content: space-between;
     min-height: 0;
     overflow: hidden;
+
+    @media screen and (max-width: 767px) {
+        width: 100%;
+        margin-left: 0;
+        padding: 1rem;
+    }
 `;
 
 const HeaderDiv = styled.div`
@@ -81,6 +87,8 @@ const HeaderDiv = styled.div`
     gap: 1vw;
     align-items: center;
     padding-top: 1vh;
+    justify-content: space-between;
+    width: 100%;
 `;
 
 const FlexColumnDiv = styled.div`
@@ -112,7 +120,6 @@ const ChatMessagesDiv = styled.div`
         width: 0.4rem;
     }
     &::-webkit-scrollbar-thumb {
-        background: #ccc;
         border-radius: 0.2rem;
     }
 `;
@@ -141,6 +148,16 @@ const DesktopOnlyHamburger = styled.div`
     }
 `;
 
+const MobileRightHamburgerWrapper = styled.div`
+    display: none;
+
+    @media screen and (max-width: 767px) {
+        display: block;
+        flex-shrink: 0;
+        z-index: 5;
+    }
+`;
+
 const API_BASE_URL = 'http://localhost:4000';
 
 export default function FullMainScreen() {
@@ -163,6 +180,7 @@ export default function FullMainScreen() {
     });
     const [selectedChatSession, setSelectedChatSession] = useState<ChatSession | null>(null);
     const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
+    const [isMobileRightOpen, setIsMobileRightOpen] = useState<boolean>(false);
 
     const location = useLocation();
     const hasRightScreen = location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Calendar' || location.pathname === '/Simulation';
@@ -420,13 +438,18 @@ export default function FullMainScreen() {
                 <FlexColumnDiv>
                     <HeaderDiv>
                         <FlexDiv>
-                            <DesktopOnlyHamburger>
-                                {!isOpen && (
+                            {!isOpen && (
+                                <DesktopOnlyHamburger>
                                     <Hamburger isClicked = { isClicked } isOpen = { isOpen } /> 
-                                )}
-                                <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
-                            </DesktopOnlyHamburger>
+                                </DesktopOnlyHamburger>
+                            )}
+                            <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
                         </FlexDiv>
+                        {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && (
+                            <MobileRightHamburgerWrapper>
+                                <Hamburger isClicked = {() => setIsMobileRightOpen((prev) => !prev)} isOpen = { isMobileRightOpen }/>
+                            </MobileRightHamburgerWrapper>
+                        )}
                     </HeaderDiv>
                     {location.pathname === '/Start' && <StartPageAfterLogin />};
                     {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && <ChatMessagesDiv>
@@ -447,7 +470,7 @@ export default function FullMainScreen() {
                     {location.pathname === '/Mypage' && <MypageScreen />}
                 </FlexColumnDiv>
             </MainContent>
-            {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } />}
+            {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} />}
         </FullScreen>
     );
 }
