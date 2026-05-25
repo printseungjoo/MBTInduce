@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum QuestionTemplateKind {
+  MAIN_CHAT
+  SIMULATION
+}
+
 enum UserRole {
   USER
   ADMIN
@@ -204,18 +209,19 @@ model Feedback {
 }
 
 model PromptTemplate {
-  id          String    @id @default(cuid())
+  id          String               @id @default(cuid())
   title       String
   content     String
   category    String?
-  isActive    Boolean   @default(true)
+  kind        QuestionTemplateKind @default(MAIN_CHAT)
+  isActive    Boolean              @default(true)
   createdById String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
 
-  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdBy   User?                @relation(fields: [createdById], references: [id], onDelete: SetNull)
 
-  @@index([isActive, createdAt])
+  @@index([kind, isActive, createdAt])
 }
 
 model SimulationTemplate {

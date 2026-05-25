@@ -1,33 +1,29 @@
-# MBTInduce Test Branch
+# MBTInduce
 
-This branch is used as an integration and verification branch before merging changes into `main`.
 
-## Purpose
+MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits.  
+Users can choose specific MBTI characteristics and control how strongly those traits influence the AI's answers.
 
 The platform helps users receive responses that match the emotional tone or logical style they want, and also allows them to simulate conversations with specific MBTI personalities.
 
-This helps prevent unexpected errors from being introduced into the production-ready branch.
+---
 
-## Why This Branch Exists
+## ⚠️ Problem Statement
 
-The main reason for this branch is safety.
+Current AI chat services typically provide responses based on a single generalized model.  
+While this approach works well for many cases, it does not consider that people often want different types of responses depending on their personality or emotional needs.
 
-If changes are merged directly into `main` without prior integration testing, structural issues, broken connections between frontend and backend, or runtime errors may be introduced.  
-To avoid that, this branch is used to:
+For example, some users may prefer empathetic and supportive responses, while others may prefer logical and objective advice. However, most AI systems generate answers without allowing users to control these perspectives.
 
-- merge frontend and backend changes first  
-- verify that the integrated project works correctly  
-- test the overall folder structure and execution flow  
-- reduce the risk of breaking the `main` branch  
+In addition, people are often curious about how individuals with different personality types might react in certain situations. Existing AI tools do not provide an easy way to simulate conversations or responses based on specific personality traits.
 
-After confirming that everything works as expected in `test`, the changes are merged into `main`.
+Because of this limitation, users cannot easily:
 
-## Branch Role
+- Guide the tone or reasoning style of AI responses  
+- Compare answers from different personality perspectives  
+- Simulate conversations with specific personality types  
 
-- `frontend`: frontend development branch  
-- `backend`: backend development branch  
-- `test`: integration and testing branch  
-- `main`: final stable branch  
+MBTInduce addresses this problem by allowing users to influence AI responses using MBTI personality traits and simulate interactions from different personality perspectives.
 
 ---
 
@@ -212,6 +208,54 @@ The admin dashboard provides analytics and management tools.
 
 ---
 
+# 🎯 Goal
+
+
+MBTInduce aims to create a new AI interaction experience where users can explore different personality perspectives, improve communication understanding, and receive responses tailored to their preferred emotional or logical style.
+
+
+---
+
+
+# ⚙️ Getting Started
+
+### 1. Clone the repository
+git clone https://github.com/printseungjoo/MBTInduce.git  
+
+cd MBTInduce
+
+### 2. Install dependencies
+npm install  
+
+cd frontend && npm install  
+
+cd ../backend && npm install  
+
+cd ..
+
+### 3. Environment Setup
+The backend requires a `.env` file to work properly.
+If you need access to the `.env` file, please request it via email:
+printseungjoo@gmail.com  
+
+The request will be reviewed before the file is shared.
+
+### 4. Run the project
+From the root directory:
+npm run dev  
+
+This command runs both frontend and backend simultaneously.
+
+### Local Development
+- Frontend: http://localhost:5173  
+- Backend: http://localhost:4000
+
+### Notes
+- PostgreSQL must be running before starting the backend.
+- The backend will not work without a valid `.env` file.
+
+---
+
 
 # 🔒 Privacy Policy
 
@@ -224,22 +268,22 @@ To protect user privacy:
 - Only anonymous analytics data is used for system improvement
 
 
----
 
 
-# 🫱🏻‍🫲🏼 Team
 
 
-### Seungjoo
-- Project Planning
-- Frontend Development  
-- UI / UX Design
 
 
-### Jibeom
-- Project Planning
-- Backend Development
-- AI Model Training & Tuning
+
+
+
+
+
+
+
+
+
+
 
 
 ---
@@ -278,47 +322,84 @@ To protect user privacy:
 
 ---
 
+# 🗣️ Frontend Development Plan
 
-# 🎯 Goal
-
-
-MBTInduce aims to create a new AI interaction experience where users can explore different personality perspectives, improve communication understanding, and receive responses tailored to their preferred emotional or logical style.
+| Feature | Description | Estimated Date |
+|---|---|---|
+| 1. Hamburgers | Hamburger menu implementation for logged-in and logged-out users | ~3/24 |
+| 2. Main Chat | Chat UI, right tab, templates, and input window | ~4/7 |
+| 3. Simulation | Simulation page and right-side tab UI | ~4/21 |
+| 4. Calendar | Calendar library integration and right tab | ~5/11 |
+| 5. History | Chat history, edit/delete buttons, chat tabs, top bar | ~5/18 |
+| 6. Start Page / Sign Up / My Page | Nickname, MBTI settings, save functionality, profile window | ~5/20 |
+| 7. Admin Page | Total users, ratings, question templates, log out button | ~5/22 |
+| 8. Responsive Design | Responsive UI optimization | ~5/24 |
+| 9. Testing | Frontend testing and debugging | ~5/26 |
+| 10. Distribution | Deployment and distribution | ~5/26 |
 
 ---
 
-# ⚙️ Getting Started
+# 🗣️ Backend Development Plan
 
-### 1. Clone the repository
-git clone https://github.com/printseungjoo/MBTInduce.git  
+| Feature | Description | Estimated Date |
+|---|---|---|
+| 1. Google Login Implementation | OAuth login system | ~3/24 |
+| 2. Database Setup | Database schema and API variable structure for Main Chat, Simulation, Calendar | ~3/24 |
+| 3. Main Chat | Main chat backend implementation | ~4/7 |
+| 4. Simulation | Simulation backend implementation | ~4/21 |
+| 5. Calendar | Calendar backend implementation | ~5/11 |
+| 6. Sign Up / My Page | User profile and account management | ~5/19 |
+| 7. Administrators Page | Admin system backend | ~5/22 |
+| 8. Backend Layer | Backend layer integration for Main Chat, Simulation, Calendar | ~5/23 |
+| 9. AI Service Layer | GPT tuning and AI service optimization | ~5/25 |
+| 10. Testing | Backend testing and debugging | ~5/26 |
 
-cd MBTInduce
+---
 
-### 2. Install dependencies
-npm install  
+# ✅ Bug Tracking and Reporting
 
-cd frontend && npm install  
+We use **GitHub Issues** to track bugs, errors, and unfinished fixes for this project.
 
-cd ../backend && npm install  
+## Where to Check Outstanding Bugs
 
-cd ..
+Outstanding bugs can be checked in the **Issues** tab of this repository:
 
-### 3. Environment Setup
-The backend requires a `.env` file to work properly.
-If you need access to the `.env` file, please request it via email:
-printseungjoo@gmail.com  
+[GitHub Issues](https://github.com/printseungjoo/MBTInduce/issues)
 
-The request will be reviewed before the file is shared.
+Open issues represent bugs or problems that still need to be fixed.  
+Closed issues represent bugs that have already been resolved.
 
-### 4. Run the project
-From the root directory:
-npm run dev  
+## How to Report a Bug
 
-This command runs both frontend and backend simultaneously.
+If you find a bug, please report it by creating a new GitHub Issue.
 
-### Local Development
-- Frontend: http://localhost:5173  
-- Backend: http://localhost:4000
+### Steps to Report a Bug
 
-### Notes
-- PostgreSQL must be running before starting the backend.
-- The backend will not work without a valid `.env` file.
+1. Go to the [Issues page](https://github.com/printseungjoo/MBTInduce/issues)
+2. Click **New Issue**
+3. Write a clear title
+4. Describe the bug using the format below
+5. Submit the issue
+
+---
+
+# 📡 API Documentation
+
+[MBTInduce API (Google Doc)](https://docs.google.com/document/d/1cfbuPG2nsKaCHA7x5rJtaO5bWX-61feJREjMbKB7Ofo/edit?usp=sharing)
+
+
+---
+
+# 🫱🏻‍🫲🏼 Team
+
+
+### Seungjoo
+- Project Planning
+- Frontend Development  
+- UI / UX Design
+
+
+### Jibeom
+- Project Planning
+- Backend Development
+- AI Model Training & Tuning

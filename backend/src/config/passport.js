@@ -1,6 +1,7 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { prisma } from "../lib/prisma.js";
+import { isAdminEmail, resolveRoleForEmail } from "../lib/adminEmails.js";
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -66,13 +67,19 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
             return done(new Error("Suspended account cannot login"));
           }
 
+          const updateData = {
+            lastLoginAt: new Date(),
+            email,
+            nickname,
+            profileImage,
+          };
+          if (isAdminEmail(email) && existingAccount.user.role !== "ADMIN") {
+            updateData.role = "ADMIN";
+          }
+
           const updatedUser = await prisma.user.update({
             where: { id: existingAccount.user.id },
-            data: {
-              lastLoginAt: new Date(),
-              email,
-              profileImage,
-            },
+            data: updateData,
           });
 
           return done(null, updatedUser);
@@ -82,18 +89,29 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           where: { email },
         });
 
-        const user =
-          existingUserByEmail ||
-          (await prisma.user.create({
+        let user = existingUserByEmail;
+
+        if (user) {
+          const updateData = { lastLoginAt: new Date() };
+          if (isAdminEmail(email) && user.role !== "ADMIN") {
+            updateData.role = "ADMIN";
+          }
+          user = await prisma.user.update({
+            where: { id: user.id },
+            data: updateData,
+          });
+        } else {
+          user = await prisma.user.create({
             data: {
               email,
               nickname,
               profileImage,
-              role: "USER",
+              role: resolveRoleForEmail(email),
               status: "ACTIVE",
               lastLoginAt: new Date(),
             },
-          }));
+          });
+        }
 
         await prisma.account.create({
           data: {
