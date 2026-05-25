@@ -5,7 +5,6 @@ import SimulationTemplateButton from '../atoms/SimulationTemplateButton'
 
 type TemplateType = {
     id: string;
-    title: string;
     content: string;
     category: string;
     isActive: boolean;
@@ -58,7 +57,6 @@ const AddButton = styled.button`
 export default function AdminRightSimulationDiv() {
     const [templates, setTemplates] = useState<TemplateType[]>([]);
     const [content, setContent] = useState<string>('');
-    const [isClicked, setIsClicked] = useState<boolean>(false);
 
     async function getTemplates() {
         const response = await fetch('http://localhost:4000/api/admin/simulation-question-templates', {
@@ -97,10 +95,6 @@ export default function AdminRightSimulationDiv() {
         getTemplates();
     }, [])
 
-    useEffect(() => {
-        postTemplates();
-    }, [isClicked])
-
     return(
         <AdminRightSimulationDivStyled>
             <PurpleP> Simulation Question Template </PurpleP>
@@ -111,7 +105,7 @@ export default function AdminRightSimulationDiv() {
             </Templates>
             <FlexDiv>
                 <InputBox onChange = {(e) => setContent(e.target.value)} />
-                <AddButton onClick = {() => setIsClicked(true)}> Add </AddButton>
+                <AddButton onClick = { postTemplates }> Add </AddButton>
             </FlexDiv>
         </AdminRightSimulationDivStyled>
     )
