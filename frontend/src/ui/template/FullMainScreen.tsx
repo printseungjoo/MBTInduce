@@ -6,7 +6,8 @@ import NavigationDrawer from '../organisms/NavigationDrawer'
 import Hamburger from '../atoms/Hamburger'
 import Title from '../atoms/Title'
 import RightScreen from '../template/RightScreen'
-import TextInputBox from '../molecules/TextInputBox'
+import MainChatTextInputBox from '../molecules/MainChatTextInputBox'
+import SimulationTextInputBox from '../molecules/SimulationTextInputBox'
 import UserChat from '../atoms/UserChat'
 import AiChat from '../atoms/AiChat'
 import InitialSimulationModal from '../molecules/InitialSimulationModal'
@@ -425,7 +426,8 @@ export default function FullMainScreen() {
                             </ChatRow>
                         ))}
                     </ChatMessagesDiv>}
-                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    {(location.pathname === '/' || location.pathname === '/MainChat') && !isSimulationModalOpen && (<MainChatTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    {(location.pathname === '/Simulation') && !isSimulationModalOpen && (<SimulationTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                     {location.pathname === '/Calendar' && <CalendarScreen selectedRange = { selectedRange } setSelectedRange = { setSelectedRange } />}
                     {location.pathname === '/History' && <HistoryScreen />}
                     {location.pathname === '/Mypage' && <MypageScreen />}

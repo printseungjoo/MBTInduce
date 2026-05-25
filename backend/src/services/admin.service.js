@@ -8,7 +8,6 @@ export const QuestionTemplateKind = {
 function mapPromptTemplate(row) {
   return {
     id: row.id,
-    title: row.title,
     category: row.category,
     content: row.content,
     kind: row.kind,
@@ -145,7 +144,6 @@ export async function listQuestionTemplatesByKind(kind) {
 export async function createQuestionTemplateByKind(kind, data, createdById) {
   const row = await prisma.promptTemplate.create({
     data: {
-      title: data.title,
       content: data.content,
       category: data.category,
       kind,

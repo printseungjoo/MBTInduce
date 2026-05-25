@@ -210,7 +210,6 @@ model Feedback {
 
 model PromptTemplate {
   id          String               @id @default(cuid())
-  title       String
   content     String
   category    String?
   kind        QuestionTemplateKind @default(MAIN_CHAT)

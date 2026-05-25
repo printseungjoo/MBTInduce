@@ -7,6 +7,7 @@ import type { ReactNode } from 'react'
 import StartPageBeforeLogin from './ui/template/StartPageBeforeLogin'
 import SignUpScreen from './ui/organisms/SignUpScreen'
 import FullMainScreen from './ui/template/FullMainScreen'
+import AdminScreen from './ui/template/AdminScreen'
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<'loading' | 'ok' | 'fail'>('loading');
@@ -24,6 +25,41 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
       }
     }
     checkAuth();
+  }, []);
+  if (status === 'loading') {
+    return null;
+  }
+  if (status === 'fail') {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+}
+
+function AdminRoute({ children }: { children: ReactNode }) {
+  const [status, setStatus] = useState<'loading' | 'ok' | 'fail'>('loading');
+  useEffect(() => {
+    async function checkAdmin() {
+      try {
+        const response = await fetch('http://localhost:4000/api/auth/me', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          setStatus('fail');
+          return;
+        }
+        const data = await response.json();
+        if (data.user?.isAdmin) {
+          setStatus('ok');
+        } else {
+          setStatus('fail');
+        }
+      } catch (error) {
+        console.error(error);
+        setStatus('fail');
+      }
+    }
+    checkAdmin();
   }, []);
   if (status === 'loading') {
     return null;
@@ -92,6 +128,14 @@ function App() {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/Admin"
+        element={
+          <AdminRoute>
+            <AdminScreen />
+          </AdminRoute>
         }
       />
     </Routes>
