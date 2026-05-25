@@ -5,12 +5,21 @@ const StartPageAfterLoginStyled = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 1.5rem;
+    overflow-x: hidden;
 `;
 
 const Title = styled.h1`
     color: ${({ theme }) => theme.colors.lightWhite};
-    font-size: 8rem;
+    font-size: clamp(3.2rem, 14vw, 8rem);
+    line-height: 1;
+    text-align: center;
+    margin: 0;
+    max-width: 100%;
+    white-space: nowrap;
 `;
 
 const PurpleText = styled.span`
@@ -30,22 +39,35 @@ const SplitI = styled.span`
 const SubTitle = styled.h3`
     font-weight: lighter;
     color: ${({ theme }) => theme.colors.lightWhite};
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    text-align: center;
+    margin: 2vh 0 0;
 `;
 
 const SubTitlePurple = styled.h3`
     font-weight: lighter;
     color: ${({ theme }) => theme.colors.paleLavender};
-    margin: 0.5vh 0;
+    font-size: clamp(1rem, 3.6vw, 1.5rem);
+    line-height: 1.4;
+    text-align: center;
+    margin: 1vh 0 0;
+    max-width: 44rem;
 `;
 
 const FlexLinkDiv = styled.div`
     display: flex;
-    gap: 1.5vw;
-    margin-top: 2vh;
+    justify-content: center;
+    gap: 0.75vw;
+    margin-top: 3vh;
+    width: 100%;
+    flex-wrap: wrap;
 `;
 
 const LinkA = styled.a`
-    color: ${({ theme }) => theme.colors.paleLavender};
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
     text-decoration: underline;
 `;
 

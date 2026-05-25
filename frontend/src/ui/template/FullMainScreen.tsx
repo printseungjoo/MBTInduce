@@ -133,6 +133,14 @@ const NavigationDrawerPlus = styled(NavigationDrawer)<{ isOpen: boolean }>`
     height: 100vh;
 `;
 
+const DesktopOnlyHamburger = styled.div`
+    display: block;
+
+    @media screen and (max-width: 767px) {
+        display: none;
+    }
+`;
+
 const API_BASE_URL = 'http://localhost:4000';
 
 export default function FullMainScreen() {
@@ -404,14 +412,20 @@ export default function FullMainScreen() {
                 }} 
             />)}
             <NavigationDrawerPlus isOpen = { isOpen }>
-                <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
+                <DesktopOnlyHamburger>
+                    <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
+                </DesktopOnlyHamburger>
             </NavigationDrawerPlus>
             <MainContent isOpen = { isOpen } hasRightScreen = { hasRightScreen }>
                 <FlexColumnDiv>
                     <HeaderDiv>
                         <FlexDiv>
-                            {!isOpen && <Hamburger isClicked = { isClicked } isOpen = { isOpen } />}
-                            <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
+                            <DesktopOnlyHamburger>
+                                {!isOpen && (
+                                    <Hamburger isClicked = { isClicked } isOpen = { isOpen } /> 
+                                )}
+                                <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
+                            </DesktopOnlyHamburger>
                         </FlexDiv>
                     </HeaderDiv>
                     {location.pathname === '/Start' && <StartPageAfterLogin />};
