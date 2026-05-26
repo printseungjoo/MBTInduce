@@ -5,7 +5,8 @@ const StartPageAfterLoginStyled = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    flex: 1;
+    min-height: 0;
     width: 100%;
     box-sizing: border-box;
     padding: 0 1.5rem;

@@ -4,7 +4,7 @@ import { isValidMbtiType, mbtiTypeToPreferenceLetters, preferenceLettersToMbtiTy
 export async function getProfilePayloadByUserId(userId) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, email: true, nickname: true, onboardingCompleted: true },
+    select: { id: true, email: true, nickname: true, onboardingCompleted: true, role: true },
   });
   if (!user) return null;
 
@@ -19,6 +19,8 @@ export async function getProfilePayloadByUserId(userId) {
     nickname: user.nickname ?? null,
     onboardingCompleted: user.onboardingCompleted,
     mbti,
+    role: user.role,
+    isAdmin: user.role === "ADMIN"
   };
 }
 

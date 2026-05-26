@@ -49,7 +49,7 @@ function AdminRoute({ children }: { children: ReactNode }) {
           return;
         }
         const data = await response.json();
-        if (data.user?.isAdmin) {
+        if (data.data?.isAdmin) {
           setStatus('ok');
         } else {
           setStatus('fail');
