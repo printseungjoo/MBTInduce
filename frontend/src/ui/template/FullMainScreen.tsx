@@ -16,6 +16,7 @@ import HistoryScreen from '../organisms/HistoryScreen'
 import InitialMainChatModal from '../molecules/InitialMainChatModal'
 import StartPageAfterLogin from '../organisms/StartPageAfterLogin'
 import MypageScreen from '../organisms/MypageScreen'
+import CalendarRightScreen from '../organisms/CalendarRightScreen'
 
 interface MbtiRange {
     eValue: number;
@@ -158,6 +159,48 @@ const MobileRightHamburgerWrapper = styled.div`
     }
 `;
 
+const CalendarModalOverlay = styled.div`
+    display: none;
+
+    @media screen and (max-width: 767px) {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 20;
+    }
+`;
+
+const CalendarModalContent = styled.div`
+    position: relative;
+    width: min(28rem, 90vw);
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: ${({ theme }) => theme.colors.deepPlum};
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-sizing: border-box;
+    margin-top: 2rem;
+`;
+
+const CalendarModalCloseButton = styled.button`
+    position: absolute;
+    top: 0.8rem;
+    right: 0.9rem;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: transparent;
+    color: ${({ theme }) => theme.colors.lightWhite};
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+`;
+
 const API_BASE_URL = 'http://localhost:4000';
 
 export default function FullMainScreen() {
@@ -183,7 +226,7 @@ export default function FullMainScreen() {
     const [isMobileRightOpen, setIsMobileRightOpen] = useState<boolean>(false);
 
     const location = useLocation();
-    const hasRightScreen = location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Calendar' || location.pathname === '/Simulation';
+    const hasRightScreen = location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar';
     const isSimulationPage = location.pathname === '/Simulation';
     const selectedSimulationKey = useMemo(() => {
         if (!selectedName || !selectedMbti || !selectedScenario) {
@@ -471,6 +514,14 @@ export default function FullMainScreen() {
                 </FlexColumnDiv>
             </MainContent>
             {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} />}
+            {location.pathname === '/Calendar' && selectedRange.startDate && selectedRange.endDate && (
+                <CalendarModalOverlay onClick = {() => setSelectedRange({ startDate: null, endDate: null })}>
+                    <CalendarModalContent onClick = {(event) => event.stopPropagation()}>
+                        <CalendarModalCloseButton type = "button" onClick = {() => setSelectedRange({ startDate: null, endDate: null })}> x </CalendarModalCloseButton>
+                        <CalendarRightScreen selectedRange = { selectedRange } />
+                    </CalendarModalContent>
+                </CalendarModalOverlay>
+            )}
         </FullScreen>
     );
 }
