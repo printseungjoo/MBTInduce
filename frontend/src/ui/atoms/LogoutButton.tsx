@@ -13,6 +13,11 @@ const LogoutButtonStyled = styled.button`
     justify-content: center;
     align-items: center;
     margin-top: 0.7vh;
+
+    @media screen and (max-width: 767px) {
+        width: 20vw;
+        height: 3vh;
+    }
 `;
 
 export default function LogoutButton({ onClick }: LogoutButtonProps) {

@@ -22,17 +22,40 @@ type StatisticsType = {
 
 const AdminScreenStyled = styled.div`
     box-sizing: border-box;
-    margin: 13vh 2vw;    
+    margin: 13vh 2vw;
+    height: calc(100vh - 26vh);
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    @media screen and (max-width: 767px) {
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        padding: 1.5rem 1rem;
+        overflow-y: auto;
+    }
 `;
 
 const MainTitle = styled.h1`
     color: ${({ theme }) => theme.colors.lightWhite};
     font-weight: bolder;
+
+    @media screen and (max-width: 767px) {
+        font-size: 3rem;
+        line-height: 1.05;
+        word-break: break-word;
+    }
 `;
 
 const FlexDiv = styled.div`
     display: flex;
     gap: 1vw;
+
+    @media screen and (max-width: 767px) {
+        width: 100%;
+        align-items: center;
+        gap: 0.75rem;
+    }
 `;
 
 const Subtitle = styled.p`
@@ -44,6 +67,13 @@ const MainContentFlexDiv = styled.div`
     display: flex;
     margin-top: 4vh;
     gap: 2.5vw;
+
+    @media screen and (max-width: 767px) {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
 `;
 
 const LeftDivs = styled.div`
@@ -52,6 +82,12 @@ const LeftDivs = styled.div`
     width: 20%;
     height: 80vh;
     gap: 3vh;
+
+    @media screen and (max-width: 767px) {
+        width: 100%;
+        height: auto;
+        gap: 1rem;
+    }
 `;
 
 const MiddleDiv = styled.div`
@@ -59,6 +95,11 @@ const MiddleDiv = styled.div`
     flex-direction: column;
     width: 35%;
     height: 80vh;
+
+    @media screen and (max-width: 767px) {
+        width: 100%;
+        height: auto;
+    }
 `;
 
 const RightDiv = styled.div`
@@ -67,6 +108,12 @@ const RightDiv = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2vh;
+
+    @media screen and (max-width: 767px) {
+        width: 100%;
+        height: auto;
+        gap: 1rem;
+    }
 `;
 
 export default function AdminScreen() {
