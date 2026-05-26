@@ -17,6 +17,8 @@ type StatisticsType = {
     comment: string;
     createdAt: Date;
     ratingCounts: RatingCounts;
+    averageRating: number;
+    totalRatings: number;
 }
 
 const AdminMiddleDivStyled = styled.div`
@@ -108,7 +110,7 @@ export default function AdminMiddleDiv() {
 
     async function getRatingStatistics() {
         try {
-            const response = await fetch('http://localhost:4000/api/admin/feedback', {
+            const response = await fetch('http://localhost:4000/api/admin/statistics', {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -116,7 +118,7 @@ export default function AdminMiddleDiv() {
                 throw new Error('Failed to get middle statistics');
             }
             const data = await response.json();
-            setRatingStatistics(data.data);
+            setRatingStatistics(data.data.ratingStatistics);
         } catch (error) {
             console.error(error);
         }
@@ -141,12 +143,12 @@ export default function AdminMiddleDiv() {
 
     return (
         <AdminMiddleDivStyled>
-            <MainTitle> { ratingStatistics?.rating } </MainTitle>
+            <MainTitle> { ratingStatistics?.averageRating } </MainTitle>
             <StarWrap>
                 <GrayStars> ★★★★★ </GrayStars>
                 <YellowStars rating = { ratingStatistics?.rating ? ratingStatistics?.rating : 0 }> ☆☆☆☆☆ </YellowStars>
             </StarWrap>
-            <PurpleP> 1032 Rates </PurpleP>
+            <PurpleP> { ratingStatistics?.totalRatings } </PurpleP>
             {[1, 2, 3, 4, 5].map((score) => {
                 const count = ratingStatistics?.ratingCounts[score as keyof RatingCounts]
                 return (

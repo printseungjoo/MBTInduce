@@ -17,6 +17,7 @@ type StatisticsType = {
     totalChatSessions: number;
     totalHistoryRecords: number;
     totalCalendarEvents: number;
+    averageRating: number;
 }
 
 const AdminScreenStyled = styled.div`
@@ -120,7 +121,7 @@ export default function AdminScreen() {
             <MainContentFlexDiv>
                 <LeftDivs>
                     <AdminLeftDiv title = 'Total Users' number = { statistics?.totalUsers } />
-                    <AdminAverageRatingDiv title = 'Average Ratings' number = { statistics?.totalRatings } />
+                    <AdminAverageRatingDiv title = 'Average Ratings' number = { statistics?.averageRating } />
                     <AdminLeftDiv title = 'Total Messages' number = { statistics?.totalQuestions ? statistics?.totalQuestions*2 : statistics?.totalQuestions } />
                 </LeftDivs>
                 <MiddleDiv>
