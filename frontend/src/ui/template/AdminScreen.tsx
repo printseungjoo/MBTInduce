@@ -24,8 +24,6 @@ const AdminScreenStyled = styled.div`
     box-sizing: border-box;
     margin: 13vh 2vw;
     height: calc(100vh - 26vh);
-    overflow-y: auto;
-    overflow-x: hidden;
 
     @media screen and (max-width: 767px) {
         width: 100%;

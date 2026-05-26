@@ -1,8 +1,16 @@
 import styled from '@emotion/styled'
+import { useState, useEffect } from 'react'
 
 import Title from '../atoms/Title'
 import WebsiteIntro from '../atoms/WebsiteIntro'
 import TargetProfile from '../atoms/TargetProfile'
+
+type profileInfo = {
+    id: string,
+    email: string,
+    nickname: string | null,
+    mbti: string | null
+}
 
 interface SimulationRightScreenProps {
     selectedScenario: string;
@@ -24,8 +32,29 @@ const FlexColumnDiv = styled.div`
     gap: 2vh;
 `;
 
-// User data is dummy data. I will change and update it soon.
 export default function SimulationRightScreen({ selectedScenario, selectedName, selectedMbti }: SimulationRightScreenProps) {
+    const [profileInformation, setProfileInformation] = useState<profileInfo | null>(null);
+
+    async function getProfile() {
+        try {
+            const response = await fetch(`http://localhost:4000/api/profile`, {
+                method: 'GET',
+                credentials: 'include',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to get profile');
+            }
+            const data = await response.json();
+            setProfileInformation(data.data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
+        getProfile();
+    }, [])
+
     return(
         <SimulationRightScreenStyled>
             <FlexColumnDiv>
@@ -34,7 +63,7 @@ export default function SimulationRightScreen({ selectedScenario, selectedName, 
             </FlexColumnDiv>
             <FlexColumnDiv>
                 <Title title = 'Conversation' />
-                <TargetProfile meOrNot = '(me)' name = 'Seungjoo' mbti = 'ESFP' />
+                <TargetProfile meOrNot = '(me)' name = { profileInformation?.nickname ?? undefined } mbti = { profileInformation?.mbti ?? undefined } />
                 <TargetProfile meOrNot = '' name = { selectedName } mbti = { selectedMbti } />
             </FlexColumnDiv>
         </SimulationRightScreenStyled>
