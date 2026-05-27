@@ -23,7 +23,9 @@ const RangeBarDiv = styled.div`
 const Center = styled.div`
     display: flex;
     justify-content: center;
-    width: 1.5vw;
+    align-items: center;
+    width: 2rem;
+    flex: 0 0 1.5rem;
 `;
 
 const RangeBarStick = styled.input`
@@ -48,24 +50,22 @@ const RangeBarStick = styled.input`
 
     &::-webkit-slider-thumb {
         appearance: none;
-        width: 1vw;
-        height: 2vh;
+        width: 1rem;
+        height: 1rem;
         border-radius: 50%;
         background-color: ${({ theme }) => theme.colors.lightWhite};
         border: none;
         box-sizing: border-box;
-        margin-top: -0.75vh;
+        margin-top: calc((0.5vh - 1rem) / 2);
     }
 
     &::-moz-range-thumb {
-        appearance: none;
-        width: 1vw;
-        height: 2vh;
+        width: 1rem;
+        height: 1rem;
         border-radius: 50%;
         background-color: ${({ theme }) => theme.colors.lightWhite};
         border: none;
         box-sizing: border-box;
-        margin-top: -0.75vh;
     }
 `;
 

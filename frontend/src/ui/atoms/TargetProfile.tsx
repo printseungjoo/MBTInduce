@@ -2,8 +2,8 @@ import styled from '@emotion/styled'
 
 interface TargetProfileProps {
     meOrNot: string;
-    name: string; 
-    mbti: string;
+    name: string | undefined; 
+    mbti: string | undefined;
 }
 
 const TargetProfileStyled = styled.div`

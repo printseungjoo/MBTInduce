@@ -68,6 +68,16 @@ const Option = styled.div`
     margin-top: 1vh;
     padding-left: 2vw;
     margin-bottom: 1vh;
+
+    @media (max-width: 768px) {
+        display: flex;
+        align-items: center;
+        padding-left: 0;
+        margin-top: 0;
+        margin-bottom: 0.6rem;
+        border-top: 3px solid ${({ theme }) => theme.colors.royalPurple};
+        border-bottom: 1px solid ${({ theme }) => theme.colors.royalPurple};
+    }
 `;
 
 export default function HistoryScreen() {

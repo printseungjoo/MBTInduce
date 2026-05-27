@@ -34,9 +34,6 @@ export function parseFeedbackListQuery(query) {
 export function validateQuestionTemplateCreateBody(body) {
   const raw = body || {};
 
-  const title = typeof raw.title === "string" ? raw.title.trim() : "";
-  if (!title) return bad("title is required");
-
   const content = typeof raw.content === "string" ? raw.content.trim() : "";
   if (!content) return bad("content is required");
 
@@ -53,19 +50,12 @@ export function validateQuestionTemplateCreateBody(body) {
     isActive = raw.isActive;
   }
 
-  return { ok: true, value: { title, content, category: category ?? null, isActive } };
+  return { ok: true, value: { content, category: category ?? null, isActive } };
 }
 
 export function validateQuestionTemplatePatchBody(body) {
   const raw = body || {};
   const value = {};
-
-  if (raw.title !== undefined) {
-    if (typeof raw.title !== "string") return bad("title must be a string");
-    const title = raw.title.trim();
-    if (!title) return bad("title cannot be empty");
-    value.title = title;
-  }
 
   if (raw.content !== undefined) {
     if (typeof raw.content !== "string") return bad("content must be a string");
