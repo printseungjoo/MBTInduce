@@ -17,13 +17,23 @@ const AiChatStyled = styled.div`
     font-size: 1.2rem;
     line-height: 1.35;
     word-break: break-word;
+
+    @media screen and (max-width: 767px) {
+        max-width: 82vw;
+        padding: 0.55rem 0.7rem;
+        font-size: 0.9rem;
+        line-height: 1.35;
+    }
 `;
 
 const StarsRow = styled.div`
     display: flex;
-    justify-content: flex-end;
     gap: 0.3vw;
     margin-top: 1vh;
+
+    @media screen and (max-width: 767px) {
+        margin-top: 0.2rem;
+    }
 `;
 
 const StarButton = styled.button<{ active: boolean }>`
@@ -35,6 +45,11 @@ const StarButton = styled.button<{ active: boolean }>`
     color: ${({ theme, active }) => (active ? theme.colors.softYellow : theme.colors.lightWhite)};
     transition: color 0.2s ease;
     outline: none;
+
+    @media screen and (max-width: 767px) {
+        font-size: 0.9rem;
+        padding: 0.1rem;
+    }
 `;
 
 export default function AiChat({ messageId, content, selectedRating, onRate }: AiChatProps) {

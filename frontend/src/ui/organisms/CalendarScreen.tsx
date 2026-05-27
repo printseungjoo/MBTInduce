@@ -54,12 +54,29 @@ const CalendarStyled = styled.div`
     }
 `;
 
+const InstructionBox = styled.div`
+    display: none;
+
+    @media screen and (max-width: 767px) {
+        display: block;
+        background-color: ${({ theme }) => theme.colors.lightWhite};
+        color: ${({ theme }) => theme.colors.deepPlum};
+        padding: 1vh 2vw;
+        width: 86%;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-align: center;
+    }
+`;
+
 const CenterDiv = styled.div`
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    gap: 2vh;
 `;
 
 export default function CalendarScreen({ selectedRange, setSelectedRange }: CalendarScreenProps) {
@@ -137,6 +154,9 @@ export default function CalendarScreen({ selectedRange, setSelectedRange }: Cale
 
     return (
         <CenterDiv>
+            <InstructionBox>
+                Click twice to set the schedule
+            </InstructionBox>
             <CalendarStyled>
                 <Calendar localizer = { localizer } selectable onSelectSlot = { handleSelectSlot } dayPropGetter = { dayPropGetter } defaultView = "month" views = {['month']} events = { events } />
             </CalendarStyled>

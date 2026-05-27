@@ -12,6 +12,12 @@ const AdminAverageRatingDivStyled = styled.div`
     height: 20%;
     box-sizing: border-box;
     padding: 2vh 1.5vw;
+
+    @media screen and (max-width: 767px) {
+        height: auto;
+        min-height: 8rem;
+        padding: 1.25rem;
+    }
 `;
 
 const TitleH = styled.h4`

@@ -25,6 +25,23 @@ const HistoryDivStyled = styled.div`
     flex-direction: column;
     gap: 1vh;
     margin: 1.5vh 0;
+
+    @media (max-width: 768px) {
+        width: calc(100% - 1.5rem);
+        padding: 1rem 0.75rem;
+        margin: 1rem 0;
+
+        .history-top {
+            display: contents;
+        }
+
+        .history-actions {
+            width: 100%;
+            display: flex;
+            gap: 0.5rem;
+            order: 10;
+        }
+    }
 `;
 
 const FlexDiv = styled.div`
@@ -57,7 +74,7 @@ const DateStyled = styled.p`
 export default function HistoryDiv({ title, description, date, etc, onClick, onEditClick}: HistoryDivProps) {
     return(
         <HistoryDivStyled>
-            <FlexDiv>
+            <FlexDiv className = "history-top">
                 <NextDiv>
                     <Title>
                         { title }
@@ -66,7 +83,7 @@ export default function HistoryDiv({ title, description, date, etc, onClick, onE
                         { etc }
                     </Etc>
                 </NextDiv>
-                <NextDiv>
+                <NextDiv className = "history-actions">
                     <EditButton onClick = { onEditClick } />
                     <DeleteButton onClick = { onClick } />
                 </NextDiv>

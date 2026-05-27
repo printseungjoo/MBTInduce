@@ -15,6 +15,13 @@ const UserChatStyled = styled.div`
     line-height: 1.35;
     word-break: break-word;
     box-sizing: border-box;
+
+    @media screen and (max-width: 767px) {
+        max-width: 82vw;
+        padding: 0.55rem 0.7rem;
+        font-size: 0.9rem;
+        line-height: 1.35;
+    }
 `;
 
 export default function UserChat({ content }: UserChatProps) {

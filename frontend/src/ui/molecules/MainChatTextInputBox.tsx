@@ -22,6 +22,10 @@ const TextInputDiv = styled.div`
     flex-direction: column;
     width: 100%;
     margin-bottom: 3vh;
+
+    @media screen and (max-width: 767px) {
+        margin-bottom: 0;
+    }
 `;
 
 const ExamplesDiv = styled.div`
@@ -69,7 +73,7 @@ export default function MainChatTextInputBox({ onSubmit, disabled = false }: Tex
     const [templates, setTemplates] = useState<TemplateType[]>([]);
 
     async function getTemplates() {
-        const response = await fetch('http://localhost:4000/api/admin/main-chat-question-templates', {
+        const response = await fetch('http://localhost:4000/api/templates', {
             method: 'GET',
             credentials: 'include'
         });
@@ -77,7 +81,7 @@ export default function MainChatTextInputBox({ onSubmit, disabled = false }: Tex
             throw new Error('Failed to get main chat question templates');
         }
         const data = await response.json();
-        setTemplates(data.data);
+        setTemplates(data.templates);
     }
 
     const textExampleClicked = (textExample: string) => {

@@ -49,7 +49,7 @@ function AdminRoute({ children }: { children: ReactNode }) {
           return;
         }
         const data = await response.json();
-        if (data.user?.isAdmin) {
+        if (data.data?.isAdmin) {
           setStatus('ok');
         } else {
           setStatus('fail');
@@ -73,66 +73,66 @@ function AdminRoute({ children }: { children: ReactNode }) {
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<StartPageBeforeLogin />} />
+      <Route path = "/" element = {<StartPageBeforeLogin />} />
       <Route
-        path="/SignUp"
-        element={
+        path = "/SignUp"
+        element = {
           <ProtectedRoute>
             <SignUpScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/Start"
-        element={
+        path = "/Start"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/MainChat"
-        element={
+        path = "/MainChat"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/Simulation"
-        element={
+        path = "/Simulation"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/Calendar"
-        element={
+        path = "/Calendar"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/History"
-        element={
+        path = "/History"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/Mypage"
-        element={
+        path = "/Mypage"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/Admin"
-        element={
+        path = "/Admin"
+        element = {
           <AdminRoute>
             <AdminScreen />
           </AdminRoute>
