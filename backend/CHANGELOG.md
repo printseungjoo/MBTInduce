@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Feature: Main chat MBTI tiered instructions (mild/strong/extreme; MUST/NEVER at 85%+) and mandatory MBTI personality system block in `postMessageCore`.
 - Feature: Split admin question templates by `PromptTemplate.kind` — `/api/admin/main-chat-question-templates` and `/api/admin/simulation-question-templates`; migration adds `QuestionTemplateKind` enum.
 - Feature: `GET /api/admin/statistics` adds `ratingStatistics` with `ratingCounts` (1–5) for admin rating distribution UI.
 - Feature: `ADMIN_EMAILS` env var — comma-separated emails receive `ADMIN` on signup/login; OAuth success redirects admins to `AUTH_ADMIN_SUCCESS_REDIRECT` (default `{AUTH_SUCCESS_REDIRECT}/admin`).
