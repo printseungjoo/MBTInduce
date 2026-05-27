@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import { useEffect, useState, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, NavLink } from 'react-router-dom'
 
 import NavigationDrawer from '../organisms/NavigationDrawer'
 import Hamburger from '../atoms/Hamburger'
@@ -79,7 +79,7 @@ const MainContent = styled.div<{ isOpen: boolean; hasRightScreen: boolean }>`
     @media screen and (max-width: 767px) {
         width: 100%;
         margin-left: 0;
-        padding: 1rem;
+        padding: 1rem 1rem 6.5rem;
     }
 `;
 
@@ -199,6 +199,39 @@ const CalendarModalCloseButton = styled.button`
     line-height: 1;
     display: flex;
     align-items: center;
+`;
+
+const MobileBottomNav = styled.nav`
+    display: none;
+
+    @media screen and (max-width: 767px) {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 4rem;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: ${({ theme }) => theme.colors.deepPlum};
+        border-top: 1px solid ${({ theme }) => theme.colors.paleLavender};
+        z-index: 30;
+    }
+`;
+
+const MobileBottomNavItem = styled(NavLink)`
+    width: 16.666%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.55rem;
+    color: ${({ theme }) => theme.colors.lightWhite};
+
+    &.active {
+        background-color: ${({ theme }) => theme.colors.midnightPurple};
+    }
 `;
 
 const API_BASE_URL = 'http://localhost:4000';
@@ -522,6 +555,14 @@ export default function FullMainScreen() {
                     </CalendarModalContent>
                 </CalendarModalOverlay>
             )}
+            <MobileBottomNav>
+                <MobileBottomNavItem to = "/Start"> 👋🏻 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/MainChat"> 💬 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Simulation"> 👥 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Calendar"> 📅 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/History"> 📄 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Mypage"> 👤 </MobileBottomNavItem>
+            </MobileBottomNav>
         </FullScreen>
     );
 }
