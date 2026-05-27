@@ -5,6 +5,7 @@ const HamburgerButton = styled.button<{ isOpen?: boolean }>`
     display: block;
     width: 2rem;
     height: 1.4rem;
+    flex-shrink: 0;
     padding: 0;
     border: 0;
     border-radius: 0;

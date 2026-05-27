@@ -104,6 +104,7 @@ const FlexDiv = styled.div`
     display: flex;
     align-items: center;
     gap: 2vw;
+    padding-left: 1rem;
 `;
 
 const ChatMessagesDiv = styled.div`
