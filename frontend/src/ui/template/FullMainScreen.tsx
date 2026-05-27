@@ -252,7 +252,7 @@ export default function FullMainScreen() {
     const [simulationChatMessages, setSimulationChatMessages] = useState<Record<string, ChatMessage[]>>({});
     const [selectedRange, setSelectedRange] = useState<SelectedRange>({
         startDate: null,
-        endDate: null,
+        endDate: null
     });
     const [selectedChatSession, setSelectedChatSession] = useState<ChatSession | null>(null);
     const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
@@ -268,7 +268,9 @@ export default function FullMainScreen() {
         return `${selectedName}-${selectedMbti}-${selectedScenario}`;
     }, [selectedName, selectedMbti, selectedScenario]);
     const isReadySimulation = isSimulationPage && showSimulation && selectedSimulationKey !== '';
+    const isMainChatModalOpen = location.pathname === '/MainChat' && !showSimulation;
     const isSimulationModalOpen = isSimulationPage && !showSimulation;
+    const isBlockingModalOpen = isMainChatModalOpen || isSimulationModalOpen;
     const currentChatMessages = isSimulationPage
         ? isReadySimulation
             ? simulationChatMessages[selectedSimulationKey] ?? []
@@ -528,8 +530,8 @@ export default function FullMainScreen() {
                         )}
                     </HeaderDiv>
                     {location.pathname === '/Start' && <StartPageAfterLogin />};
-                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && <ChatMessagesDiv>
-                        {!isSimulationModalOpen && currentChatMessages.map((chatMessage) => (
+                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isBlockingModalOpen && <ChatMessagesDiv>
+                        {!currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
                                     <UserChat content = { chatMessage.content } />
@@ -539,14 +541,14 @@ export default function FullMainScreen() {
                             </ChatRow>
                         ))}
                     </ChatMessagesDiv>}
-                    {(location.pathname === '/' || location.pathname === '/MainChat') && !isSimulationModalOpen && (<MainChatTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
-                    {(location.pathname === '/Simulation') && !isSimulationModalOpen && (<SimulationTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    {(location.pathname === '/' || location.pathname === '/MainChat') && !isBlockingModalOpen && (<MainChatTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    {(location.pathname === '/Simulation') && !isBlockingModalOpen && (<SimulationTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                     {location.pathname === '/Calendar' && <CalendarScreen selectedRange = { selectedRange } setSelectedRange = { setSelectedRange } />}
                     {location.pathname === '/History' && <HistoryScreen />}
                     {location.pathname === '/Mypage' && <MypageScreen />}
                 </FlexColumnDiv>
             </MainContent>
-            {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} />}
+            {!isBlockingModalOpen && (location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} />}
             {location.pathname === '/Calendar' && selectedRange.startDate && selectedRange.endDate && (
                 <CalendarModalOverlay onClick = {() => setSelectedRange({ startDate: null, endDate: null })}>
                     <CalendarModalContent onClick = {(event) => event.stopPropagation()}>
@@ -555,14 +557,16 @@ export default function FullMainScreen() {
                     </CalendarModalContent>
                 </CalendarModalOverlay>
             )}
-            <MobileBottomNav>
-                <MobileBottomNavItem to = "/Start"> 👋🏻 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/MainChat"> 💬 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/Simulation"> 👥 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/Calendar"> 📅 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/History"> 📄 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/Mypage"> 👤 </MobileBottomNavItem>
-            </MobileBottomNav>
+            {!isBlockingModalOpen && (
+                <MobileBottomNav>
+                    <MobileBottomNavItem to = "/Start"> 👋🏻 </MobileBottomNavItem>
+                    <MobileBottomNavItem to = "/MainChat"> 💬 </MobileBottomNavItem>
+                    <MobileBottomNavItem to = "/Simulation"> 👥 </MobileBottomNavItem>
+                    <MobileBottomNavItem to = "/Calendar"> 📅 </MobileBottomNavItem>
+                    <MobileBottomNavItem to = "/History"> 📄 </MobileBottomNavItem>
+                    <MobileBottomNavItem to = "/Mypage"> 👤 </MobileBottomNavItem>
+                </MobileBottomNav>
+            )}
         </FullScreen>
     );
 }

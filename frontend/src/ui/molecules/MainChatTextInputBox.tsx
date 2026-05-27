@@ -22,6 +22,10 @@ const TextInputDiv = styled.div`
     flex-direction: column;
     width: 100%;
     margin-bottom: 3vh;
+
+    @media screen and (max-width: 767px) {
+        margin-bottom: 0;
+    }
 `;
 
 const ExamplesDiv = styled.div`
