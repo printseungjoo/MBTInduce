@@ -499,6 +499,20 @@ export default function FullMainScreen() {
         setMainChatMessages(messages);
     }
 
+    function handleMobileNavClick(path: string) {
+        if (path === '/MainChat') {
+            setShowSimulation(false);
+            setSelectedMainChatSessionId(null);
+        }
+        if (path === '/Simulation') {
+            setShowSimulation(false);
+            setShowOldSimulationModal(false);
+            setSelectedScenario('');
+            setSelectedName('');
+            setSelectedMbti('');
+        }
+    }
+
     return (
         <FullScreen>
             {location.pathname === '/Simulation' && !showSimulation && (<InitialSimulationModal onConfirm = { handleConfirm } onSelectHistory = { handleSelectHistory } />)}
@@ -557,16 +571,14 @@ export default function FullMainScreen() {
                     </CalendarModalContent>
                 </CalendarModalOverlay>
             )}
-            {!isBlockingModalOpen && (
-                <MobileBottomNav>
-                    <MobileBottomNavItem to = "/Start"> 👋🏻 </MobileBottomNavItem>
-                    <MobileBottomNavItem to = "/MainChat"> 💬 </MobileBottomNavItem>
-                    <MobileBottomNavItem to = "/Simulation"> 👥 </MobileBottomNavItem>
-                    <MobileBottomNavItem to = "/Calendar"> 📅 </MobileBottomNavItem>
-                    <MobileBottomNavItem to = "/History"> 📄 </MobileBottomNavItem>
-                    <MobileBottomNavItem to = "/Mypage"> 👤 </MobileBottomNavItem>
-                </MobileBottomNav>
-            )}
+            <MobileBottomNav>
+                <MobileBottomNavItem to = "/Start"> 👋🏻 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/MainChat" onClick = {() => handleMobileNavClick('/MainChat')}> 💬 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Simulation" onClick = {() => handleMobileNavClick('/Simulation')}> 👥 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Calendar"> 📅 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/History"> 📄 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Mypage"> 👤 </MobileBottomNavItem>
+            </MobileBottomNav>
         </FullScreen>
     );
 }
