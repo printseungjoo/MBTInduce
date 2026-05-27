@@ -35,6 +35,144 @@ export function lettersFromWeights(w) {
   };
 }
 
+/** Fixed system lines for main chat — apply after language rules, before MBTI profile. */
+export const MBTI_SYSTEM_PERSONALITY_RULES = [
+  "MBTI personality rules (mandatory — apply after language rules):",
+  "- Your voice for this reply is defined ONLY by the MBTI profile below.",
+  "- Do not sound like a neutral generic assistant.",
+  "- The reader should feel the personality without you naming MBTI types, letters, or percentages.",
+  "- Follow every MUST and NEVER in the MBTI profile.",
+  "- When multiple axes conflict, prioritize Decision (F/T), then Energy (E/I), then Information (S/N), then Structure (P/J).",
+];
+
+/**
+ * @param {number} leftPct Slider value toward the left pole (E, S, F, or P).
+ * @returns {{ tier: "balanced" | "mild" | "strong" | "extreme", strength: number, leftDominant: boolean }}
+ */
+export function axisIntensity(leftPct) {
+  const pct = clampPct(leftPct, 50);
+  if (pct === 50) {
+    return { tier: "balanced", strength: 50, leftDominant: true };
+  }
+
+  const leftDominant = pct > 50;
+  const strength = leftDominant ? pct : 100 - pct;
+  let tier = "mild";
+  if (strength >= 85) tier = "extreme";
+  else if (strength >= 65) tier = "strong";
+
+  return { tier, strength, leftDominant };
+}
+
+const AXIS_TEMPLATES = {
+  energy: {
+    left: "E",
+    right: "I",
+    leftLabel: "energetic/outward",
+    rightLabel: "reflective/quiet",
+    lines: {
+      E: {
+        mild: "Lean energetic and conversational; a little reflective tone is fine.",
+        strong: "Be outward, warm, and engaging. Use inviting follow-ups. Avoid sounding flat or distant.",
+        extreme:
+          "MUST sound energetic and socially warm. MUST invite interaction. Do NOT be dry, cold, or overly reserved.",
+      },
+      I: {
+        mild: "Lean thoughtful and measured; some warmth is fine.",
+        strong: "Be calm, introspective, and depth-focused. Prefer substance over hype.",
+        extreme:
+          "MUST sound reserved and reflective. MUST prioritize depth and careful wording. Do NOT use cheerleader energy or many exclamation marks.",
+      },
+    },
+  },
+  information: {
+    left: "S",
+    right: "N",
+    leftLabel: "concrete/practical",
+    rightLabel: "abstract/possibilities",
+    lines: {
+      S: {
+        mild: "Lean practical and concrete; occasional big-picture framing is fine.",
+        strong: "Ground answers in specifics, examples, and actionable detail.",
+        extreme:
+          "MUST anchor in concrete facts, examples, and what works in practice. Do NOT drift into abstract theory without practical ties.",
+      },
+      N: {
+        mild: "Lean toward patterns and possibilities; some concrete detail is fine.",
+        strong: "Highlight connections, meaning, and future options beyond immediate facts.",
+        extreme:
+          "MUST emphasize possibilities, patterns, and the bigger picture. Do NOT stay only in step-by-step minutiae without meaning.",
+      },
+    },
+  },
+  decision: {
+    left: "F",
+    right: "T",
+    leftLabel: "empathy-first",
+    rightLabel: "analysis-first",
+    lines: {
+      F: {
+        mild: "Lean empathy-first; include some logical clarity.",
+        strong: "Lead with emotional validation. Acknowledge feelings before advice or solutions.",
+        extreme:
+          "MUST lead with empathy and emotional validation. MUST mirror the user's feelings. Do NOT open with cold analysis, bullet pros/cons, or dismiss emotions.",
+      },
+      T: {
+        mild: "Lean logical and structured; brief emotional context is fine.",
+        strong: "Lead with clear reasoning, causes, tradeoffs, and options.",
+        extreme:
+          "MUST prioritize logic, structure, and objective analysis. MUST use causes, tradeoffs, and options. Do NOT use lengthy sympathy paragraphs or vague reassurance without reasoning.",
+      },
+    },
+  },
+  lifestyle: {
+    left: "P",
+    right: "J",
+    leftLabel: "flexible/open-ended",
+    rightLabel: "organized/stepwise",
+    lines: {
+      P: {
+        mild: "Lean flexible and exploratory; some structure is fine.",
+        strong: "Keep options open and adaptable; avoid forcing one rigid path.",
+        extreme:
+          "MUST stay open-ended and exploratory. Do NOT force a single rigid plan or pretend there is only one right answer.",
+      },
+      J: {
+        mild: "Lean organized with clear steps; leave some room to adapt.",
+        strong: "Provide ordered steps, priorities, and a sense of closure.",
+        extreme:
+          "MUST give structured steps, priorities, and a clear conclusion. Do NOT leave everything vague or unresolved.",
+      },
+    },
+  },
+};
+
+/**
+ * @param {"energy" | "information" | "decision" | "lifestyle"} axisKey
+ * @param {number} leftPct
+ */
+function formatAxisInstruction(axisKey, leftPct) {
+  const axis = AXIS_TEMPLATES[axisKey];
+  const { tier, strength, leftDominant } = axisIntensity(leftPct);
+
+  if (tier === "balanced") {
+    return `${axisKey === "energy" ? "Energy" : axisKey === "information" ? "Information" : axisKey === "decision" ? "Decision style" : "Structure"}: balance ${axis.left} and ${axis.right} evenly.`;
+  }
+
+  const pole = leftDominant ? axis.left : axis.right;
+  const line = axis.lines[pole][tier];
+  const label =
+    axisKey === "energy"
+      ? "Energy"
+      : axisKey === "information"
+        ? "Information"
+        : axisKey === "decision"
+          ? "Decision style"
+          : "Structure";
+
+  return `${label} (${strength}% ${pole}): ${line}`;
+}
+
 /**
  * Build a short instruction string for the AI layer from discrete letters + slider weights.
  */
@@ -48,56 +186,12 @@ export function mbtiToWeightedInstruction(mbtiRow) {
     lifestyle: mbtiRow.lifestyleWeight,
   });
 
-  const ePct = w.energy;
-  const iPct = 100 - ePct;
-  const sPct = w.information;
-  const nPct = 100 - sPct;
-  const fPct = w.decision;
-  const tPct = 100 - fPct;
-  const pPct = w.lifestyle;
-  const jPct = 100 - pPct;
-
-  const parts = [];
-
-  if (ePct > iPct) {
-    parts.push(
-      `Energy: lean energetic/outward (${ePct}% E) with ${iPct}% reflective/quiet tone.`
-    );
-  } else if (iPct > ePct) {
-    parts.push(
-      `Energy: lean reflective/quiet (${iPct}% I) with ${ePct}% outward energy.`
-    );
-  } else {
-    parts.push("Energy: balance E and I evenly.");
-  }
-
-  if (sPct > nPct) {
-    parts.push(
-      `Information: concrete and practical (${sPct}% S) with ${nPct}% abstract/possibility framing.`
-    );
-  } else if (nPct > sPct) {
-    parts.push(
-      `Information: abstract possibilities (${nPct}% N) with ${sPct}% concrete detail.`
-    );
-  } else {
-    parts.push("Information: balance S and N evenly.");
-  }
-
-  if (fPct > tPct) {
-    parts.push(`Decision style: empathy-first (${fPct}% F) with ${tPct}% logical clarity.`);
-  } else if (tPct > fPct) {
-    parts.push(`Decision style: analysis-first (${tPct}% T) with ${fPct}% emotional context.`);
-  } else {
-    parts.push("Decision style: balance F and T evenly.");
-  }
-
-  if (pPct > jPct) {
-    parts.push(`Structure: flexible and open-ended (${pPct}% P) with ${jPct}% clear steps.`);
-  } else if (jPct > pPct) {
-    parts.push(`Structure: organized steps (${jPct}% J) with ${pPct}% room to adapt.`);
-  } else {
-    parts.push("Structure: balance P and J evenly.");
-  }
+  const parts = [
+    formatAxisInstruction("energy", w.energy),
+    formatAxisInstruction("information", w.information),
+    formatAxisInstruction("decision", w.decision),
+    formatAxisInstruction("lifestyle", w.lifestyle),
+  ];
 
   const letters = [
     mbtiRow.energy,
@@ -106,5 +200,13 @@ export function mbtiToWeightedInstruction(mbtiRow) {
     mbtiRow.lifestyle,
   ].join("");
 
-  return `[MBTI target ~${letters}] ${parts.join(" ")}`;
+  const hasExtreme = [w.energy, w.information, w.decision, w.lifestyle].some(
+    (pct) => axisIntensity(pct).tier === "extreme"
+  );
+
+  const header = hasExtreme
+    ? `[MBTI profile ~${letters} — strong personality mode]`
+    : `[MBTI profile ~${letters}]`;
+
+  return `${header} ${parts.join(" ")}`;
 }
