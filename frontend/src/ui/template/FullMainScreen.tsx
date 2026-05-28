@@ -361,6 +361,14 @@ export default function FullMainScreen() {
     async function sendChatMessages(inputValue: string) {
         const trimmedValue = inputValue.trim();
         if (!trimmedValue || isLoading) return;
+        if (isSimulationPage && !selectedSimulationKey) {
+            console.error('No selected simulation key');
+            return;
+        }
+        if (!isSimulationPage && !selectedMainChatSessionId) {
+            console.error('No selected main chat session');
+            return;
+        }
         const newUserChatMessage: ChatMessage = {
             id: crypto.randomUUID(),
             role: 'user',
@@ -376,8 +384,39 @@ export default function FullMainScreen() {
         };
         addCurrentChatMessage(newUserChatMessage);
         setIsLoading(true);
-
+    
         try {
+            if (isSimulationPage) {
+                const response = await fetch(`${API_BASE_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        content: trimmedValue,
+                        role: 'user',
+                        mbtiRange: {
+                            eValue,
+                            sValue,
+                            fValue,
+                            pValue
+                        },
+                        pageType: 'simulation',
+                        simulationKey: selectedSimulationKey,
+                    }),
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to post simulation chatMessage');
+                }
+                const data: ChatMessage[] = await response.json();
+                setSimulationChatMessages((prev) => ({
+                    ...prev,
+                    [selectedSimulationKey]: data,
+                }));
+                return;
+            }
+
             const response = await fetch(`${API_BASE_URL}/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`, {
                 method: 'POST',
                 headers: {
@@ -391,23 +430,16 @@ export default function FullMainScreen() {
                         eValue,
                         sValue,
                         fValue,
-                        pValue,
+                        pValue
                     },
-                    pageType: isSimulationPage ? 'simulation' : 'main',
-                    simulationKey: isSimulationPage ? selectedSimulationKey : '',
+                    pageType: 'main',
+                    simulationKey: '',
                 }),
             });
             if (!response.ok) {
                 throw new Error('Failed to post chatMessage');
             }
             const data = await response.json();
-            if (isSimulationPage) {
-                setSimulationChatMessages((prev) => ({
-                    ...prev,
-                    [selectedSimulationKey]: data,
-                }));
-                return;
-            }
             const assistantMessage: ChatMessage = {
                 id: data.assistantMessage.id,
                 role: 'ai',
@@ -432,7 +464,7 @@ export default function FullMainScreen() {
                     eValue,
                     sValue,
                     fValue,
-                    pValue,
+                    pValue
                 },
                 createdAt: new Date().toISOString(),
                 rate: 0,
