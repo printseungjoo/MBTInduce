@@ -1,7 +1,9 @@
 import styled from '@emotion/styled'
+import { useState } from 'react'
 
 import EditButton from './EditButton'
 import DeleteButton from './DeleteButton'
+import EditSimulationQuestionTemplate from './EditSimulationQuestionTemplate'
 
 interface SimulationTemplateButtonProps {
     id: string;
@@ -29,26 +31,7 @@ const FlexDiv = styled.div`
 `;
 
 export default function SimulationTemplateButton({ id, content }: SimulationTemplateButtonProps) {
-    async function patchTemplates() {
-        try {
-            const response = await fetch(`http://localhost:4000/api/admin/simulation-question-templates/${id}`, {
-                method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    content: content
-                })
-            });
-            if (!response.ok) {
-                throw new Error('Failed to patch simulation template');
-            }
-            window.location.reload();
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
 
     async function deleteTemplates() {
         try {
@@ -73,12 +56,15 @@ export default function SimulationTemplateButton({ id, content }: SimulationTemp
     }
 
     return(
-        <SimulationTemplateButtonStyled>
-            <ContentP> { content } </ContentP>
-            <FlexDiv>
-                <EditButton onClick = {() => patchTemplates()} />
-                <DeleteButton onClick = {() => deleteTemplates()}/>
-            </FlexDiv>
-        </SimulationTemplateButtonStyled>
+        <>
+            <SimulationTemplateButtonStyled>
+                <ContentP> { content } </ContentP>
+                <FlexDiv>
+                    <EditButton onClick = {() => setIsEditOpen(true)} />
+                    <DeleteButton onClick = {() => deleteTemplates()}/>
+                </FlexDiv>
+            </SimulationTemplateButtonStyled>
+            {isEditOpen && <EditSimulationQuestionTemplate id = { id }/>}
+        </>
     )
 }

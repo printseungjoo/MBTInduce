@@ -1,7 +1,9 @@
 import styled from '@emotion/styled'
+import { useState } from 'react'
 
 import EditButton from './EditButton'
 import DeleteButton from './DeleteButton'
+import EditMainChatQuestionTemplate from './EditMainChatQuestionTemplate'
 
 interface MainChatTemplateButtonProps {
     id: string;
@@ -29,27 +31,8 @@ const FlexDiv = styled.div`
 `;
 
 export default function MainChatTemplateButton({ id, content }: MainChatTemplateButtonProps) {
-    async function patchTemplates() {
-        try {
-            const response = await fetch(`http://localhost:4000/api/admin/main-chat-question-templates/${id}`, {
-                method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    content: content
-                })
-            });
-            if (!response.ok) {
-                throw new Error('Failed to patch main chat template');
-            }
-            window.location.reload();
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
+    const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+    
     async function deleteTemplates() {
         try {
             const response = await fetch(`http://localhost:4000/api/admin/main-chat-question-templates/${id}`, {
@@ -73,12 +56,15 @@ export default function MainChatTemplateButton({ id, content }: MainChatTemplate
     }
 
     return(
-        <MainChatTemplateButtonStyled>
-            <ContentP> { content } </ContentP>
-            <FlexDiv>
-                <EditButton onClick = {() => patchTemplates()} />
-                <DeleteButton onClick = {() => deleteTemplates()}/>
-            </FlexDiv>
-        </MainChatTemplateButtonStyled>
+        <>
+            <MainChatTemplateButtonStyled>
+                <ContentP> { content } </ContentP>
+                <FlexDiv>
+                    <EditButton onClick = {() => setIsEditOpen(true)} />
+                    <DeleteButton onClick = {() => deleteTemplates()}/>
+                </FlexDiv>
+            </MainChatTemplateButtonStyled>
+            {isEditOpen && <EditMainChatQuestionTemplate id = { id }/>}
+        </>
     )
 }
