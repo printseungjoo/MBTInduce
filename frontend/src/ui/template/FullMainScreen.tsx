@@ -546,7 +546,7 @@ export default function FullMainScreen() {
                     </HeaderDiv>
                     {location.pathname === '/Start' && <StartPageAfterLogin />};
                     {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isBlockingModalOpen && <ChatMessagesDiv>
-                        {!currentChatMessages.map((chatMessage) => (
+                        {currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
                                     <UserChat content = { chatMessage.content } />
