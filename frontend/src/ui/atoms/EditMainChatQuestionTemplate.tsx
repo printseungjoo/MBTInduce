@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import { useState } from 'react'
 
 import CenterPurpleP from './CenterPurpleP'
-import GoBackButton from './GoBackButton'
+import GoBacktoAdminButton from './GoBackToAdmin'
 
 interface EditMainChatQuestionTemplateProps {
     id: string;
@@ -99,7 +99,7 @@ export default function EditMainChatQuestionTemplate({ id }: EditMainChatQuestio
             <CenterBox>
                 <CenterPurpleP content = 'If you want to modify the main chat question template, please write down the content here.' />
                 <MainChatQuestionTemplateTextArea value = { changedContent} onChange = {(e) => setChangedContent(e.target.value)}/>
-                <GoBackButton />
+                <GoBacktoAdminButton />
                 <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
             </CenterBox>
         </EditMainChatQuestionTemplateModalStyled>

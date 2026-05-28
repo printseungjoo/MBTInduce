@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import { useState } from 'react'
 
 import CenterPurpleP from './CenterPurpleP'
-import GoBackButton from './GoBackButton'
+import GoBacktoAdminButton from './GoBackToAdmin'
 
 interface EditSimulationQuestionTemplateProps {
     id: string;
@@ -99,7 +99,7 @@ export default function EditSimulationQuestionTemplate({ id }: EditSimulationQue
             <CenterBox>
                 <CenterPurpleP content = 'If you want to modify the simulation question template, please write down the content here.' />
                 <SimulationQuestionTemplateTextArea value = { changedContent} onChange = {(e) => setChangedContent(e.target.value)}/>
-                <GoBackButton />
+                <GoBacktoAdminButton />
                 <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
             </CenterBox>
         </EditSimulationQuestionTemplateModalStyled>
