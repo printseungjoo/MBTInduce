@@ -52,7 +52,7 @@ export default function SimulationTemplateButton({ id, content }: SimulationTemp
 
     async function deleteTemplates() {
         try {
-            const response = await fetch(`http://localhost:4000/api/admin/simulation-question-templates/$${id}`, {
+            const response = await fetch(`http://localhost:4000/api/admin/simulation-question-templates/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
