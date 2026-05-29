@@ -35,6 +35,17 @@ interface ChatMessage {
     rate?: number;
 }
 
+interface BackendAssistantMessage {
+    id: string;
+    content: string;
+    createdAt: string;
+}
+
+interface PostChatMessageResponse {
+    assistantMessage: BackendAssistantMessage;
+    assistantMessages?: BackendAssistantMessage[];
+}
+
 interface SelectedRange {
   startDate: Date | null;
   endDate: Date | null;
@@ -444,21 +455,24 @@ export default function FullMainScreen() {
             if (!response.ok) {
                 throw new Error('Failed to post chatMessage');
             }
-            const data = await response.json();
-            const assistantMessage: ChatMessage = {
-                id: data.assistantMessage.id,
-                role: 'ai',
-                content: data.assistantMessage.content,
-                mbtiRange: {
-                    eValue,
-                    sValue,
-                    fValue,
-                    pValue
-                },
-                createdAt: data.assistantMessage.createdAt,
-                rate: 0,
-            };
-            setMainChatMessages((prev) => [...prev, assistantMessage]);
+            const data: PostChatMessageResponse = await response.json();
+            const assistantMessages = data.assistantMessages?.length ? data.assistantMessages : [data.assistantMessage];
+            setMainChatMessages((prev) => [
+                ...prev,
+                ...assistantMessages.map((message) => ({
+                    id: message.id,
+                    role: 'ai' as const,
+                    content: message.content,
+                    mbtiRange: {
+                        eValue,
+                        sValue,
+                        fValue,
+                        pValue
+                    },
+                    createdAt: message.createdAt,
+                    rate: 0,
+                })),
+            ]);
         } catch (error) {
             console.error(error);
             const errorMessage: ChatMessage = {
