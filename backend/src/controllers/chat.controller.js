@@ -1,5 +1,14 @@
 import { prisma } from "../lib/prisma.js";
-import { lettersFromWeights, mbtiToWeightedInstruction, normalizeMbtiWeights } from "../lib/mbtiPrompt.js";
+import {
+  detectMessageLanguage,
+  languageDirectiveForDetected,
+} from "../lib/detectMessageLanguage.js";
+import {
+  lettersFromWeights,
+  MBTI_SYSTEM_PERSONALITY_RULES,
+  mbtiToWeightedInstruction,
+  normalizeMbtiWeights,
+} from "../lib/mbtiPrompt.js";
 import { deleteChatSessionById, updateChatSessionTitle } from "../services/chat.service.js";
 import { getChatCompletion } from "../services/openAiService.js";
 import { validateChatSessionPatchBody } from "../validators/chat.validator.js";
@@ -261,6 +270,8 @@ export async function postMessageCore(userId, sessionId, body = {}) {
   }
 
   const instruction = mbtiToWeightedInstruction(mbti);
+  const detectedLanguage = detectMessageLanguage(content);
+  const languageDirective = languageDirectiveForDetected(detectedLanguage);
 
   const userMessage = await prisma.message.create({
     data: {
@@ -281,7 +292,17 @@ export async function postMessageCore(userId, sessionId, body = {}) {
   const systemContent = [
     "You are a helpful assistant in an app called MBTInduce.",
     "Follow the MBTI style guidance below for tone and structure.",
-    "Match the user's language (e.g. Korean if they write Korean).",
+    "",
+    "Language rules (strict — highest priority):",
+    "- Reply in the same language as the user's latest message in this turn only.",
+    "- If the user's latest message is in English, respond entirely in English. Do not use Korean (no Korean words, sentences, or mixed code-switching).",
+    "- If the user's latest message is in Korean, respond entirely in Korean. Do not use English unless quoting the user's words.",
+    "- Ignore the language of earlier messages in the conversation if it differs from the user's latest message.",
+    "- If the latest message mixes languages, use the language that carries most of the user's question; when unclear, prefer English.",
+    languageDirective,
+    "",
+    ...MBTI_SYSTEM_PERSONALITY_RULES,
+    "",
     "Do not prefix your answer with meta labels like [MBTI 적용 응답]. Answer directly.",
     "",
     instruction,
