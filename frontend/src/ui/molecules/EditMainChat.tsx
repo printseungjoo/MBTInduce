@@ -43,6 +43,12 @@ const MainChatTextArea = styled.textarea`
     height: 20vh;
     resize: none;
     overflow-y: auto;
+    box-sizing: border-box;
+    padding: 1.5vh 1vw;
+
+    @media screen and (max-width: 767px) {
+        padding: 0.8vh 2vw;
+    }
 `;
 
 const SubmitButton = styled.button<{isValid: boolean}>`

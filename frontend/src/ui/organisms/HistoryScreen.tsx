@@ -311,7 +311,7 @@ export default function HistoryScreen() {
                     <HistoryDiv key = { e.id } title = { e.title } description = { formatDisplayDate(e.start) + ' ' + formatDisplayTime(e.start) + ' - ' + formatDisplayDate(e.end) + ' ' + formatDisplayTime(e.end)} date = { '' } etc = { '' } onClick = {() => { deleteSchedule(e.id) }} onEditClick = {() => { goToEditSchedule(e.id, e.title, e.start, e.end) }}/>
                 )
             })}
-            {isScheduleEditOpen && editingScheduleId && (<InitialEditSchedule id = { editingScheduleId.scheduleId } title = { editingScheduleId.scheduleTitle } start = { editingScheduleId.scheduleStart } end = { editingScheduleId.scheduleEnd } onSelectEditTarget = { handleSelectScheduleEditTarget } />)}
+            {isScheduleEditOpen && editingScheduleId && !selectedScheduleTarget && (<InitialEditSchedule id = { editingScheduleId.scheduleId } title = { editingScheduleId.scheduleTitle } start = { editingScheduleId.scheduleStart } end = { editingScheduleId.scheduleEnd } onSelectEditTarget = { handleSelectScheduleEditTarget } />)}
             {isScheduleEditOpen && selectedScheduleTarget && (<EditSchedule id = { selectedScheduleId } target = { selectedScheduleTarget } content = { String(selectedScheduleContent) }/>)}
         </>
     )
