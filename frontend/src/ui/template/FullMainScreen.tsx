@@ -290,6 +290,7 @@ export default function FullMainScreen() {
             : []
         : mainChatMessages;
     const mainChatRightScreenRef = useRef<MainChatRightScreenRef>(null);
+    const chatMessagesEndRef = useRef<HTMLDivElement>(null);
 
     function isClicked() {
         setIsOpen(!isOpen);
@@ -310,6 +311,13 @@ export default function FullMainScreen() {
             setSelectedMbti('');
         }
     }, [location.pathname]);
+
+    useEffect(() => {
+        chatMessagesEndRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'end',
+        });
+    }, [currentChatMessages.length, isLoading]);
 
     const handleSelectHistory = (h: { scenario: string, name: string, mbti: string }) => {
         setSelectedScenario(h.scenario);
@@ -606,6 +614,7 @@ export default function FullMainScreen() {
                                 )}
                             </ChatRow>
                         ))}
+                        <div ref = { chatMessagesEndRef } />
                     </ChatMessagesDiv>}
                     {(location.pathname === '/' || location.pathname === '/MainChat') && !isBlockingModalOpen && (<MainChatTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                     {(location.pathname === '/Simulation') && !isBlockingModalOpen && (<SimulationTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
