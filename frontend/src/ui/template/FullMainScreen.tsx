@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { useLocation, NavLink } from 'react-router-dom'
 
 import NavigationDrawer from '../organisms/NavigationDrawer'
@@ -17,6 +17,7 @@ import InitialMainChatModal from '../molecules/InitialMainChatModal'
 import StartPageAfterLogin from '../organisms/StartPageAfterLogin'
 import MypageScreen from '../organisms/MypageScreen'
 import CalendarRightScreen from '../organisms/CalendarRightScreen'
+import type { MainChatRightScreenRef } from '../organisms/MainChatRightScreen'
 
 interface MbtiRange {
     eValue: number;
@@ -277,6 +278,7 @@ export default function FullMainScreen() {
             ? simulationChatMessages[selectedSimulationKey] ?? []
             : []
         : mainChatMessages;
+    const mainChatRightScreenRef = useRef<MainChatRightScreenRef>(null);
 
     function isClicked() {
         setIsOpen(!isOpen);
@@ -359,6 +361,7 @@ export default function FullMainScreen() {
     }
 
     async function sendChatMessages(inputValue: string) {
+        const rightScreenValues = await mainChatRightScreenRef.current?.sendMainChatRightScreenValues();
         const trimmedValue = inputValue.trim();
         if (!trimmedValue || isLoading) return;
         if (isSimulationPage && !selectedSimulationKey) {
@@ -402,6 +405,7 @@ export default function FullMainScreen() {
                             fValue,
                             pValue
                         },
+                        showBoth: rightScreenValues?.showBoth ?? [],
                         pageType: 'simulation',
                         simulationKey: selectedSimulationKey,
                     }),
@@ -426,12 +430,13 @@ export default function FullMainScreen() {
                 body: JSON.stringify({
                     content: trimmedValue,
                     role: 'user',
-                    mbtiRange: {
+                    mbtiRange: rightScreenValues?.mbtiRange ?? {
                         eValue,
                         sValue,
                         fValue,
                         pValue
                     },
+                    showBoth: rightScreenValues?.showBoth ?? [],
                     pageType: 'main',
                     simulationKey: '',
                 }),
@@ -595,7 +600,7 @@ export default function FullMainScreen() {
                     {location.pathname === '/Mypage' && <MypageScreen />}
                 </FlexColumnDiv>
             </MainContent>
-            {!isBlockingModalOpen && (location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} />}
+            {!isBlockingModalOpen && (location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen ref = { mainChatRightScreenRef } eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} />}
             {location.pathname === '/Calendar' && selectedRange.startDate && selectedRange.endDate && (
                 <CalendarModalOverlay onClick = {() => setSelectedRange({ startDate: null, endDate: null })}>
                     <CalendarModalContent onClick = {(event) => event.stopPropagation()}>
