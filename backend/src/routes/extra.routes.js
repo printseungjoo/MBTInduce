@@ -5,6 +5,7 @@ import {
   createTemplate,
   deleteTemplate,
   getAdminDashboard,
+  getSimulationQuestionTemplates,
   getTemplates,
   updateTemplate,
 } from "../controllers/extra.controller.js";
@@ -16,6 +17,7 @@ const router = Router();
 router.post("/ratings", requireAuth, createRating);
 router.post("/feedback", requireAuth, createFeedback);
 router.get("/templates", getTemplates);
+router.get("/simulation-question-templates", getSimulationQuestionTemplates);
 
 router.get("/admin/dashboard", requireAuth, requireAdmin, getAdminDashboard);
 router.post("/admin/templates", requireAuth, requireAdmin, createTemplate);

@@ -16,12 +16,12 @@ const GoBackStyled = styled.button`
 export default function GoBackButton() {
     const navigate = useNavigate();
     const clickGoBack = () => {
-        navigate('/MainChat');
+        navigate('/Start');
     };
 
     return(
         <GoBackStyled onClick = { clickGoBack }>
-            Go to main page
+            Go to start page
         </GoBackStyled>
     )
 }

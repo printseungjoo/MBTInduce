@@ -15,6 +15,8 @@ const DateP = styled.p`
 
 const DateInput = styled.input`
     margin-bottom: 1.5vh;
+    width: 100%;
+    box-sizing: border-box;
 `;
 
 export default function SelectTime({ date, onDateChange, onTimeChange, editableDate = false, showDateLabel = true }: SelectTimeProps) {

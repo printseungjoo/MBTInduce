@@ -7,6 +7,7 @@ import type { ReactNode } from 'react'
 import StartPageBeforeLogin from './ui/template/StartPageBeforeLogin'
 import SignUpScreen from './ui/organisms/SignUpScreen'
 import FullMainScreen from './ui/template/FullMainScreen'
+import AdminScreen from './ui/template/AdminScreen'
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<'loading' | 'ok' | 'fail'>('loading');
@@ -34,64 +35,107 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   return children;
 }
 
+function AdminRoute({ children }: { children: ReactNode }) {
+  const [status, setStatus] = useState<'loading' | 'ok' | 'fail'>('loading');
+  useEffect(() => {
+    async function checkAdmin() {
+      try {
+        const response = await fetch('http://localhost:4000/api/auth/me', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          setStatus('fail');
+          return;
+        }
+        const data = await response.json();
+        if (data.data?.isAdmin) {
+          setStatus('ok');
+        } else {
+          setStatus('fail');
+        }
+      } catch (error) {
+        console.error(error);
+        setStatus('fail');
+      }
+    }
+    checkAdmin();
+  }, []);
+  if (status === 'loading') {
+    return null;
+  }
+  if (status === 'fail') {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+}
+
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<StartPageBeforeLogin />} />
+      <Route path = "/" element = {<StartPageBeforeLogin />} />
       <Route
-        path="/SignUp"
-        element={
+        path = "/SignUp"
+        element = {
           <ProtectedRoute>
             <SignUpScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/Start"
-        element={
+        path = "/Start"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/MainChat"
-        element={
+        path = "/MainChat"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/Simulation"
-        element={
+        path = "/Simulation"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/Calendar"
-        element={
+        path = "/Calendar"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/History"
-        element={
+        path = "/History"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/Mypage"
-        element={
+        path = "/Mypage"
+        element = {
           <ProtectedRoute>
             <FullMainScreen />
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path = "/Admin"
+        element = {
+          <AdminRoute>
+            <AdminScreen />
+          </AdminRoute>
         }
       />
     </Routes>

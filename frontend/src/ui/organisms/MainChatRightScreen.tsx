@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { useState } from 'react'
+import { forwardRef, useImperativeHandle, useState } from 'react'
 
 import Title from '../atoms/Title'
 import RangeBar from '../molecules/RangeBar'
@@ -24,6 +24,18 @@ interface RightScreenProps {
     setPValues: React.Dispatch<React.SetStateAction<number>>;
 }
 
+export interface MainChatRightScreenRef {
+    sendMainChatRightScreenValues: () => Promise<{
+        mbtiRange: {
+            eValue: number;
+            sValue: number;
+            fValue: number;
+            pValue: number;
+        };
+        showBoth: string[];
+    }>;
+}
+
 const MainChatRightScreenStyled = styled.div`
     width: 100%;
     display: flex;
@@ -42,7 +54,7 @@ const WebsiteIntroStyled = styled(WebsiteIntro)`
     line-height: 3vh;
 `;
 
-export default function MainChatRightScreen({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues }: RightScreenProps) {
+const MainChatRightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>(({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues }, ref) => {
     const [clickedEI, setClickedEI] = useState<boolean>(false);
     const [clickedSN, setClickedSN] = useState<boolean>(false);
     const [clickedFT, setClickedFT] = useState<boolean>(false);
@@ -62,24 +74,22 @@ export default function MainChatRightScreen({ eValues, sValues, fValues, pValues
             if (!response.ok) {
                 throw new Error('Failed to send mbtiRange')
             }
-            const data = await response.json();
         } catch (error) {
             console.error('Error transmitting mbtiRange:', error);
         }
     }
     
-    const selectedDualModes: string[] = [];
-    function trueThenPush(typeName: string, value: boolean) {
-        if (value === true) {
-            selectedDualModes.push(typeName);
-        }
+    function getSelectedDualModes() {
+        const selectedDualModes: string[] = [];
+        if (clickedEI) selectedDualModes.push('EI');
+        if (clickedSN) selectedDualModes.push('SN');
+        if (clickedFT) selectedDualModes.push('FT');
+        if (clickedPJ) selectedDualModes.push('PJ');
+        return selectedDualModes;
     }
     
     const sendTwoMBTIs = async() => {
-        trueThenPush('EI', clickedEI);
-        trueThenPush('SN', clickedSN);
-        trueThenPush('FT', clickedFT);
-        trueThenPush('PJ', clickedPJ);
+        const selectedDualModes = getSelectedDualModes();
         try {
             const response = await fetch('http://localhost:4000/api/showBoth', {
                 method: 'POST',
@@ -92,11 +102,27 @@ export default function MainChatRightScreen({ eValues, sValues, fValues, pValues
             if (!response.ok) {
                 throw new Error('TwoMBTIs transmission failed')
             }
-            const data = await response.json()
         } catch (error) {
             console.error('Error transmitting twoMBTIs:', error)
         }
+        return selectedDualModes;
     }
+
+    useImperativeHandle(ref, () => ({
+        async sendMainChatRightScreenValues() {
+            await sendMbtiRange();
+            const showBoth = await sendTwoMBTIs();
+            return {
+                mbtiRange: {
+                    eValue: eValues,
+                    sValue: sValues,
+                    fValue: fValues,
+                    pValue: pValues
+                },
+                showBoth
+            };
+        }
+    }));
 
     return(
         <MainChatRightScreenStyled>
@@ -117,4 +143,6 @@ export default function MainChatRightScreen({ eValues, sValues, fValues, pValues
             <WebsiteIntroStyled content = 'Customize the MBTI before entering your text. Set the MBTI to shape how the response will be generated.' />
         </MainChatRightScreenStyled>
     )
-}
+})
+
+export default MainChatRightScreen;

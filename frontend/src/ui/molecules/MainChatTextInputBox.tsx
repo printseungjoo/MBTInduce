@@ -4,6 +4,14 @@ import type { KeyboardEvent } from 'react'
 
 import TextExample from '../atoms/TextExample'
 
+type TemplateType = {
+    title: string;
+    content: string;
+    category: string;
+    isActive: boolean;
+    createdById: string;
+}
+
 interface TextInputBoxProps {
     onSubmit: (value: string) => void;
     disabled?: boolean;
@@ -14,6 +22,10 @@ const TextInputDiv = styled.div`
     flex-direction: column;
     width: 100%;
     margin-bottom: 3vh;
+
+    @media screen and (max-width: 767px) {
+        margin-bottom: 0;
+    }
 `;
 
 const ExamplesDiv = styled.div`
@@ -54,14 +66,31 @@ const TextInputBoxStyled = styled.input`
     font-size: 1rem;
 `;
 
-export default function TextInputBox({ onSubmit, disabled = false }: TextInputBoxProps) {
+export default function MainChatTextInputBox({ onSubmit, disabled = false }: TextInputBoxProps) {
     const [text, setText] = useState<string>('');
     const [example, setExample] = useState<string>('');
     const [exampleShown, setExampleShown] = useState<boolean>(false);
+    const [templates, setTemplates] = useState<TemplateType[]>([]);
+
+    async function getTemplates() {
+        const response = await fetch('http://localhost:4000/api/templates', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        if(!response.ok) {
+            throw new Error('Failed to get main chat question templates');
+        }
+        const data = await response.json();
+        setTemplates(data.templates);
+    }
 
     const textExampleClicked = (textExample: string) => {
         setExample(textExample);
     }
+
+    useEffect(() => {
+        getTemplates();
+    }, [])
 
     useEffect(() => {
         setText(text + ' ' + example);
@@ -70,22 +99,19 @@ export default function TextInputBox({ onSubmit, disabled = false }: TextInputBo
 
     function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
         if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
-        const trimmedValue = text.trim();
-        if (!trimmedValue) return;
-        onSubmit(trimmedValue);
-        setText('');
+            const trimmedValue = text.trim();
+            if (!trimmedValue) return;
+            onSubmit(trimmedValue);
+            setText('');
         }
     }
 
     return (
         <TextInputDiv>
             {exampleShown && <ExamplesDiv>
-                <TextExample content = 'Can you give me honest advice about this situation?' clicked = { textExampleClicked } />
-                <TextExample content = 'Can you comfort me about this situation?' clicked = { textExampleClicked } />
-                <TextExample content = 'Should I choose option A or option B?' clicked = { textExampleClicked } />
-                <TextExample content = 'What are the pros and cons of this decision?' clicked = { textExampleClicked } />
-                <TextExample content = 'What would be the logical way to decide this?' clicked = { textExampleClicked } />
-                <TextExample content = 'How can I improve myself?' clicked = { textExampleClicked } />
+                {templates.map((t) => {
+                    return <TextExample content = { t.content } clicked = { textExampleClicked } />
+                })}
             </ExamplesDiv>}
             <TextInputBoxDiv>
                 <TextExampleButton onClick = {() => setExampleShown(!exampleShown)}>

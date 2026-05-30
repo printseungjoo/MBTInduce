@@ -42,6 +42,10 @@ const Profile = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    @media (max-width: 768px) {
+        display: none;
+    }
 `;
 
 const ProfileMbti = styled.div`
@@ -72,9 +76,23 @@ const WriteProfile = styled.div`
     border: 1px solid ${({ theme }) => theme.colors.mutedViolet};
     border-radius: 7px;
     background-color: ${({ theme }) => theme.colors.deepPlum};
-    width: 45vw;
     box-sizing: border-box;
-    padding: 2.5vh 1.5vw;
+    width: min(90vw, 36rem);
+    max-height: 85vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 5vh 4vw;
+
+    @media screen and (min-width: 768px) {
+        border: 1px solid ${({ theme }) => theme.colors.mutedViolet};
+        border-radius: 7px;
+        background-color: ${({ theme }) => theme.colors.deepPlum};
+        width: 45vw;
+        box-sizing: border-box;
+        padding: 2.5vh 1.5vw;
+    }
 `;
 
 const WriteProfileP = styled.p`
