@@ -49,7 +49,7 @@ export async function getAdminStatistics() {
     prisma.calendarEvent.count(),
   ]);
 
-  const averageRating = avgRatingResult._avg.score ?? 0;
+  const averageRating = Number((avgRatingResult._avg.score ?? 0).toFixed(2));
   const ratingCounts = buildRatingCounts(ratingGroups);
 
   return {

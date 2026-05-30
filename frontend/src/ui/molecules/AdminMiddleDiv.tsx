@@ -143,10 +143,10 @@ export default function AdminMiddleDiv() {
 
     return (
         <AdminMiddleDivStyled>
-            <MainTitle> { ratingStatistics?.averageRating } </MainTitle>
+            <MainTitle> { ratingStatistics?.averageRating !== undefined ? ratingStatistics.averageRating.toFixed(2) : '0.00' } </MainTitle>
             <StarWrap>
                 <GrayStars> ★★★★★ </GrayStars>
-                <YellowStars rating = { ratingStatistics?.rating ? ratingStatistics?.rating : 0 }> ☆☆☆☆☆ </YellowStars>
+                <YellowStars rating = { ratingStatistics?.averageRating ?? 0 }> ☆☆☆☆☆ </YellowStars>
             </StarWrap>
             <PurpleP> { ratingStatistics?.totalRatings } </PurpleP>
             {[1, 2, 3, 4, 5].map((score) => {
