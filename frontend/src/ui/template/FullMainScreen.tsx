@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { useEffect, useState, useMemo, useRef } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useLocation, NavLink } from 'react-router-dom'
 
 import NavigationDrawer from '../organisms/NavigationDrawer'
@@ -17,7 +17,6 @@ import InitialMainChatModal from '../molecules/InitialMainChatModal'
 import StartPageAfterLogin from '../organisms/StartPageAfterLogin'
 import MypageScreen from '../organisms/MypageScreen'
 import CalendarRightScreen from '../organisms/CalendarRightScreen'
-import type { MainChatRightScreenRef } from '../organisms/MainChatRightScreen'
 
 interface MbtiRange {
     eValue: number;
@@ -35,32 +34,9 @@ interface ChatMessage {
     rate?: number;
 }
 
-interface BackendAssistantMessage {
-    id: string;
-    content: string;
-    createdAt: string;
-}
-
-interface PostChatMessageResponse {
-    assistantMessage: BackendAssistantMessage;
-    assistantMessages?: BackendAssistantMessage[];
-}
-
 interface SelectedRange {
   startDate: Date | null;
   endDate: Date | null;
-}
-
-interface ChatSession {
-    id: string;
-    userId: string;
-    title: string | null;
-    isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
-    _count?: {
-        messages: number;
-    };
 }
 
 const FullScreen = styled.div`
@@ -260,14 +236,12 @@ export default function FullMainScreen() {
     const [selectedScenario, setSelectedScenario] = useState<string>('');
     const [selectedName, setSelectedName] = useState<string>('');
     const [selectedMbti, setSelectedMbti] = useState<string>('');
-    const [showOldSimulationModal, setShowOldSimulationModal] = useState<boolean>(false);
     const [mainChatMessages, setMainChatMessages] = useState<ChatMessage[]>([]);
     const [simulationChatMessages, setSimulationChatMessages] = useState<Record<string, ChatMessage[]>>({});
     const [selectedRange, setSelectedRange] = useState<SelectedRange>({
         startDate: null,
         endDate: null
     });
-    const [selectedChatSession, setSelectedChatSession] = useState<ChatSession | null>(null);
     const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
     const [isMobileRightOpen, setIsMobileRightOpen] = useState<boolean>(false);
 
@@ -289,8 +263,6 @@ export default function FullMainScreen() {
             ? simulationChatMessages[selectedSimulationKey] ?? []
             : []
         : mainChatMessages;
-    const mainChatRightScreenRef = useRef<MainChatRightScreenRef>(null);
-    const chatMessagesEndRef = useRef<HTMLDivElement>(null);
 
     function isClicked() {
         setIsOpen(!isOpen);
@@ -305,19 +277,11 @@ export default function FullMainScreen() {
     useEffect(() => {
         if (location.pathname === '/Simulation') {
             setShowSimulation(false);
-            setShowOldSimulationModal(false);
             setSelectedScenario('');
             setSelectedName('');
             setSelectedMbti('');
         }
     }, [location.pathname]);
-
-    useEffect(() => {
-        chatMessagesEndRef.current?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'end',
-        });
-    }, [currentChatMessages.length, isLoading]);
 
     const handleSelectHistory = (h: { scenario: string, name: string, mbti: string }) => {
         setSelectedScenario(h.scenario);
@@ -380,17 +344,8 @@ export default function FullMainScreen() {
     }
 
     async function sendChatMessages(inputValue: string) {
-        const rightScreenValues = await mainChatRightScreenRef.current?.sendMainChatRightScreenValues();
         const trimmedValue = inputValue.trim();
         if (!trimmedValue || isLoading) return;
-        if (isSimulationPage && !selectedSimulationKey) {
-            console.error('No selected simulation key');
-            return;
-        }
-        if (!isSimulationPage && !selectedMainChatSessionId) {
-            console.error('No selected main chat session');
-            return;
-        }
         const newUserChatMessage: ChatMessage = {
             id: crypto.randomUUID(),
             role: 'user',
@@ -406,40 +361,8 @@ export default function FullMainScreen() {
         };
         addCurrentChatMessage(newUserChatMessage);
         setIsLoading(true);
-    
-        try {
-            if (isSimulationPage) {
-                const response = await fetch(`${API_BASE_URL}/api/chat`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        content: trimmedValue,
-                        role: 'user',
-                        mbtiRange: {
-                            eValue,
-                            sValue,
-                            fValue,
-                            pValue
-                        },
-                        showBoth: rightScreenValues?.showBoth ?? [],
-                        pageType: 'simulation',
-                        simulationKey: selectedSimulationKey,
-                    }),
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to post simulation chatMessage');
-                }
-                const data: ChatMessage[] = await response.json();
-                setSimulationChatMessages((prev) => ({
-                    ...prev,
-                    [selectedSimulationKey]: data,
-                }));
-                return;
-            }
 
+        try {
             const response = await fetch(`${API_BASE_URL}/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`, {
                 method: 'POST',
                 headers: {
@@ -449,38 +372,41 @@ export default function FullMainScreen() {
                 body: JSON.stringify({
                     content: trimmedValue,
                     role: 'user',
-                    mbtiRange: rightScreenValues?.mbtiRange ?? {
+                    mbtiRange: {
                         eValue,
                         sValue,
                         fValue,
-                        pValue
+                        pValue,
                     },
-                    showBoth: rightScreenValues?.showBoth ?? [],
-                    pageType: 'main',
-                    simulationKey: '',
+                    pageType: isSimulationPage ? 'simulation' : 'main',
+                    simulationKey: isSimulationPage ? selectedSimulationKey : '',
                 }),
             });
             if (!response.ok) {
                 throw new Error('Failed to post chatMessage');
             }
-            const data: PostChatMessageResponse = await response.json();
-            const assistantMessages = data.assistantMessages?.length ? data.assistantMessages : [data.assistantMessage];
-            setMainChatMessages((prev) => [
-                ...prev,
-                ...assistantMessages.map((message) => ({
-                    id: message.id,
-                    role: 'ai' as const,
-                    content: message.content,
-                    mbtiRange: {
-                        eValue,
-                        sValue,
-                        fValue,
-                        pValue
-                    },
-                    createdAt: message.createdAt,
-                    rate: 0,
-                })),
-            ]);
+            const data = await response.json();
+            if (isSimulationPage) {
+                setSimulationChatMessages((prev) => ({
+                    ...prev,
+                    [selectedSimulationKey]: data,
+                }));
+                return;
+            }
+            const assistantMessage: ChatMessage = {
+                id: data.assistantMessage.id,
+                role: 'ai',
+                content: data.assistantMessage.content,
+                mbtiRange: {
+                    eValue,
+                    sValue,
+                    fValue,
+                    pValue
+                },
+                createdAt: data.assistantMessage.createdAt,
+                rate: 0,
+            };
+            setMainChatMessages((prev) => [...prev, assistantMessage]);
         } catch (error) {
             console.error(error);
             const errorMessage: ChatMessage = {
@@ -491,7 +417,7 @@ export default function FullMainScreen() {
                     eValue,
                     sValue,
                     fValue,
-                    pValue
+                    pValue,
                 },
                 createdAt: new Date().toISOString(),
                 rate: 0,
@@ -566,7 +492,6 @@ export default function FullMainScreen() {
         }
         if (path === '/Simulation') {
             setShowSimulation(false);
-            setShowOldSimulationModal(false);
             setSelectedScenario('');
             setSelectedName('');
             setSelectedMbti('');
@@ -605,7 +530,7 @@ export default function FullMainScreen() {
                     </HeaderDiv>
                     {location.pathname === '/Start' && <StartPageAfterLogin />};
                     {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isBlockingModalOpen && <ChatMessagesDiv>
-                        {currentChatMessages.map((chatMessage) => (
+                        {!currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
                                     <UserChat content = { chatMessage.content } />
@@ -614,7 +539,6 @@ export default function FullMainScreen() {
                                 )}
                             </ChatRow>
                         ))}
-                        <div ref = { chatMessagesEndRef } />
                     </ChatMessagesDiv>}
                     {(location.pathname === '/' || location.pathname === '/MainChat') && !isBlockingModalOpen && (<MainChatTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                     {(location.pathname === '/Simulation') && !isBlockingModalOpen && (<SimulationTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
@@ -623,7 +547,7 @@ export default function FullMainScreen() {
                     {location.pathname === '/Mypage' && <MypageScreen />}
                 </FlexColumnDiv>
             </MainContent>
-            {!isBlockingModalOpen && (location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen ref = { mainChatRightScreenRef } eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} />}
+            {!isBlockingModalOpen && (location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} />}
             {location.pathname === '/Calendar' && selectedRange.startDate && selectedRange.endDate && (
                 <CalendarModalOverlay onClick = {() => setSelectedRange({ startDate: null, endDate: null })}>
                     <CalendarModalContent onClick = {(event) => event.stopPropagation()}>

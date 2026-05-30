@@ -62,7 +62,7 @@ const RightScreenStyled = styled.div<{ isMobileOpen: boolean }>`
     }
 `;
 
-const RightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>(({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues, selectedScenario, selectedName, selectedMbti, showSimulation, selectedRange, isMobileOpen, onMobileClose }, ref) => {
+const RightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>(({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues, selectedScenario, selectedName, selectedMbti, showSimulation, selectedRange, isMobileOpen }, ref) => {
     const location = useLocation()
 
     return(
