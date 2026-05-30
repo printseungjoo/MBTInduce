@@ -21,6 +21,51 @@ async function ensureSessionOwner(sessionId, userId) {
   return chatSession;
 }
 
+const SHOW_BOTH_AXES = {
+  EI: {
+    key: "energy",
+    leftLabel: "E 100%",
+    rightLabel: "I 100%",
+  },
+  SN: {
+    key: "information",
+    leftLabel: "S 100%",
+    rightLabel: "N 100%",
+  },
+  FT: {
+    key: "decision",
+    leftLabel: "F 100%",
+    rightLabel: "T 100%",
+  },
+  PJ: {
+    key: "lifestyle",
+    leftLabel: "P 100%",
+    rightLabel: "J 100%",
+  },
+};
+
+function normalizeShowBoth(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((axis) => String(axis).toUpperCase())
+    .filter((axis, index, array) => SHOW_BOTH_AXES[axis] && array.indexOf(axis) === index);
+}
+
+function buildMbtiRow(weights) {
+  const normalized = normalizeMbtiWeights(weights);
+  const letters = lettersFromWeights(normalized);
+  return {
+    energy: letters.energy,
+    information: letters.information,
+    decision: letters.decision,
+    lifestyle: letters.lifestyle,
+    energyWeight: normalized.energy,
+    informationWeight: normalized.information,
+    decisionWeight: normalized.decision,
+    lifestyleWeight: normalized.lifestyle,
+  };
+}
+
 export async function listMyChatSessions(req, res, next) {
   try {
     const sessions = await prisma.chatSession.findMany({
@@ -271,20 +316,71 @@ export async function postMessageCore(userId, sessionId, body = {}) {
     })),
   ];
 
-  let assistantReplyText;
-  try {
-    assistantReplyText = await getChatCompletion(openaiMessages);
-  } catch (aiError) {
-    assistantReplyText = `[AI 응답 생성 실패] ${aiError?.message || "unknown error"}`;
-  }
+  const showBoth = Array.isArray(body.showBoth) ? body.showBoth : [];
+  const assistantMessages = [];
 
-  const assistantMessage = await prisma.message.create({
-    data: {
-      chatSessionId: sessionId,
-      role: "ASSISTANT",
-      content: assistantReplyText,
-    },
-  });
+  if (showBoth.length > 0) {
+    for (const axis of showBoth) {
+      const promptsByAxis = {
+        EI: ["E 100%", "I 100%"],
+        SN: ["S 100%", "N 100%"],
+        FT: ["F 100%", "T 100%"],
+        PJ: ["P 100%", "J 100%"],
+      };
+      const labels = promptsByAxis[axis];
+      if (!labels) continue;
+      const blocks = [];
+      for (const label of labels) {
+        let content;
+        try {
+          content = await getChatCompletion([
+            {
+              role: "system",
+              content: `${systemContent}\n\nAnswer as ${label}.`,
+            },
+            ...recent.map((m) => ({
+              role: m.role === "USER" ? "user" : m.role === "ASSISTANT" ? "assistant" : "system",
+              content: m.content
+            })),
+          ]);
+        } catch (aiError) {
+          content = `[AI response fails] ${aiError?.message || "unknown error"}`;
+        } 
+        blocks.push({
+          label,
+          content,
+        });
+      }
+
+      const assistantMessage = await prisma.message.create({
+        data: {
+          chatSessionId: sessionId,
+          role: "ASSISTANT",
+          content: JSON.stringify({
+            type: "SHOW_BOTH",
+            axis,
+            blocks,
+          }),
+        },
+      });
+      assistantMessages.push(assistantMessage);
+    }
+  } else {
+    let assistantReplyText;
+    try {
+      assistantReplyText = await getChatCompletion(openaiMessages);
+    } catch (aiError) {
+      assistantReplyText = `[AI response fails] ${aiError?.message || "unknown error"}`;
+    }
+    const assistantMessage = await prisma.message.create({
+      data: {
+        chatSessionId: sessionId,
+        role: "ASSISTANT",
+        content: assistantReplyText,
+      },
+    });
+    assistantMessages.push(assistantMessage);
+  }
 
   await prisma.chatSession.update({
     where: { id: sessionId },
@@ -309,7 +405,8 @@ export async function postMessageCore(userId, sessionId, body = {}) {
 
   return {
     userMessage,
-    assistantMessage,
+    assistantMessage: assistantMessages[0],
+    assistantMessages,
     appliedMbti,
   };
 }

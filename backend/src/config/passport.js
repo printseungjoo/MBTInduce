@@ -35,9 +35,11 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:4000/auth/google/callback",
+        passReqToCallback: true
       },
-      async (accessToken, refreshToken, profile, done) => {
+      async (req, accessToken, refreshToken, profile, done) => {
       try {
+        const mode = req.query.state === "login" ? "login" : "signup";
         const provider = "GOOGLE";
         const providerAccountId = profile.id;
         const email = profile.emails?.[0]?.value?.toLowerCase();
@@ -48,46 +50,71 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           return done(new Error("Google profile email is missing"));
         }
 
-        const existingAccount = await prisma.account.findUnique({
+        let existingAccount = await prisma.account.findUnique({
+          where: {
+            provider_providerAccountId: {
+              provider,
+              providerAccountId,
+          },
+        },
+        include: { user: true },
+      });
+
+      if (existingAccount?.user?.status === "DELETED") {
+        await prisma.account.delete({
           where: {
             provider_providerAccountId: {
               provider,
               providerAccountId,
             },
           },
-          include: { user: true },
         });
 
-        if (existingAccount?.user) {
-          if (existingAccount.user.status === "DELETED") {
-            return done(new Error("Deleted account cannot login"));
-          }
+        existingAccount = null;
+      }
 
-          if (existingAccount.user.status === "SUSPENDED") {
-            return done(new Error("Suspended account cannot login"));
-          }
+      if (existingAccount?.user) {
+        if (existingAccount.user.status === "DELETED") {
+          return done(new Error("Deleted account cannot login"));
+        }
 
-          const updateData = {
-            lastLoginAt: new Date(),
-            email,
-            nickname,
-            profileImage,
-          };
-          if (isAdminEmail(email) && existingAccount.user.role !== "ADMIN") {
-            updateData.role = "ADMIN";
-          }
+        if (existingAccount.user.status === "SUSPENDED") {
+          return done(new Error("Suspended account cannot login"));
+        }
 
-          const updatedUser = await prisma.user.update({
-            where: { id: existingAccount.user.id },
-            data: updateData,
-          });
+        if (mode === "signup") {
+          return done(new Error("Account already registered"));
+        }
 
-          return done(null, updatedUser);
+        const updateData = {
+          lastLoginAt: new Date(),
+          email,
+          profileImage,
+        };
+
+        if (isAdminEmail(email) && existingAccount.user.role !== "ADMIN") {
+          updateData.role = "ADMIN";
+        }
+
+        const updatedUser = await prisma.user.update({
+          where: { id: existingAccount.user.id },
+          data: updateData,
+        });
+
+        return done(null, updatedUser);
         }
 
         const existingUserByEmail = await prisma.user.findUnique({
           where: { email },
         });
+
+        if (existingUserByEmail && mode === "signup") {
+          return done(new Error("Account already registered"));
+        }
+
+        if (!existingUserByEmail && mode === "login") {
+          return done(new Error("Account not registered"));
+        }
 
         let user = existingUserByEmail;
 

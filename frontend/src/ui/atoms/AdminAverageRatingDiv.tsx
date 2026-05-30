@@ -45,7 +45,7 @@ export default function AdminAverageRatingDiv({ title, number }: AdminAverageRat
         <AdminAverageRatingDivStyled>
             <TitleH> { title } </TitleH>
             <FlexDiv>
-                <NumberH> { number } </NumberH>
+                <NumberH> { number !== undefined ? number.toFixed(2) : '0.00' } </NumberH>
                 <OutofFive> / 5.0 </OutofFive>
             </FlexDiv>
         </AdminAverageRatingDivStyled>

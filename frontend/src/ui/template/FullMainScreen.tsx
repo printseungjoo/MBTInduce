@@ -39,18 +39,6 @@ interface SelectedRange {
   endDate: Date | null;
 }
 
-interface ChatSession {
-    id: string;
-    userId: string;
-    title: string | null;
-    isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
-    _count?: {
-        messages: number;
-    };
-}
-
 const FullScreen = styled.div`
     width: 100vw;
     height: 100vh;
@@ -248,14 +236,12 @@ export default function FullMainScreen() {
     const [selectedScenario, setSelectedScenario] = useState<string>('');
     const [selectedName, setSelectedName] = useState<string>('');
     const [selectedMbti, setSelectedMbti] = useState<string>('');
-    const [showOldSimulationModal, setShowOldSimulationModal] = useState<boolean>(false);
     const [mainChatMessages, setMainChatMessages] = useState<ChatMessage[]>([]);
     const [simulationChatMessages, setSimulationChatMessages] = useState<Record<string, ChatMessage[]>>({});
     const [selectedRange, setSelectedRange] = useState<SelectedRange>({
         startDate: null,
         endDate: null
     });
-    const [selectedChatSession, setSelectedChatSession] = useState<ChatSession | null>(null);
     const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
     const [isMobileRightOpen, setIsMobileRightOpen] = useState<boolean>(false);
 
@@ -291,7 +277,6 @@ export default function FullMainScreen() {
     useEffect(() => {
         if (location.pathname === '/Simulation') {
             setShowSimulation(false);
-            setShowOldSimulationModal(false);
             setSelectedScenario('');
             setSelectedName('');
             setSelectedMbti('');
@@ -507,7 +492,6 @@ export default function FullMainScreen() {
         }
         if (path === '/Simulation') {
             setShowSimulation(false);
-            setShowOldSimulationModal(false);
             setSelectedScenario('');
             setSelectedName('');
             setSelectedMbti('');

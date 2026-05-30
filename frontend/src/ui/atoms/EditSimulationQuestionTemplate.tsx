@@ -1,14 +1,14 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
-import CenterPurpleP from '../atoms/CenterPurpleP'
-import GoBackButton from '../atoms/GoBackButton'
+import CenterPurpleP from './CenterPurpleP'
+import GoBacktoAdminButton from './GoBacktoAdminButton'
 
-interface EditMainChatProps {
-    changedChatId: string;
+interface EditSimulationQuestionTemplateProps {
+    id: string;
 }
 
-const EditMainChatModalStyled = styled.div`
+const EditSimulationQuestionTemplateModalStyled = styled.div`
     position: fixed;
     top: 0;
     left: 0;
@@ -38,7 +38,7 @@ const CenterBox = styled.div`
     }
 `;
 
-const MainChatTextArea = styled.textarea`
+const SimulationQuestionTemplateTextArea = styled.textarea`
     width: 98%;
     height: 20vh;
     resize: none;
@@ -63,38 +63,36 @@ const SubmitButton = styled.button<{isValid: boolean}>`
     border-radius: 0;
 `;
 
-export default function EditMainChat({ changedChatId }: EditMainChatProps) {
-    const [changedChatInfo, setChangedChatInfo] = useState<string>('');
+export default function EditSimulationQuestionTemplate({ id }: EditSimulationQuestionTemplateProps) {
+    const [changedContent, setChangedContent] = useState<string>('');
 
-    async function editChatSession(targetId: string, changedTitle: string) {
+    async function patchTemplates(changedContent: string) {
         try {
-            const response = await fetch(`http://localhost:4000/api/chatMessage/sessions/${targetId}`, {
+            const response = await fetch(`http://localhost:4000/api/admin/simulation-question-templates/${id}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    title: changedTitle
+                    content: changedContent
                 })
             });
             if (!response.ok) {
-                throw new Error('Failed to patch chat title');
+                throw new Error('Failed to patch simulation question template');
             }
-            const data = await response.json();
-            return data.session;
+            window.location.reload();
         } catch (error) {
             console.error(error);
         }
     }
 
-    const isValid = changedChatInfo.trim() !== '';
+    const isValid = changedContent.trim() !== '';
 
     const clickSubmitButton = async () => {
         if (!isValid) return;
         try {
-            const session = await editChatSession(changedChatId, changedChatInfo);
-            if (!session) return;
+            await patchTemplates(changedContent);
             window.alert('It is successfully changed.')
             window.location.reload();
         } catch (error) {
@@ -103,13 +101,13 @@ export default function EditMainChat({ changedChatId }: EditMainChatProps) {
     };
 
     return (
-        <EditMainChatModalStyled>
+        <EditSimulationQuestionTemplateModalStyled>
             <CenterBox>
-                <CenterPurpleP content = 'If you want to modify the main chat, please write down the content here.' />
-                <MainChatTextArea value = { changedChatInfo } onChange = {(e) => setChangedChatInfo(e.target.value)}/>
-                <GoBackButton />
+                <CenterPurpleP content = 'If you want to modify the simulation question template, please write down the content here.' />
+                <SimulationQuestionTemplateTextArea value = { changedContent} onChange = {(e) => setChangedContent(e.target.value)}/>
+                <GoBacktoAdminButton />
                 <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
             </CenterBox>
-        </EditMainChatModalStyled>
+        </EditSimulationQuestionTemplateModalStyled>
     )
 }

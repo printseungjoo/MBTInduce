@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { useEffect } from 'react'
 
 import GenerateButton from '../atoms/GenerateButton'
 
@@ -95,6 +96,21 @@ const LinkA = styled.a`
 
 // I will put the links later.
 export default function StartPageBeforeLogin() {
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const error = params.get('error');
+        if (error === 'already_registered') {
+            window.alert('You already have an account.');
+            window.history.replaceState({}, '', window.location.pathname);
+            window.location.href = '/';
+        }
+        if (error === 'not_registered') {
+            window.alert("You don't have an account yet. Please sign up first.");
+            window.history.replaceState({}, '', window.location.pathname);
+            window.location.href = 'http://localhost:4000/auth/google?mode=signup';
+        }
+    }, []);
+
     const goToGoogleSignUp = () => {
         window.location.href = 'http://localhost:4000/auth/google?mode=signup';
     };

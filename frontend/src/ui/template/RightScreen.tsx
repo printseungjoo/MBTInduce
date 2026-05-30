@@ -1,9 +1,11 @@
 import styled from '@emotion/styled'
 import { useLocation } from 'react-router-dom'
+import { forwardRef } from 'react'
 
 import MainChatRightScreen from '../organisms/MainChatRightScreen'
 import SimulationRightScreen from '../organisms/SimulationRightScreen'
 import CalendarRightScreen from '../organisms/CalendarRightScreen'
+import type { MainChatRightScreenRef } from '../organisms/MainChatRightScreen'
 
 interface SelectedRange {
     startDate: Date | null;
@@ -60,13 +62,13 @@ const RightScreenStyled = styled.div<{ isMobileOpen: boolean }>`
     }
 `;
 
-export default function RightScreen({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues, selectedScenario, selectedName, selectedMbti, showSimulation, selectedRange, isMobileOpen, onMobileClose }: RightScreenProps) {
+const RightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>(({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues, selectedScenario, selectedName, selectedMbti, showSimulation, selectedRange, isMobileOpen }, ref) => {
     const location = useLocation()
 
     return(
         <RightScreenStyled isMobileOpen = { isMobileOpen }>
             {(location.pathname === '/MainChat' || location.pathname === '/' ) && (
-                <MainChatRightScreen eValues = { eValues } sValues = { sValues } fValues = { fValues } pValues = { pValues } setEValues = { setEValues } setSValues = { setSValues } setFValues = { setFValues } setPValues = { setPValues }/>
+                <MainChatRightScreen ref = { ref } eValues = { eValues } sValues = { sValues } fValues = { fValues } pValues = { pValues } setEValues = { setEValues } setSValues = { setSValues } setFValues = { setFValues } setPValues = { setPValues } />
             )}
             {location.pathname === '/Simulation' && showSimulation && (
                 <SimulationRightScreen selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti }/>
@@ -76,4 +78,6 @@ export default function RightScreen({ eValues, sValues, fValues, pValues, setEVa
             )}
         </RightScreenStyled>
     )
-}
+})
+
+export default RightScreen;

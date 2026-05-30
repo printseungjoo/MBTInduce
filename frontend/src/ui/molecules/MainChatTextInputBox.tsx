@@ -99,10 +99,10 @@ export default function MainChatTextInputBox({ onSubmit, disabled = false }: Tex
 
     function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
         if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
-        const trimmedValue = text.trim();
-        if (!trimmedValue) return;
-        onSubmit(trimmedValue);
-        setText('');
+            const trimmedValue = text.trim();
+            if (!trimmedValue) return;
+            onSubmit(trimmedValue);
+            setText('');
         }
     }
 

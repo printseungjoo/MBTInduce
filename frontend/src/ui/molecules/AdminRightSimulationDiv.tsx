@@ -43,6 +43,12 @@ const InputBox = styled.input`
     border-radius: 5px;
     height: 3.5vh;
     width: 84%;
+    box-sizing: border-box;
+    padding: 0 0.5vw;
+
+    @media screen and (max-width: 767px) {
+        padding: 0 1.5vw;
+    }
 `;
 
 const AddButton = styled.button`
