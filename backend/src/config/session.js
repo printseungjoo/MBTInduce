@@ -15,7 +15,7 @@ export function createSessionMiddleware() {
       maxAge: 1000 * 60 * 60 * 24 * 14,
       secure: process.env.NODE_ENV === 'production', // production일 때 true (HTTPS 필수)
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 크로스 도메인 간 쿠키 전송 허용
-      domain: '.mbtinduce.com'
+      ...(isProd ? { domain: ".mbtinduce.com" } : {})
     },
   };
 

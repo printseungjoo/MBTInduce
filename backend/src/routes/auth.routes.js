@@ -38,10 +38,10 @@ router.get("/google/callback", ensureGoogleOAuthConfigured, (req, res, next) => 
       if (err.message === "Account not registered") {
         return res.redirect("https://www.mbtinduce.com/?error=not_registered");
       }
-      return res.redirect("https://www.mbtinduce.com/login?error=oauth_failed_etc");
+      return res.redirect("https://www.mbtinduce.com/?error=oauth_failed");
     }
     if (!user) {
-      return res.redirect("https://www.mbtinduce.com/login?error=oauth_failed_no_user");
+      return res.redirect("https://www.mbtinduce.com/?error=oauth_failed");
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
