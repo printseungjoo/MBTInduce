@@ -69,41 +69,8 @@ const WebsiteIntroPlus = styled(WebsiteIntro)`
 export default function CalendarRightScreen({ selectedRange }: CalendarRightScreenProps) {
     const [schedule, setSchedule] = useState('');
     const [selectedOption, setSelectedOption] = useState<DisturbOption | ''>('');
-    const [events, setEvents] = useState<BigCalendarEvent[]>([]);
-    const [selectedEventId, setSelectedEventId] = useState('');
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
-    
-    useEffect(() => {
-        loadCalendarEvents();
-    }, []);
-    
-    async function loadCalendarEvents() {
-        try {
-            const response = await fetch('http://localhost:4000/api/calendarEvent', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get calendar events');
-            }
-            const result = await response.json();
-            const calendarEvents: CalendarEventResponse[] = result.data.events;
-            const convertedEvents = calendarEvents.map((event) => ({
-                id: event.id,
-                title: event.title,
-                start: new Date(event.startAt),
-                end: new Date(event.endAt),
-                allDay: event.allDay,
-            }));
-            setEvents(convertedEvents);
-        } catch (error) {
-            console.error(error);
-        }
-    }
     
     function formatDate(date: Date | null) {
         if (!date) return '';
@@ -190,7 +157,6 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             alert('Schedule submitted successfully.');
             setSchedule('');
             setSelectedOption('');
-            setSelectedEventId('');
             window.location.reload();
         } catch (error) {
             console.error(error);
