@@ -73,7 +73,7 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
 
     async function editTitle(title: string) {
         try {
-            const response = await fetch(`http://localhost:4000/api/calendarEvent/${id}`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/calendarEvent/${id}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {
@@ -95,7 +95,7 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
 
     async function editStart(start: Date | string) {
         try {
-            const response = await fetch(`http://localhost:4000/api/calendarEvent/${id}`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/calendarEvent/${id}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {
@@ -117,7 +117,7 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
 
     async function editEnd(end: Date | string) {
         try {
-            const response = await fetch(`http://localhost:4000/api/calendarEvent/${id}`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/calendarEvent/${id}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {

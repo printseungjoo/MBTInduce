@@ -73,7 +73,7 @@ export default function SimulationextInputBox({ onSubmit, disabled = false }: Te
     const [templates, setTemplates] = useState<TemplateType[]>([]);
 
     async function getTemplates() {
-        const response = await fetch('http://localhost:4000/api/simulation-question-templates', {
+        const response = await fetch(`${import.meta.env.API_BASE_URL}/api/simulation-question-templates`, {
             method: 'GET',
             credentials: 'include'
         });

@@ -111,11 +111,11 @@ export default function HistoryScreen() {
 
     async function getSimulationData() {
         try {
-            const templateResponse = await fetch('http://localhost:4000/api/simulation/simulationTemplate', {
+            const templateResponse = await fetch(`${import.meta.env.API_BASE_URL}/api/simulation/simulationTemplate`, {
                 method: 'GET',
                 credentials: 'include',
             });
-            const profileResponse = await fetch('http://localhost:4000/api/simulation/userProfiles', {
+            const profileResponse = await fetch(`${import.meta.env.API_BASE_URL}/api/simulation/userProfiles`, {
                 method: 'GET',
                 credentials: 'include',
             });
@@ -133,7 +133,7 @@ export default function HistoryScreen() {
 
     async function loadCalendarEvents() {
         try {
-            const response = await fetch('http://localhost:4000/api/calendarEvent', {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/calendarEvent`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ export default function HistoryScreen() {
 
     async function getChatSessions() {
         try {
-            const response = await fetch('http://localhost:4000/api/chatMessage/sessions', {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/chatMessage/sessions`, {
                 method: 'GET',
                 credentials: 'include',
             });
@@ -177,7 +177,7 @@ export default function HistoryScreen() {
 
     async function deleteChatSession(selectedChatId: string) {
         try {
-            const response = await fetch(`http://localhost:4000/api/chatMessage/sessions/${selectedChatId}`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/chatMessage/sessions/${selectedChatId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -199,7 +199,7 @@ export default function HistoryScreen() {
 
     async function deleteSimulationSession(selectedSimulationId: string, selectedUserId: string) {
         try {
-            const response = await fetch(`http://localhost:4000/api/simulation/simulationTemplate/${selectedSimulationId}`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/simulation/simulationTemplate/${selectedSimulationId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ export default function HistoryScreen() {
                 alert(data.message || 'Failed to delete simulation.');
                 return;
             }
-            const profileResponse = await fetch(`http://localhost:4000/api/simulation/userProfiles/${selectedUserId}`, {
+            const profileResponse = await fetch(`${import.meta.env.API_BASE_URL}/api/simulation/userProfiles/${selectedUserId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -233,7 +233,7 @@ export default function HistoryScreen() {
 
     async function deleteSchedule(selectedEventId: string) {
         try {
-            const response = await fetch(`http://localhost:4000/api/calendarEvent/${selectedEventId}`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/calendarEvent/${selectedEventId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

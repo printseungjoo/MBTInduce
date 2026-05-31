@@ -91,7 +91,7 @@ export default function MakeNewSimulationModal({ onSubmitSuccess }: MakeNewSimul
     const sendScenario = async() => {
         const simulationContent: ScenarioRequest = { content: scenario };
         try {
-            const response = await fetch('http://localhost:4000/api/simulation/simulationTemplate', {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/simulation/simulationTemplate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ export default function MakeNewSimulationModal({ onSubmitSuccess }: MakeNewSimul
     const sendTargetInfo = async() => {
         const targetInfo: TargetInfoRequest = { name: name, meOrNot: false, mbti: mbti };
         try {
-            const response = await fetch('http://localhost:4000/api/simulation/userProfiles', {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/simulation/userProfiles`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

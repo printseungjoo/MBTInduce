@@ -68,7 +68,7 @@ export default function EditSimulationQuestionTemplate({ id }: EditSimulationQue
 
     async function patchTemplates(changedContent: string) {
         try {
-            const response = await fetch(`http://localhost:4000/api/admin/simulation-question-templates/${id}`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/admin/simulation-question-templates/${id}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {

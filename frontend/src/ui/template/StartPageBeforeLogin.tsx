@@ -107,16 +107,16 @@ export default function StartPageBeforeLogin() {
         if (error === 'not_registered') {
             window.alert("You don't have an account yet. Please sign up first.");
             window.history.replaceState({}, '', window.location.pathname);
-            window.location.href = 'http://localhost:4000/auth/google?mode=signup';
+            window.location.href = `${import.meta.env.API_BASE_URL}/auth/google?mode=signup`;
         }
     }, []);
 
     const goToGoogleSignUp = () => {
-        window.location.href = 'http://localhost:4000/auth/google?mode=signup';
+        window.location.href = `${import.meta.env.API_BASE_URL}/auth/google?mode=signup`;
     };
 
     const goToGoogleLogin = () => {
-        window.location.href = 'http://localhost:4000/auth/google?mode=login';
+        window.location.href = `${import.meta.env.API_BASE_URL}/auth/google?mode=login`;
     };
 
     return(

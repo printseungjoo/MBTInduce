@@ -68,7 +68,7 @@ export default function EditMainChatQuestionTemplate({ id }: EditMainChatQuestio
 
     async function patchTemplates(changedContent: string) {
         try {
-            const response = await fetch(`http://localhost:4000/api/admin/main-chat-question-templates/${id}`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/admin/main-chat-question-templates/${id}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {

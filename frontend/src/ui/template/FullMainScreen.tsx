@@ -223,8 +223,6 @@ const MobileBottomNavItem = styled(NavLink)`
     }
 `;
 
-const API_BASE_URL = 'http://localhost:4000';
-
 export default function FullMainScreen() {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -304,7 +302,7 @@ export default function FullMainScreen() {
         const key = simKey ?? selectedSimulationKey;
         const onSimPage = location.pathname === '/Simulation';
         try {
-            const url = onSimPage && key ? `http://localhost:4000/api/chat?pageType=simulation&simulationKey=${encodeURIComponent(key)}` : 'http://localhost:4000/api/chat?pageType=main';
+            const url = onSimPage && key ? `${import.meta.env.API_BASE_URL}/api/chat?pageType=simulation&simulationKey=${encodeURIComponent(key)}` : `${import.meta.env.API_BASE_URL}/api/chat?pageType=main`;
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -363,7 +361,7 @@ export default function FullMainScreen() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -430,7 +428,7 @@ export default function FullMainScreen() {
 
     async function patchChatMessageRate(messageId: string, rate: number) {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/chat/${messageId}`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/chat/${messageId}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -461,7 +459,7 @@ export default function FullMainScreen() {
     }
 
     async function getMainChatSessionMessages(sessionId: string) {
-        const response = await fetch(`${API_BASE_URL}/api/chatMessage/sessions/${sessionId}`, {
+        const response = await fetch(`${import.meta.env.API_BASE_URL}/api/chatMessage/sessions/${sessionId}`, {
             method: 'GET',
             credentials: 'include',
         });

@@ -65,7 +65,7 @@ export default function AdminRightSimulationDiv() {
     const [content, setContent] = useState<string>('');
 
     async function getTemplates() {
-        const response = await fetch('http://localhost:4000/api/admin/simulation-question-templates', {
+        const response = await fetch(`${import.meta.env.API_BASE_URL}/api/admin/simulation-question-templates`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -78,7 +78,7 @@ export default function AdminRightSimulationDiv() {
 
     async function postTemplates() {
         try {
-            const response = await fetch('http://localhost:4000/api/admin/simulation-question-templates', {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/admin/simulation-question-templates`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

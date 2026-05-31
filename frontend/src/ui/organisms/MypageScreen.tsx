@@ -162,7 +162,7 @@ export default function MypageScreen() {
 
     async function getEmail() {
         try {
-            const response = await fetch(`http://localhost:4000/api/profile`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/profile`, {
                 method: 'GET',
                 credentials: 'include',
             });
@@ -178,7 +178,7 @@ export default function MypageScreen() {
 
     async function patchProfileInfo(mbtiValue: string) {
         try {
-            const response = await fetch(`http://localhost:4000/api/profile`, {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/profile`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {
@@ -217,7 +217,7 @@ export default function MypageScreen() {
 
     async function handleLogout() {
         try {
-            const response = await fetch('http://localhost:4000/api/auth/logout', {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/auth/logout`, {
                 method: 'POST',
                 credentials: 'include',
             });
@@ -238,7 +238,7 @@ export default function MypageScreen() {
             return;
         }
         try {
-            const response = await fetch('http://localhost:4000/auth/withdraw', {
+            const response = await fetch(`${import.meta.env.API_BASE_URL}/auth/withdraw`, {
                 method: 'DELETE',
                 credentials: 'include',
             });

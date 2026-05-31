@@ -14,7 +14,7 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const response = await fetch('http://localhost:4000/api/auth/me', {
+        const response = await fetch(`${import.meta.env.API_BASE_URL}/api/auth/me`, {
           method: 'GET',
           credentials: 'include',
         });
@@ -40,7 +40,7 @@ function AdminRoute({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function checkAdmin() {
       try {
-        const response = await fetch('http://localhost:4000/api/auth/me', {
+        const response = await fetch(`${import.meta.env.API_BASE_URL}/api/auth/me`, {
           method: 'GET',
           credentials: 'include',
         });
