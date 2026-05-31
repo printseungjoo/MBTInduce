@@ -19,18 +19,16 @@ export function clearAuthSession(req, res) {
 }
 
 export async function handleGoogleCallbackSuccess(req, res) {
-  const mode = req.query.state;
-  const user = req.user;
-  if (mode === "signup") {
-    return res.redirect("http://localhost:5173/SignUp");
+  const defaultUrl = process.env.AUTH_SUCCESS_REDIRECT || "http://localhost:5173";
+  const signupUrl = process.env.AUTH_SIGNUP_REDIRECT || `${defaultUrl.replace(/\/$/, "")}/SignUp`;
+  const adminUrl = process.env.AUTH_ADMIN_SUCCESS_REDIRECT || `${defaultUrl.replace(/\/$/, "")}/Admin`;
+  if (req.user?.role === "ADMIN") {
+    return res.redirect(adminUrl);
   }
-  if (mode === "login") {
-    if (user.onboardingCompleted) {
-      return res.redirect("http://localhost:5173/Start");
-    }
-    return res.redirect("http://localhost:5173/SignUp");
+  if (req.user && req.user.onboardingCompleted === false) {
+    return res.redirect(signupUrl);
   }
-  return res.redirect("http://localhost:5173");
+  return res.redirect(defaultUrl);
 }
 
 export async function handleGoogleCallbackFailure(req, res) {
@@ -55,6 +53,10 @@ export async function deleteMyAccount(req, res, next) {
     if (mode === "HARD") {
       await prisma.user.delete({ where: { id: userId } });
     } else {
+      await prisma.account.deleteMany({
+        where: { userId },
+      });
+
       await prisma.user.update({
         where: { id: userId },
         data: {

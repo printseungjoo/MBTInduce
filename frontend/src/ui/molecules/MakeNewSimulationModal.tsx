@@ -28,18 +28,25 @@ const InitialSimulationModalStyled = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0, 0, 0, 0.4);
     z-index: 3;
 `;
 
 const CenterBox = styled.div`
-    width: 40vw;
+    width: min(90vw, 36rem);
+    max-height: 85vh;
+    overflow-y: auto;
     background-color: ${({ theme }) => theme.colors.lightWhite};
     border-radius: 1rem;
-    padding: 2vh 1vw;
+    padding: 2vh 1rem;
     display: flex;
     flex-direction: column;
     gap: 1.5vh;
+    box-sizing: border-box;
+
+    @media screen and (min-width: 768px) {
+        width: 40vw;
+        padding: 2vh 1vw;
+    }
 `;
 
 const ScenarioTextArea = styled.textarea`
@@ -47,6 +54,12 @@ const ScenarioTextArea = styled.textarea`
     height: 20vh;
     resize: none;
     overflow-y: auto;
+    box-sizing: border-box;
+    padding: 1.5vh 1vw;
+
+    @media screen and (max-width: 767px) {
+        padding: 0.8vh 2vw;
+    }
 `;
 
 const FlexDiv = styled.div`

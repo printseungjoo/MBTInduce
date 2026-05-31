@@ -68,6 +68,16 @@ const Option = styled.div`
     margin-top: 1vh;
     padding-left: 2vw;
     margin-bottom: 1vh;
+
+    @media (max-width: 768px) {
+        display: flex;
+        align-items: center;
+        padding-left: 0;
+        margin-top: 0;
+        margin-bottom: 0.6rem;
+        border-top: 3px solid ${({ theme }) => theme.colors.royalPurple};
+        border-bottom: 1px solid ${({ theme }) => theme.colors.royalPurple};
+    }
 `;
 
 export default function HistoryScreen() {
@@ -79,7 +89,7 @@ export default function HistoryScreen() {
     const [isMainEditOpen, setIsMainEditOpen] = useState<boolean>(false);
     const [editingChatId, setEditingChatId] = useState<string | null>(null);
     const [isSimulationEditOpen, setIsSimulationEditOpen] = useState<boolean>(false);
-    const [editingSimulationId, setEditingSimulationId] = useState<{userName: string; userMbti: string; simulationContent: string; simulationId: string} | null>(null);
+    const [editingSimulationId, setEditingSimulationId] = useState<{userName: string; userMbti: string; simulationContent: string; userId: string; simulationId: string} | null>(null);
     const [selectedEditTarget, setSelectedEditTarget] = useState<EditTarget | null>(null);
     const [selectedEditContent, setSelectedEditContent] = useState<string>('');
     const [selectedSimulationId, setSelectedSimulationId] = useState<string>('');
@@ -254,8 +264,8 @@ export default function HistoryScreen() {
         setIsMainEditOpen(true);
     }
 
-    const goToEditSimulation = (userName: string, userMbti: string, simulationContent: string, simulationId: string) => {
-        setEditingSimulationId({userName, userMbti, simulationContent, simulationId});
+    const goToEditSimulation = (userName: string, userMbti: string, simulationContent: string, userId: string, simulationId: string) => {
+        setEditingSimulationId({userName, userMbti, simulationContent, userId, simulationId});
         setIsSimulationEditOpen(true);
     }
 
@@ -292,16 +302,16 @@ export default function HistoryScreen() {
             {optionSelected === 'Simulation History' && simulationTemplates.map((s, index) => {
                 const user = userProfiles[index];
                 return(
-                    <HistoryDiv key = { s.id } title = { user?.name || '' } description = { s.content } date = { s.createdAt || '' } etc = { user?.mbti || '' } onClick = {() => { deleteSimulationSession(s.id, user.id) }} onEditClick = {() => { goToEditSimulation(user.name, user.mbti, s.content, user.id) }}/>)
+                    <HistoryDiv key = { s.id } title = { user?.name || '' } description = { s.content } date = { s.createdAt || '' } etc = { user?.mbti || '' } onClick = {() => { deleteSimulationSession(s.id, user.id) }} onEditClick = {() => { goToEditSimulation(user.name, user.mbti, s.content, user.id, s.id) }}/>)
             })}
-            {isSimulationEditOpen && editingSimulationId && (<InitialEditSimulation userName = { editingSimulationId.userName } userMbti = { editingSimulationId.userMbti } simulationContent = { editingSimulationId.simulationContent } simulationId = { editingSimulationId.simulationId } onSelectEditTarget = { handleSelectEditTarget } />)}
+            {isSimulationEditOpen && editingSimulationId && (<InitialEditSimulation userName = { editingSimulationId.userName } userMbti = { editingSimulationId.userMbti } simulationContent = { editingSimulationId.simulationContent } userId = { editingSimulationId.userId } simulationId = { editingSimulationId.simulationId } onSelectEditTarget = { handleSelectEditTarget } />)}
             {isSimulationEditOpen && selectedEditTarget && (<EditSimulation content = { selectedEditContent } target = { selectedEditTarget } id = { selectedSimulationId }/>)}
             {optionSelected === 'Schedule' && events.map((e) => {
                 return(
                     <HistoryDiv key = { e.id } title = { e.title } description = { formatDisplayDate(e.start) + ' ' + formatDisplayTime(e.start) + ' - ' + formatDisplayDate(e.end) + ' ' + formatDisplayTime(e.end)} date = { '' } etc = { '' } onClick = {() => { deleteSchedule(e.id) }} onEditClick = {() => { goToEditSchedule(e.id, e.title, e.start, e.end) }}/>
                 )
             })}
-            {isScheduleEditOpen && editingScheduleId && (<InitialEditSchedule id = { editingScheduleId.scheduleId } title = { editingScheduleId.scheduleTitle } start = { editingScheduleId.scheduleStart } end = { editingScheduleId.scheduleEnd } onSelectEditTarget = { handleSelectScheduleEditTarget } />)}
+            {isScheduleEditOpen && editingScheduleId && !selectedScheduleTarget && (<InitialEditSchedule id = { editingScheduleId.scheduleId } title = { editingScheduleId.scheduleTitle } start = { editingScheduleId.scheduleStart } end = { editingScheduleId.scheduleEnd } onSelectEditTarget = { handleSelectScheduleEditTarget } />)}
             {isScheduleEditOpen && selectedScheduleTarget && (<EditSchedule id = { selectedScheduleId } target = { selectedScheduleTarget } content = { String(selectedScheduleContent) }/>)}
         </>
     )

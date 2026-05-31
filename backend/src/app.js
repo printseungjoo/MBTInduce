@@ -19,6 +19,7 @@ import { extraRouter } from "./routes/extra.routes.js";
 import { simulationRouter } from "./routes/simulation.routes.js";
 import { showBothRouter } from "./routes/showBoth.routes.js";
 import { calendarEventRouter } from "./routes/calendarEvent.routes.js";
+import { adminRouter } from "./routes/admin.routes.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.js";
 
 const app = express();
@@ -68,6 +69,7 @@ app.use("/api", simulationPageRouter);
 app.use("/api/chatMessage", chatRouter);
 app.use("/api/simulation", simulationRouter);
 app.use("/api/calendarEvent", calendarEventRouter);
+app.use("/api/admin", adminRouter);
 app.use("/api", extraRouter);
 
 app.use(notFoundHandler);

@@ -23,13 +23,15 @@ const NavigationDrawerStyled = styled.div<{ isOpen: boolean }>`
 `;
 
 const PaddingLeftWithLine = styled.div`
-    padding-left: 1vw;
-    padding-bottom: 2vh;
+    padding: 0 1vw 2vh 1vw;
     border-bottom: 0.5px solid ${({ theme }) => theme.colors.lightWhite};
 `;
 
 const FlexDiv = styled.div`
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 `;
 
 const Subtitle = styled.p`

@@ -1,12 +1,13 @@
 import styled from '@emotion/styled'
 import { useEffect, useState, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, NavLink } from 'react-router-dom'
 
 import NavigationDrawer from '../organisms/NavigationDrawer'
 import Hamburger from '../atoms/Hamburger'
 import Title from '../atoms/Title'
 import RightScreen from '../template/RightScreen'
-import TextInputBox from '../molecules/TextInputBox'
+import MainChatTextInputBox from '../molecules/MainChatTextInputBox'
+import SimulationTextInputBox from '../molecules/SimulationTextInputBox'
 import UserChat from '../atoms/UserChat'
 import AiChat from '../atoms/AiChat'
 import InitialSimulationModal from '../molecules/InitialSimulationModal'
@@ -15,6 +16,7 @@ import HistoryScreen from '../organisms/HistoryScreen'
 import InitialMainChatModal from '../molecules/InitialMainChatModal'
 import StartPageAfterLogin from '../organisms/StartPageAfterLogin'
 import MypageScreen from '../organisms/MypageScreen'
+import CalendarRightScreen from '../organisms/CalendarRightScreen'
 
 interface MbtiRange {
     eValue: number;
@@ -35,18 +37,6 @@ interface ChatMessage {
 interface SelectedRange {
   startDate: Date | null;
   endDate: Date | null;
-}
-
-interface ChatSession {
-    id: string;
-    userId: string;
-    title: string | null;
-    isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
-    _count?: {
-        messages: number;
-    };
 }
 
 const FullScreen = styled.div`
@@ -73,6 +63,12 @@ const MainContent = styled.div<{ isOpen: boolean; hasRightScreen: boolean }>`
     justify-content: space-between;
     min-height: 0;
     overflow: hidden;
+
+    @media screen and (max-width: 767px) {
+        width: 100%;
+        margin-left: 0;
+        padding: 1rem 1rem 6.5rem;
+    }
 `;
 
 const HeaderDiv = styled.div`
@@ -80,6 +76,8 @@ const HeaderDiv = styled.div`
     gap: 1vw;
     align-items: center;
     padding-top: 1vh;
+    justify-content: space-between;
+    width: 100%;
 `;
 
 const FlexColumnDiv = styled.div`
@@ -94,6 +92,7 @@ const FlexDiv = styled.div`
     display: flex;
     align-items: center;
     gap: 2vw;
+    padding-left: 1rem;
 `;
 
 const ChatMessagesDiv = styled.div`
@@ -111,7 +110,6 @@ const ChatMessagesDiv = styled.div`
         width: 0.4rem;
     }
     &::-webkit-scrollbar-thumb {
-        background: #ccc;
         border-radius: 0.2rem;
     }
 `;
@@ -132,6 +130,99 @@ const NavigationDrawerPlus = styled(NavigationDrawer)<{ isOpen: boolean }>`
     height: 100vh;
 `;
 
+const DesktopOnlyHamburger = styled.div`
+    display: block;
+
+    @media screen and (max-width: 767px) {
+        display: none;
+    }
+`;
+
+const MobileRightHamburgerWrapper = styled.div`
+    display: none;
+
+    @media screen and (max-width: 767px) {
+        display: block;
+        flex-shrink: 0;
+        z-index: 5;
+    }
+`;
+
+const CalendarModalOverlay = styled.div`
+    display: none;
+
+    @media screen and (max-width: 767px) {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 20;
+    }
+`;
+
+const CalendarModalContent = styled.div`
+    position: relative;
+    width: min(28rem, 90vw);
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: ${({ theme }) => theme.colors.deepPlum};
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-sizing: border-box;
+    margin-top: 2rem;
+`;
+
+const CalendarModalCloseButton = styled.button`
+    position: absolute;
+    top: 0.8rem;
+    right: 0.9rem;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: transparent;
+    color: ${({ theme }) => theme.colors.lightWhite};
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+`;
+
+const MobileBottomNav = styled.nav`
+    display: none;
+
+    @media screen and (max-width: 767px) {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 4rem;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background-color: ${({ theme }) => theme.colors.deepPlum};
+        border-top: 1px solid ${({ theme }) => theme.colors.paleLavender};
+        z-index: 30;
+    }
+`;
+
+const MobileBottomNavItem = styled(NavLink)`
+    width: 16.666%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 1.55rem;
+    color: ${({ theme }) => theme.colors.lightWhite};
+
+    &.active {
+        background-color: ${({ theme }) => theme.colors.midnightPurple};
+    }
+`;
+
 const API_BASE_URL = 'http://localhost:4000';
 
 export default function FullMainScreen() {
@@ -145,18 +236,17 @@ export default function FullMainScreen() {
     const [selectedScenario, setSelectedScenario] = useState<string>('');
     const [selectedName, setSelectedName] = useState<string>('');
     const [selectedMbti, setSelectedMbti] = useState<string>('');
-    const [showOldSimulationModal, setShowOldSimulationModal] = useState<boolean>(false);
     const [mainChatMessages, setMainChatMessages] = useState<ChatMessage[]>([]);
     const [simulationChatMessages, setSimulationChatMessages] = useState<Record<string, ChatMessage[]>>({});
     const [selectedRange, setSelectedRange] = useState<SelectedRange>({
         startDate: null,
-        endDate: null,
+        endDate: null
     });
-    const [selectedChatSession, setSelectedChatSession] = useState<ChatSession | null>(null);
     const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
+    const [isMobileRightOpen, setIsMobileRightOpen] = useState<boolean>(false);
 
     const location = useLocation();
-    const hasRightScreen = location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Calendar' || location.pathname === '/Simulation';
+    const hasRightScreen = location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar';
     const isSimulationPage = location.pathname === '/Simulation';
     const selectedSimulationKey = useMemo(() => {
         if (!selectedName || !selectedMbti || !selectedScenario) {
@@ -165,7 +255,9 @@ export default function FullMainScreen() {
         return `${selectedName}-${selectedMbti}-${selectedScenario}`;
     }, [selectedName, selectedMbti, selectedScenario]);
     const isReadySimulation = isSimulationPage && showSimulation && selectedSimulationKey !== '';
+    const isMainChatModalOpen = location.pathname === '/MainChat' && !showSimulation;
     const isSimulationModalOpen = isSimulationPage && !showSimulation;
+    const isBlockingModalOpen = isMainChatModalOpen || isSimulationModalOpen;
     const currentChatMessages = isSimulationPage
         ? isReadySimulation
             ? simulationChatMessages[selectedSimulationKey] ?? []
@@ -185,7 +277,6 @@ export default function FullMainScreen() {
     useEffect(() => {
         if (location.pathname === '/Simulation') {
             setShowSimulation(false);
-            setShowOldSimulationModal(false);
             setSelectedScenario('');
             setSelectedName('');
             setSelectedMbti('');
@@ -394,6 +485,19 @@ export default function FullMainScreen() {
         setMainChatMessages(messages);
     }
 
+    function handleMobileNavClick(path: string) {
+        if (path === '/MainChat') {
+            setShowSimulation(false);
+            setSelectedMainChatSessionId(null);
+        }
+        if (path === '/Simulation') {
+            setShowSimulation(false);
+            setSelectedScenario('');
+            setSelectedName('');
+            setSelectedMbti('');
+        }
+    }
+
     return (
         <FullScreen>
             {location.pathname === '/Simulation' && !showSimulation && (<InitialSimulationModal onConfirm = { handleConfirm } onSelectHistory = { handleSelectHistory } />)}
@@ -403,19 +507,30 @@ export default function FullMainScreen() {
                 }} 
             />)}
             <NavigationDrawerPlus isOpen = { isOpen }>
-                <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
+                <DesktopOnlyHamburger>
+                    <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
+                </DesktopOnlyHamburger>
             </NavigationDrawerPlus>
             <MainContent isOpen = { isOpen } hasRightScreen = { hasRightScreen }>
                 <FlexColumnDiv>
                     <HeaderDiv>
                         <FlexDiv>
-                            {!isOpen && <Hamburger isClicked = { isClicked } isOpen = { isOpen } />}
+                            {!isOpen && (
+                                <DesktopOnlyHamburger>
+                                    <Hamburger isClicked = { isClicked } isOpen = { isOpen } /> 
+                                </DesktopOnlyHamburger>
+                            )}
                             <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
                         </FlexDiv>
+                        {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && (
+                            <MobileRightHamburgerWrapper>
+                                <Hamburger isClicked = {() => setIsMobileRightOpen((prev) => !prev)} isOpen = { isMobileRightOpen }/>
+                            </MobileRightHamburgerWrapper>
+                        )}
                     </HeaderDiv>
                     {location.pathname === '/Start' && <StartPageAfterLogin />};
-                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && <ChatMessagesDiv>
-                        {!isSimulationModalOpen && currentChatMessages.map((chatMessage) => (
+                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isBlockingModalOpen && <ChatMessagesDiv>
+                        {!currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
                                     <UserChat content = { chatMessage.content } />
@@ -425,13 +540,30 @@ export default function FullMainScreen() {
                             </ChatRow>
                         ))}
                     </ChatMessagesDiv>}
-                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isSimulationModalOpen && (<TextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    {(location.pathname === '/' || location.pathname === '/MainChat') && !isBlockingModalOpen && (<MainChatTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    {(location.pathname === '/Simulation') && !isBlockingModalOpen && (<SimulationTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                     {location.pathname === '/Calendar' && <CalendarScreen selectedRange = { selectedRange } setSelectedRange = { setSelectedRange } />}
                     {location.pathname === '/History' && <HistoryScreen />}
                     {location.pathname === '/Mypage' && <MypageScreen />}
                 </FlexColumnDiv>
             </MainContent>
-            {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } />}
+            {!isBlockingModalOpen && (location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} />}
+            {location.pathname === '/Calendar' && selectedRange.startDate && selectedRange.endDate && (
+                <CalendarModalOverlay onClick = {() => setSelectedRange({ startDate: null, endDate: null })}>
+                    <CalendarModalContent onClick = {(event) => event.stopPropagation()}>
+                        <CalendarModalCloseButton type = "button" onClick = {() => setSelectedRange({ startDate: null, endDate: null })}> x </CalendarModalCloseButton>
+                        <CalendarRightScreen selectedRange = { selectedRange } />
+                    </CalendarModalContent>
+                </CalendarModalOverlay>
+            )}
+            <MobileBottomNav>
+                <MobileBottomNavItem to = "/Start"> 👋🏻 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/MainChat" onClick = {() => handleMobileNavClick('/MainChat')}> 💬 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Simulation" onClick = {() => handleMobileNavClick('/Simulation')}> 👥 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Calendar"> 📅 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/History"> 📄 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Mypage"> 👤 </MobileBottomNavItem>
+            </MobileBottomNav>
         </FullScreen>
     );
 }
