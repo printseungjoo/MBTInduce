@@ -29,6 +29,9 @@ router.get("/google", ensureGoogleOAuthConfigured, (req, res, next) => {
 router.get("/google/callback", ensureGoogleOAuthConfigured, (req, res, next) => {
   passport.authenticate("google", (err, user) => {
     if (err) {
+      console.error("Google OAuth error:", err);
+      console.error("Google OAuth error message:", err.message);
+
       if (err.message === "Account already registered") {
         return res.redirect("https://www.mbtinduce.com/?error=already_registered");
       }
