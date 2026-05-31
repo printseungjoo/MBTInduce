@@ -146,7 +146,7 @@ export default function SignUpScreen() {
 
     async function getEmail() {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/profile`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
                 method: 'GET',
                 credentials: 'include',
             });
@@ -162,7 +162,7 @@ export default function SignUpScreen() {
 
     async function patchProfileInfo(nickname: string, mbtiValue: string) {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/profile`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {

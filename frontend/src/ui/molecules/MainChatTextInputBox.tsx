@@ -73,7 +73,7 @@ export default function MainChatTextInputBox({ onSubmit, disabled = false }: Tex
     const [templates, setTemplates] = useState<TemplateType[]>([]);
 
     async function getTemplates() {
-        const response = await fetch('http://localhost:4000/api/templates', {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/templates`, {
             method: 'GET',
             credentials: 'include'
         });

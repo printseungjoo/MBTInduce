@@ -63,7 +63,7 @@ const MainChatRightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>
     const sendMbtiRange = async() => {
         const mbtiRange: MbtIRangeRequest = { eValue: eValues, sValue: sValues, fValue: fValues, pValue: pValues };
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/mbtiRange`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/mbtiRange`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ const MainChatRightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>
     const sendTwoMBTIs = async() => {
         const selectedDualModes = getSelectedDualModes();
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/showBoth`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/showBoth`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

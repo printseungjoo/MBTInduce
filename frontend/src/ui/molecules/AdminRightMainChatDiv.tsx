@@ -65,7 +65,7 @@ export default function AdminRightMainChatDiv() {
     const [content, setContent] = useState<string>('');
 
     async function getTemplates() {
-        const response = await fetch(`${import.meta.env.API_BASE_URL}/api/admin/main-chat-question-templates`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/main-chat-question-templates`, {
             method: 'GET',
             credentials: 'include'
         });
@@ -78,7 +78,7 @@ export default function AdminRightMainChatDiv() {
 
     async function postTemplates() {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/admin/main-chat-question-templates`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/main-chat-question-templates`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

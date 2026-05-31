@@ -70,7 +70,7 @@ export default function EditSimulation({ target, id }: EditSimulationProps) {
 
     async function editUserName(userName: string) {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/simulation/userProfiles/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles/${id}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {
@@ -92,7 +92,7 @@ export default function EditSimulation({ target, id }: EditSimulationProps) {
 
     async function editUserMbti(userMbti: string) {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/simulation/userProfiles/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles/${id}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {
@@ -114,7 +114,7 @@ export default function EditSimulation({ target, id }: EditSimulationProps) {
 
     async function editSimulationContent(simulationContent: string) {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/simulation/simulationTemplate/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/simulationTemplate/${id}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {

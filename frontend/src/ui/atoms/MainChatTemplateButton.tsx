@@ -35,7 +35,7 @@ export default function MainChatTemplateButton({ id, content }: MainChatTemplate
     
     async function deleteTemplates() {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/admin/main-chat-question-templates/${id}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/main-chat-question-templates/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

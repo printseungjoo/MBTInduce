@@ -121,7 +121,7 @@ export default function AdminScreen() {
 
     async function getStatistics() {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/admin/statistics`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/statistics`, {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -137,7 +137,7 @@ export default function AdminScreen() {
     
     async function handleLogout() {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/auth/logout`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`, {
                 method: 'POST',
                 credentials: 'include',
             });

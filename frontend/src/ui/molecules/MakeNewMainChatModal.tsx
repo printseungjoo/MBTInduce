@@ -80,7 +80,7 @@ export default function MakeNewMainChatModal({ onSubmitSuccess }: MakeNewMainCha
 
     async function createChatSession(title: string) {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/chatMessage/sessions`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

@@ -120,7 +120,7 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
         };
 
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/calendarEvent`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

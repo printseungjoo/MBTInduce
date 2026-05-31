@@ -77,7 +77,7 @@ export default function OldMainChatModal({ onConfirm, onSelectHistory }: OldMain
 
     async function getChatSessions() {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/chatMessage/sessions`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions`, {
                 method: 'GET',
                 credentials: 'include',
             });

@@ -68,7 +68,7 @@ export default function EditMainChat({ changedChatId }: EditMainChatProps) {
 
     async function editChatSession(targetId: string, changedTitle: string) {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/chatMessage/sessions/${targetId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions/${targetId}`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {

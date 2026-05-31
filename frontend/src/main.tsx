@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-const gaMeasurementId = import.meta.env.GA_ID;
+const gaMeasurementId = import.meta.env.VITE_GA_ID;
 
 if (gaMeasurementId) {
   const script = document.createElement('script');

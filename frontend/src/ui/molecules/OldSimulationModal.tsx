@@ -77,14 +77,14 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
     const getHistory = async () => {
         try {
             const [scenarioRes, targetRes] = await Promise.all([
-                fetch(`${import.meta.env.API_BASE_URL}/api/simulation/simulationTemplate`, {
+                fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/simulationTemplate`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json' 
                     },
                     credentials: 'include',
                 }),
-                fetch(`${import.meta.env.API_BASE_URL}/api/simulation/userProfiles`, {
+                fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles`, {
                     method: 'GET',
                     headers: { 
                         'Content-Type': 'application/json' 
