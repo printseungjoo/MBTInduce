@@ -22,6 +22,13 @@ import { calendarEventRouter } from "./routes/calendarEvent.routes.js";
 import { adminRouter } from "./routes/admin.routes.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.js";
 
+const express = require('express');
+const app = express();
+
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1); 
+}
+
 const app = express();
 const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
   .split(",")

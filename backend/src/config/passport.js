@@ -35,7 +35,8 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:4000/auth/google/callback",
-        passReqToCallback: true
+        passReqToCallback: true,
+        proxy: true
       },
       async (req, accessToken, refreshToken, profile, done) => {
       try {
