@@ -30,15 +30,15 @@ router.get("/google/callback", ensureGoogleOAuthConfigured, (req, res, next) => 
   passport.authenticate("google", (err, user) => {
     if (err) {
       if (err.message === "Account already registered") {
-        return res.redirect("http://localhost:5173/?error=already_registered");
+        return res.redirect("https://mbtinduce.com/?error=already_registered");
       }
       if (err.message === "Account not registered") {
-        return res.redirect("http://localhost:5173/?error=not_registered");
+        return res.redirect("https://mbtinduce.com/?error=not_registered");
       }
-      return res.redirect("http://localhost:5173/login?error=oauth_failed");
+      return res.redirect("https://mbtinduce.com/login?error=oauth_failed");
     }
     if (!user) {
-      return res.redirect("http://localhost:5173/login?error=oauth_failed");
+      return res.redirect("https://mbtinduce.com/login?error=oauth_failed");
     }
     req.login(user, (loginErr) => {
       if (loginErr) {
