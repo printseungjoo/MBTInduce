@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 import Title from '../atoms/Title'
 import SelectTime from '../molecules/SelectTime'
@@ -14,27 +14,6 @@ interface SelectedRange {
 
 interface CalendarRightScreenProps {
     selectedRange: SelectedRange;
-}
-
-interface CalendarEventResponse {
-    id: string;
-    title: string;
-    description: string | null;
-    startAt: string;
-    endAt: string;
-    allDay: boolean;
-    mbti: string | null;
-    planningNote: string | null;
-    createdAt: string;
-    updatedAt: string;
-}
-
-interface BigCalendarEvent {
-    id: string;
-    title: string;
-    start: Date;
-    end: Date;
-    allDay: boolean;
 }
 
 type DisturbOption = 'You can disturb' | 'Do not disturb whole day' | 'Do not disturb only at this time';
