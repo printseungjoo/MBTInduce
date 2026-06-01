@@ -17,6 +17,7 @@ import InitialMainChatModal from '../molecules/InitialMainChatModal'
 import StartPageAfterLogin from '../organisms/StartPageAfterLogin'
 import MypageScreen from '../organisms/MypageScreen'
 import CalendarRightScreen from '../organisms/CalendarRightScreen'
+import type { MainChatRightScreenRef } from '../organisms/MainChatRightScreen'
 
 interface MbtiRange {
     eValue: number;
@@ -37,6 +38,41 @@ interface ChatMessage {
 interface SelectedRange {
   startDate: Date | null;
   endDate: Date | null;
+}
+
+interface ApiMessage {
+    id: string;
+    role: 'USER' | 'ASSISTANT' | 'SYSTEM';
+    content: string;
+    createdAt: string;
+}
+
+interface PostChatMessageResponse {
+    userMessage: ApiMessage;
+    assistantMessage: ApiMessage;
+    assistantMessages?: ApiMessage[];
+    appliedMbti?: {
+        energy: string;
+        information: string;
+        decision: string;
+        lifestyle: string;
+        energyWeight: number;
+        informationWeight: number;
+        decisionWeight: number;
+        lifestyleWeight: number;
+    } | null;
+}
+
+interface ChatSessionMessagesResponse {
+    session: {
+        id: string;
+        userId: string;
+        title: string | null;
+        isArchived: boolean;
+        createdAt: string;
+        updatedAt: string;
+    };
+    messages: ApiMessage[];
 }
 
 const FullScreen = styled.div`
@@ -243,6 +279,7 @@ export default function FullMainScreen() {
     const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
     const [isMobileRightOpen, setIsMobileRightOpen] = useState<boolean>(false);
     const chatMessagesRef = useRef<HTMLDivElement | null>(null);
+    const mainChatRightScreenRef = useRef<MainChatRightScreenRef | null>(null);
 
     const location = useLocation();
     const hasRightScreen = location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar';
@@ -350,6 +387,9 @@ export default function FullMainScreen() {
     async function sendChatMessages(inputValue: string) {
         const trimmedValue = inputValue.trim();
         if (!trimmedValue || isLoading) return;
+        const rightScreenValues = !isSimulationPage
+            ? await mainChatRightScreenRef.current?.sendMainChatRightScreenValues()
+            : null;
         const newUserChatMessage: ChatMessage = {
             id: crypto.randomUUID(),
             role: 'user',
@@ -379,6 +419,7 @@ export default function FullMainScreen() {
                         content: trimmedValue,
                         role: 'user',
                         mbtiRange: { eValue, sValue, fValue, pValue },
+                        showBoth: rightScreenValues?.showBoth ?? [],
                         pageType: isSimulationPage ? 'simulation' : 'main',
                         simulationKey: isSimulationPage ? selectedSimulationKey : '',
                     }),
@@ -395,21 +436,22 @@ export default function FullMainScreen() {
                 }));
                 return;
             }
-            const data = await response.json();
-            const assistantMessage: ChatMessage = {
-                id: data.assistantMessage.id,
+            const data: PostChatMessageResponse = await response.json();
+            const assistantSourceMessages = data.assistantMessages ?? [data.assistantMessage];
+            const assistantMessages: ChatMessage[] = assistantSourceMessages.map((message) => ({
+                id: message.id,
                 role: 'ai',
-                content: data.assistantMessage.content,
-                mbtiRange: {
+                content: message.content,
+                mbtiRange: rightScreenValues?.mbtiRange ?? {
                     eValue,
                     sValue,
                     fValue,
-                    pValue,
+                    pValue
                 },
-                createdAt: data.assistantMessage.createdAt,
+                createdAt: message.createdAt,
                 rate: 0,
-            };
-            setMainChatMessages((prev) => [...prev, assistantMessage]);
+            }));
+            setMainChatMessages((prev) => [...prev, ...assistantMessages]);
         } catch (error) {
             console.error(error);
             const errorMessage: ChatMessage = {
@@ -471,8 +513,8 @@ export default function FullMainScreen() {
         if (!response.ok) {
             throw new Error('Failed to get main chat session messages');
         }
-        const data = await response.json();
-        const messages: ChatMessage[] = data.messages.map((message: any) => ({
+        const data: ChatSessionMessagesResponse = await response.json();
+        const messages: ChatMessage[] = data.messages.map((message) => ({
             id: message.id,
             role: message.role === 'USER' ? 'user' : 'ai',
             content: message.content,
@@ -550,7 +592,7 @@ export default function FullMainScreen() {
                     {location.pathname === '/Mypage' && <MypageScreen />}
                 </FlexColumnDiv>
             </MainContent>
-            {!isBlockingModalOpen && (location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} />}
+            {!isBlockingModalOpen && (location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} ref = { mainChatRightScreenRef } />}
             {location.pathname === '/Calendar' && selectedRange.startDate && selectedRange.endDate && (
                 <CalendarModalOverlay onClick = {() => setSelectedRange({ startDate: null, endDate: null })}>
                     <CalendarModalContent onClick = {(event) => event.stopPropagation()}>
