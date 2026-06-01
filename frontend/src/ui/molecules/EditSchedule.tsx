@@ -140,7 +140,17 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
     const isValid = target === 'title' ? changedContent.trim() !== '' : selectedDate !== '' && selectedTime !== '';
 
     function makeDateTime(date: string, time: string) {
-        return `${date}T${time}:00`;
+        const [year, month, day] = date.split('-').map(Number);
+        const [hours, minutes] = time.split(':').map(Number);
+        return new Date(
+            year,
+            month - 1,
+            day,
+            hours,
+            minutes,
+            0,
+            0
+        ).toISOString();
     }
 
     const clickSubmitButton = async () => {

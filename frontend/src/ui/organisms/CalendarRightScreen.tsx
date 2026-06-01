@@ -61,10 +61,17 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
     
     function formatDateTime(date: Date | null, time: string) {
         if (!date) return '';
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}T${time}:00`;
+        const [hours, minutes] = time.split(':').map(Number);
+        const localDate = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            hours,
+            minutes,
+            0,
+            0
+        );
+        return localDate.toISOString();
     }
 
     function getOrderedDates(startDate: Date | null, endDate: Date | null) {
