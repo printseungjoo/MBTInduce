@@ -15,8 +15,14 @@ interface TargetInfoRequest {
     mbti: string;
 }
 
+interface SimulationSelection {
+    scenario: string;
+    name: string;
+    mbti: string;
+}
+
 interface MakeNewSimulationModalProps {
-    onSubmitSuccess: () => void;
+    onSubmitSuccess: (selection: SimulationSelection) => void;
 }
 
 const InitialSimulationModalStyled = styled.div`
@@ -130,7 +136,11 @@ export default function MakeNewSimulationModal({ onSubmitSuccess }: MakeNewSimul
         try {
             await sendScenario();
             await sendTargetInfo();
-            onSubmitSuccess();
+            onSubmitSuccess({
+                scenario,
+                name,
+                mbti
+            });
         } catch (error) {
             console.error(error);
         }
