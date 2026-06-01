@@ -409,30 +409,21 @@ To protect user privacy:
 
 ---
 
-# ✅ Bug Tracking and Reporting
+## Bug Tracking System
 
-We use **GitHub Issues** to track bugs, errors, and unfinished fixes for this project.
+Our team uses **Jira** as the main bug tracking system for this project.
 
-## Where to Check Outstanding Bugs
+All outstanding bugs, reported issues, and serious problems are recorded and managed in Jira. Team members can check the current list of bugs, assigned person, and progress through the Jira project board.
 
-Outstanding bugs can be checked in the **Issues** tab of this repository:
+If a new bug or issue is found, it should be reported in Jira with the following information:
 
-[GitHub Issues](https://github.com/printseungjoo/MBTInduce/issues)
+- Description of the problem
+- issued date
+- Expected behavior
 
-Open issues represent bugs or problems that still need to be fixed.  
-Closed issues represent bugs that have already been resolved.
+For serious bugs, the issue is generally assigned to a responsible team member, and the required bug-fixing time is managed according to the project milestones and schedule.
 
-## How to Report a Bug
-
-If you find a bug, please report it by creating a new GitHub Issue.
-
-### Steps to Report a Bug
-
-1. Go to the [Issues page](https://github.com/printseungjoo/MBTInduce/issues)
-2. Click **New Issue**
-3. Write a clear title
-4. Describe the bug using the format below
-5. Submit the issue
+Since our team is using Jira instead of GitHub Issues, please refer to our Jira board for the official list of outstanding bugs and bug reports.
 
 ---
 
