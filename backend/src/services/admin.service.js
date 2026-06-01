@@ -148,7 +148,7 @@ export async function createQuestionTemplateByKind(kind, data, createdById) {
       category: data.category,
       kind,
       isActive: data.isActive,
-      createdById,
+      createdById: null,
     },
   });
   return mapPromptTemplate(row);
