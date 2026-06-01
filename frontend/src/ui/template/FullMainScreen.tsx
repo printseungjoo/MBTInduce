@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { useLocation, NavLink } from 'react-router-dom'
 
 import NavigationDrawer from '../organisms/NavigationDrawer'
@@ -242,6 +242,7 @@ export default function FullMainScreen() {
     });
     const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
     const [isMobileRightOpen, setIsMobileRightOpen] = useState<boolean>(false);
+    const chatMessagesRef = useRef<HTMLDivElement | null>(null);
 
     const location = useLocation();
     const hasRightScreen = location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar';
@@ -261,6 +262,11 @@ export default function FullMainScreen() {
             ? simulationChatMessages[selectedSimulationKey] ?? []
             : []
         : mainChatMessages;
+    useEffect(() => {
+        const chatMessagesElement = chatMessagesRef.current;
+        if (!chatMessagesElement) return;
+        chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
+    }, [currentChatMessages]);
 
     function isClicked() {
         setIsOpen(!isOpen);
@@ -526,7 +532,7 @@ export default function FullMainScreen() {
                         )}
                     </HeaderDiv>
                     {location.pathname === '/Start' && <StartPageAfterLogin />};
-                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isBlockingModalOpen && <ChatMessagesDiv>
+                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isBlockingModalOpen && <ChatMessagesDiv ref = { chatMessagesRef }>
                         {currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
