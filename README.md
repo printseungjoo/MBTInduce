@@ -213,6 +213,59 @@ The admin dashboard provides analytics and management tools.
 
 MBTInduce aims to create a new AI interaction experience where users can explore different personality perspectives, improve communication understanding, and receive responses tailored to their preferred emotional or logical style.
 
+---
+
+# Instructions for Checking Out the Source Code
+
+### 1. Clone the Repository
+
+Download the project directly from the main branch, or clone it using the command below.
+
+```bash
+git clone https://github.com/printseungjoo/MBTInduce.git
+```
+
+### 2. Move into the Project Folder
+
+```bash
+cd MBTInduce
+```
+
+### 3. Install Dependencies
+
+Install dependencies for the root project, frontend, and backend.
+
+```bash
+npm install
+
+cd frontend
+npm install
+
+cd ../backend
+npm install
+
+cd ..
+```
+
+### 4. Set Up Environment Variables
+
+Move into the backend folder and create a `.env` file by copying `.env.example`.
+
+```bash
+cd backend
+copy .env.example .env
+```
+
+> Note: For `.env` setup, please follow the instructions in the **Getting Started** section below.
+
+### 5. Set Up the Database
+
+After starting PostgreSQL, run the following commands inside the backend folder.
+
+```bash
+npm run prisma:generate
+npm run prisma:migrate
+```
 
 ---
 
