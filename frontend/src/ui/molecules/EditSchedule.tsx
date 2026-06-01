@@ -142,7 +142,7 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
     function makeDateTime(date: string, time: string) {
         const [year, month, day] = date.split('-').map(Number);
         const [hours, minutes] = time.split(':').map(Number);
-        return new Date(Date.UTC(
+        return new Date(
             year,
             month - 1,
             day,
@@ -150,7 +150,7 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
             minutes,
             0,
             0
-        )).toISOString();
+        ).toISOString();
     }
 
     const clickSubmitButton = async () => {
