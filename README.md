@@ -213,6 +213,59 @@ The admin dashboard provides analytics and management tools.
 
 MBTInduce aims to create a new AI interaction experience where users can explore different personality perspectives, improve communication understanding, and receive responses tailored to their preferred emotional or logical style.
 
+---
+
+# Instructions for Checking Out the Source Code
+
+### 1. Clone the Repository
+
+Download the project directly from the main branch, or clone it using the command below.
+
+```bash
+git clone https://github.com/printseungjoo/MBTInduce.git
+```
+
+### 2. Move into the Project Folder
+
+```bash
+cd MBTInduce
+```
+
+### 3. Install Dependencies
+
+Install dependencies for the root project, frontend, and backend.
+
+```bash
+npm install
+
+cd frontend
+npm install
+
+cd ../backend
+npm install
+
+cd ..
+```
+
+### 4. Set Up Environment Variables
+
+Move into the backend folder and create a `.env` file by copying `.env.example`.
+
+```bash
+cd backend
+copy .env.example .env
+```
+
+> Note: For `.env` setup, please follow the instructions in the **Getting Started** section below.
+
+### 5. Set Up the Database
+
+After starting PostgreSQL, run the following commands inside the backend folder.
+
+```bash
+npm run prisma:generate
+npm run prisma:migrate
+```
 
 ---
 
@@ -356,30 +409,21 @@ To protect user privacy:
 
 ---
 
-# ✅ Bug Tracking and Reporting
+## Bug Tracking System
 
-We use **GitHub Issues** to track bugs, errors, and unfinished fixes for this project.
+Our team uses **Jira** as the main bug tracking system for this project.
 
-## Where to Check Outstanding Bugs
+All outstanding bugs, reported issues, and serious problems are recorded and managed in Jira. Team members can check the current list of bugs, assigned person, and progress through the Jira project board.
 
-Outstanding bugs can be checked in the **Issues** tab of this repository:
+If a new bug or issue is found, it should be reported in Jira with the following information:
 
-[GitHub Issues](https://github.com/printseungjoo/MBTInduce/issues)
+- Description of the problem
+- issued date
+- Expected behavior
 
-Open issues represent bugs or problems that still need to be fixed.  
-Closed issues represent bugs that have already been resolved.
+For serious bugs, the issue is generally assigned to a responsible team member, and the required bug-fixing time is managed according to the project milestones and schedule.
 
-## How to Report a Bug
-
-If you find a bug, please report it by creating a new GitHub Issue.
-
-### Steps to Report a Bug
-
-1. Go to the [Issues page](https://github.com/printseungjoo/MBTInduce/issues)
-2. Click **New Issue**
-3. Write a clear title
-4. Describe the bug using the format below
-5. Submit the issue
+Since our team is using Jira instead of GitHub Issues, please refer to our Jira board for the official list of outstanding bugs and bug reports.
 
 ---
 
