@@ -85,7 +85,10 @@ export default function AdminRightMainChatDiv() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    content
+                    title: content.trim(),
+                    content: content.trim(),
+                    category: 'MAIN_CHAT',
+                    isActive: true,
                 })
             });
             if (!response.ok) {

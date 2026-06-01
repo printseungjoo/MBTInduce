@@ -85,7 +85,10 @@ export default function AdminRightSimulationDiv() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    content
+                    title: content.trim(),
+                    content: content.trim(),
+                    category: 'SIMULATION',
+                    isActive: true,
                 })
             });
             if (!response.ok) {
