@@ -322,37 +322,37 @@ To protect user privacy:
 
 ---
 
-# 🗣️ Frontend Development Plan
+## 🗣️ Frontend Development Plan
 
-| Feature | Description | Estimated Date |
-|---|---|---|
-| 1. Hamburgers | Hamburger menu implementation for logged-in and logged-out users | ~3/24 |
-| 2. Main Chat | Chat UI, right tab, templates, and input window | ~4/7 |
-| 3. Simulation | Simulation page and right-side tab UI | ~4/21 |
-| 4. Calendar | Calendar library integration and right tab | ~5/11 |
-| 5. History | Chat history, edit/delete buttons, chat tabs, top bar | ~5/18 |
-| 6. Start Page / Sign Up / My Page | Nickname, MBTI settings, save functionality, profile window | ~5/20 |
-| 7. Admin Page | Total users, ratings, question templates, log out button | ~5/22 |
-| 8. Responsive Design | Responsive UI optimization | ~5/24 |
-| 9. Testing | Frontend testing and debugging | ~5/26 |
-| 10. Distribution | Deployment and distribution | ~5/26 |
+| Feature                                              | Description                                                                                               | Estimated Date | Status      |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------: | ----------- |
+| 1. Hamburger / Navigation UI                         | Hamburger menu implementation for logged-in and logged-out users                                          |          ~3/24 | ✅ Completed |
+| 2. Main Chat Page                                    | Chat UI, right screen, templates, and input box                                                           |           ~4/7 | ✅ Completed |
+| 3. Simulation Page                                   | Simulation UI and right-side interaction                                                                  |          ~4/21 | ✅ Completed |
+| 4. Calendar Page                                     | Calendar UI and schedule interaction                                                                      |          ~5/11 | ✅ Completed |
+| 5. History Page                                      | Main chat, simulation, and schedule history                                                               |          ~5/18 | ✅ Completed |
+| 6. Start Page / Sign Up / My Page                    | Sign up flow, profile, nickname, MBTI settings                                                            |          ~5/20 | ✅ Completed |
+| 7. Admin Page                                        | Statistics, rating data, logout functionality                                                             |          ~5/23 | ✅ Completed |
+| 8. Responsive Design                                 | Responsive optimization for start page, main chat, simulation, calendar, history, my page, and admin page |          ~5/26 | ✅ Completed |
+| 9. Testing and Bug Fixing                            | Frontend testing and debugging                                                                            |          ~5/30 | ✅ Completed |
+| 10. Deployment / Analytics / Environment Refactoring | Deployment, analytics integration, and environment refactoring                                            |          ~5/31 | ✅ Completed |
 
 ---
 
-# 🗣️ Backend Development Plan
+## 🗣️ Backend Development Plan
 
-| Feature | Description | Estimated Date |
-|---|---|---|
-| 1. Google Login Implementation | OAuth login system | ~3/24 |
-| 2. Database Setup | Database schema and API variable structure for Main Chat, Simulation, Calendar | ~3/24 |
-| 3. Main Chat | Main chat backend implementation | ~4/7 |
-| 4. Simulation | Simulation backend implementation | ~4/21 |
-| 5. Calendar | Calendar backend implementation | ~5/11 |
-| 6. Sign Up / My Page | User profile and account management | ~5/19 |
-| 7. Administrators Page | Admin system backend | ~5/22 |
-| 8. Backend Layer | Backend layer integration for Main Chat, Simulation, Calendar | ~5/23 |
-| 9. AI Service Layer | GPT tuning and AI service optimization | ~5/25 |
-| 10. Testing | Backend testing and debugging | ~5/26 |
+| Feature                        | Description                                                                                 | Estimated Date | Status      |
+| ------------------------------ | ------------------------------------------------------------------------------------------- | -------------: | ----------- |
+| 1. Google Login Implementation | Google OAuth login system implementation                                                    |          ~3/24 | ✅ Completed |
+| 2. Database Setup              | Database schema, variable naming, and API data flow for Main Chat, Simulation, and Calendar |          ~3/24 | ✅ Completed |
+| 3. Main Chat                   | Main chat backend API and logic                                                             |           ~4/7 | ✅ Completed |
+| 4. Simulation                  | Simulation backend API and functionality                                                    |          ~4/21 | ✅ Completed |
+| 5. Calendar                    | Calendar backend API and event handling                                                     |          ~5/11 | ✅ Completed |
+| 6. Sign Up / My Page           | User profile, sign up, and account management                                               |          ~5/19 | ✅ Completed |
+| 7. Administrators Page         | Admin page backend and role-based access                                                    |          ~5/22 | ✅ Completed |
+| 8. AI Service Layer - Tuning   | AI response service tuning and prompt improvements                                          |          ~5/25 | ✅ Completed |
+| 9. Testing                     | Backend testing and debugging                                                               |          ~5/26 | ✅ Completed |
+
 
 ---
 

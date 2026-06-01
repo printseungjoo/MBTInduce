@@ -361,50 +361,29 @@ export default function FullMainScreen() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chat`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
                 body: JSON.stringify({
                     content: trimmedValue,
                     role: 'user',
-                    mbtiRange: {
-                        eValue,
-                        sValue,
-                        fValue,
-                        pValue,
-                    },
+                    mbtiRange: { eValue, sValue, fValue, pValue },
                     pageType: isSimulationPage ? 'simulation' : 'main',
                     simulationKey: isSimulationPage ? selectedSimulationKey : '',
                 }),
             });
-            if (!response.ok) {
-                throw new Error('Failed to post chatMessage');
-            }
-            const data = await response.json();
+
+            const data: ChatMessage[] = await response.json();
+
             if (isSimulationPage) {
                 setSimulationChatMessages((prev) => ({
                     ...prev,
                     [selectedSimulationKey]: data,
                 }));
-                return;
+            } else {
+                setMainChatMessages(data);
             }
-            const assistantMessage: ChatMessage = {
-                id: data.assistantMessage.id,
-                role: 'ai',
-                content: data.assistantMessage.content,
-                mbtiRange: {
-                    eValue,
-                    sValue,
-                    fValue,
-                    pValue
-                },
-                createdAt: data.assistantMessage.createdAt,
-                rate: 0,
-            };
-            setMainChatMessages((prev) => [...prev, assistantMessage]);
         } catch (error) {
             console.error(error);
             const errorMessage: ChatMessage = {
@@ -528,7 +507,7 @@ export default function FullMainScreen() {
                     </HeaderDiv>
                     {location.pathname === '/Start' && <StartPageAfterLogin />};
                     {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isBlockingModalOpen && <ChatMessagesDiv>
-                        {!currentChatMessages.map((chatMessage) => (
+                        {currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
                                     <UserChat content = { chatMessage.content } />
