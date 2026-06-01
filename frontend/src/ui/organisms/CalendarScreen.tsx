@@ -124,14 +124,26 @@ export default function CalendarScreen({ selectedRange, setSelectedRange }: Cale
         const e = normalize(end).getTime();
         return t >= Math.min(s, e) && t <= Math.max(s, e);
     }
+    function toCalendarDate(date: Date) {
+        return new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+            12,
+            0,
+            0,
+            0
+        );
+    }
     function handleSelectSlot(slotInfo: SlotInfo) {
-        const clicked = slotInfo.start;
+        const clicked = toCalendarDate(slotInfo.slots?.[0] ?? slotInfo.start);
         if (!startDate || endDate) {
             setSelectedRange({ startDate: clicked, endDate: null });
             return;
         }
+
         setSelectedRange({
-            startDate,
+            startDate: toCalendarDate(startDate),
             endDate: clicked,
         });
     }
