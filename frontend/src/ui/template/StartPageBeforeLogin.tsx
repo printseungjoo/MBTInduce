@@ -80,21 +80,6 @@ const GenerateButtonPlus = styled(GenerateButton)`
     }
 `;
 
-const FlexLinkDiv = styled.div`
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 3vh;
-    flex-wrap: wrap;
-`;
-
-const LinkA = styled.a`
-    color: ${({ theme }) => theme.colors.paleLavender};
-    text-decoration: underline;
-    font-size: clamp(1rem, 3vw, 1.25rem);
-`;
-
-// I will put the links later.
 export default function StartPageBeforeLogin() {
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -132,10 +117,6 @@ export default function StartPageBeforeLogin() {
                 <GenerateButtonPlus content = 'Sign Up' onClick = { goToGoogleSignUp } />
                 <GenerateButtonPlus content = 'Log In' onClick = { goToGoogleLogin } />
             </FlexDiv>
-            <FlexLinkDiv>
-                <LinkA> Tutorial </LinkA>
-                <LinkA> Request </LinkA>
-            </FlexLinkDiv>
         </StartPageBeforeLoginStyled>
     )
 }

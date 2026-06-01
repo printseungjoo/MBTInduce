@@ -62,7 +62,7 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
     function formatDateTime(date: Date | null, time: string) {
         if (!date) return '';
         const [hours, minutes] = time.split(':').map(Number);
-        const localDate = new Date(
+        return new Date(Date.UTC(
             date.getFullYear(),
             date.getMonth(),
             date.getDate(),
@@ -70,8 +70,7 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
             minutes,
             0,
             0
-        );
-        return localDate.toISOString();
+        )).toISOString();
     }
 
     function getOrderedDates(startDate: Date | null, endDate: Date | null) {

@@ -55,24 +55,6 @@ const SubTitlePurple = styled.h3`
     max-width: 44rem;
 `;
 
-const FlexLinkDiv = styled.div`
-    display: flex;
-    justify-content: center;
-    gap: 0.75vw;
-    margin-top: 3vh;
-    width: 100%;
-    flex-wrap: wrap;
-`;
-
-const LinkA = styled.a`
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    text-decoration: underline;
-`;
-
-// I will put the links later.
 export default function StartPageAfterLogin() {
     return(
         <StartPageAfterLoginStyled>
@@ -83,10 +65,6 @@ export default function StartPageAfterLogin() {
             </Title>
             <SubTitle> MBTI Chat-GPT AI Agent </SubTitle>
             <SubTitlePurple> Chat with AI that adapts to your personality type and preferences </SubTitlePurple>
-            <FlexLinkDiv>
-                <LinkA> Tutorial </LinkA>
-                <LinkA> Request </LinkA>
-            </FlexLinkDiv>
         </StartPageAfterLoginStyled>
     )
 }
