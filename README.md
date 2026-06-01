@@ -434,6 +434,34 @@ Since our team is using Jira instead of GitHub Issues, please refer to our Jira 
 
 ---
 
+## 💻 Supported Operating Systems
+
+The setup, build, and testing instructions in this project are intended to work on the operating systems currently used by our team members.
+
+### 🖥️ Supported OS
+
+* Windows 11 (Intel-based systems)
+* Else
+
+These instructions have been written and tested for Windows 11 development environments used by the team.
+
+### ⚙️ Team Development Environment
+
+| Team Member  | Operating System |
+| ------------ | ---------------- |
+| Seungjoo  | Windows 11       |
+| Jibeom    | Windows 11       |
+
+Since all team members use Windows 11, all setup, build, testing, and deployment instructions in this README are optimized for a Windows 11 environment.
+
+---
+
+# 🥹 Notification
+
+When running the website, it would feel slow. But everything works well with low speed. Please wait for the process. Also, if something doesn’t work, can you report printseungjoo@gmail.com and jibeom.ryu@stonybrook.edu if you can give us a chance for us to refactor code?
+
+---
+
 # 🫱🏻‍🫲🏼 Team
 
 
