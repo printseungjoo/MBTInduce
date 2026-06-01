@@ -240,7 +240,7 @@ export default function FullMainScreen() {
         startDate: null,
         endDate: null
     });
-    const [_selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
+    const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
     const [isMobileRightOpen, setIsMobileRightOpen] = useState<boolean>(false);
 
     const location = useLocation();
@@ -361,29 +361,49 @@ export default function FullMainScreen() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    content: trimmedValue,
-                    role: 'user',
-                    mbtiRange: { eValue, sValue, fValue, pValue },
-                    pageType: isSimulationPage ? 'simulation' : 'main',
-                    simulationKey: isSimulationPage ? selectedSimulationKey : '',
-                }),
-            });
-
-            const data: ChatMessage[] = await response.json();
-
+            const response = await fetch(
+                isSimulationPage
+                    ? `${import.meta.env.VITE_API_BASE_URL}/api/chat`
+                    : `${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        content: trimmedValue,
+                        role: 'user',
+                        mbtiRange: { eValue, sValue, fValue, pValue },
+                        pageType: isSimulationPage ? 'simulation' : 'main',
+                        simulationKey: isSimulationPage ? selectedSimulationKey : '',
+                    }),
+                }
+            );
+            if (!response.ok) {
+                throw new Error('Failed to post chatMessage');
+            }
             if (isSimulationPage) {
+                const data: ChatMessage[] = await response.json();
                 setSimulationChatMessages((prev) => ({
                     ...prev,
                     [selectedSimulationKey]: data,
                 }));
-            } else {
-                setMainChatMessages(data);
+                return;
             }
+            const data = await response.json();
+            const assistantMessage: ChatMessage = {
+                id: data.assistantMessage.id,
+                role: 'ai',
+                content: data.assistantMessage.content,
+                mbtiRange: {
+                    eValue,
+                    sValue,
+                    fValue,
+                    pValue,
+                },
+                createdAt: data.assistantMessage.createdAt,
+                rate: 0,
+            };
+            setMainChatMessages((prev) => [...prev, assistantMessage]);
         } catch (error) {
             console.error(error);
             const errorMessage: ChatMessage = {
