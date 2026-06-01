@@ -240,7 +240,7 @@ export default function FullMainScreen() {
         startDate: null,
         endDate: null
     });
-    const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
+    const [_selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
     const [isMobileRightOpen, setIsMobileRightOpen] = useState<boolean>(false);
 
     const location = useLocation();
