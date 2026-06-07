@@ -11,7 +11,8 @@ export const theme = {
         mutedRose: '#94455C',
         warmTaupe: '#9E5D5D',
         softYellow: '#FEE95E',
-        paleLavender: '#B08BC2'
+        paleLavender: '#B08BC2',
+        deepBlack: '#000000'
     }
 }
 

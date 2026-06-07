@@ -15,6 +15,7 @@ const UserChatStyled = styled.div`
     line-height: 1.35;
     word-break: break-word;
     box-sizing: border-box;
+    color: ${({ theme }) => theme.colors.deepBlack};
 
     @media screen and (max-width: 767px) {
         max-width: 82vw;
