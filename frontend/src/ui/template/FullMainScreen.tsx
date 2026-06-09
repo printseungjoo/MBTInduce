@@ -573,7 +573,7 @@ export default function FullMainScreen() {
                             </MobileRightHamburgerWrapper>
                         )}
                     </HeaderDiv>
-                    {location.pathname === '/Start' && <StartPageAfterLogin />};
+                    {location.pathname === '/Start' && <StartPageAfterLogin />}
                     {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isBlockingModalOpen && <ChatMessagesDiv ref = { chatMessagesRef }>
                         {currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
