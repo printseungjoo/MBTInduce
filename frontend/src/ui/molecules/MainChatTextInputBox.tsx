@@ -64,6 +64,7 @@ const TextInputBoxStyled = styled.input`
     outline: none;
     background: transparent;
     font-size: 1rem;
+    color: ${({ theme }) => theme.colors.deepBlack};
 `;
 
 export default function MainChatTextInputBox({ onSubmit, disabled = false }: TextInputBoxProps) {

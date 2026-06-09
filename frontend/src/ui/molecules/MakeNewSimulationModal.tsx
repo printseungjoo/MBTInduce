@@ -62,6 +62,8 @@ const ScenarioTextArea = styled.textarea`
     overflow-y: auto;
     box-sizing: border-box;
     padding: 1.5vh 1vw;
+    background-color: ${({ theme }) => theme.colors.lightWhite};
+    color: ${({ theme }) => theme.colors.deepBlack};
 
     @media screen and (max-width: 767px) {
         padding: 0.8vh 2vw;

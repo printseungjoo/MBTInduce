@@ -45,6 +45,8 @@ const MainChatQuestionTemplateTextArea = styled.textarea`
     overflow-y: auto;
     box-sizing: border-box;
     padding: 1.5vh 1vw;
+    background-color: ${({ theme }) => theme.colors.brightWhite};
+    color: ${({ theme }) => theme.colors.lightWhite};
 
     @media screen and (max-width: 767px) {
         padding: 0.8vh 2vw;

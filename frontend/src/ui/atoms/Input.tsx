@@ -10,9 +10,12 @@ const InputStyled = styled.input`
     width: 46%;
     height: 4vh;
     text-align: center;
+    background-color: ${({ theme }) => theme.colors.lightWhite};
+    color: ${({ theme }) => theme.colors.deepBlack};
 
     &::placeholder {
         text-align: center;
+        color: ${({ theme }) => theme.colors.deepBlack};
     }
 `;
 

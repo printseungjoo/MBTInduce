@@ -11,6 +11,7 @@ const GoBackStyled = styled.button`
     align-items: center;
     background-color: ${({ theme }) => theme.colors.coolGray};
     border-radius: 0;
+    color: ${({ theme }) => theme.colors.deepBlack};
 `;
 
 export default function GoBackButton() {

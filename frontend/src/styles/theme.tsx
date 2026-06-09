@@ -12,7 +12,8 @@ export const theme = {
         warmTaupe: '#9E5D5D',
         softYellow: '#FEE95E',
         paleLavender: '#B08BC2',
-        deepBlack: '#000000'
+        deepBlack: '#000000',
+        brightWhite: '#FFFFFF'
     }
 }
 

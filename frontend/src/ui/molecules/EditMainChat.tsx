@@ -45,6 +45,8 @@ const MainChatTextArea = styled.textarea`
     overflow-y: auto;
     box-sizing: border-box;
     padding: 1.5vh 1vw;
+    background-color: ${({ theme }) => theme.colors.brightWhite};
+    color: ${({ theme }) => theme.colors.deepBlack};
 
     @media screen and (max-width: 767px) {
         padding: 0.8vh 2vw;
@@ -61,6 +63,7 @@ const SubmitButton = styled.button<{isValid: boolean}>`
     align-items: center;
     background-color: ${({ theme, isValid }) => isValid ? theme.colors.paleLavender : theme.colors.coolGray};
     border-radius: 0;
+    color: ${({ theme }) => theme.colors.deepBlack};
 `;
 
 export default function EditMainChat({ changedChatId }: EditMainChatProps) {
