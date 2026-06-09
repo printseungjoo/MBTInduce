@@ -610,5 +610,5 @@ export default function FullMainScreen() {
                 <MobileBottomNavItem to = "/Mypage"> 👤 </MobileBottomNavItem>
             </MobileBottomNav>
         </FullScreen>
-    );
+    )
 }

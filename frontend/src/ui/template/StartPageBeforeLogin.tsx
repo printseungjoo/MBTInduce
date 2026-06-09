@@ -72,6 +72,7 @@ const GenerateButtonPlus = styled(GenerateButton)`
     font-size: 1rem;
     padding: 0.5rem 0.75rem;
     box-sizing: border-box;
+    color: ${({ theme }) => theme.colors.deepBlack};
 
     @media screen and (min-width: 768px) {
         width: 10vw;

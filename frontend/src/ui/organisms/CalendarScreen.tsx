@@ -43,6 +43,7 @@ const CalendarStyled = styled.div`
     height: 85%;
     background-color: ${({ theme }) => theme.colors.lightWhite};
     color-scheme: only light;
+    olor: ${({ theme }) => theme.colors.deepBlack};
 
     .rbc-calendar {
         background-color: ${({ theme }) => theme.colors.lightWhite};
@@ -52,6 +53,13 @@ const CalendarStyled = styled.div`
     }
     .rbc-today {
         background-color: transparent;
+    }
+    .rbc-toolbar,
+    .rbc-header,
+    .rbc-date-cell,
+    .rbc-button-link,
+    .rbc-off-range {
+        color: ${({ theme }) => theme.colors.deepBlack};
     }
 `;
 

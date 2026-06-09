@@ -108,6 +108,7 @@ const GenerateButtonPlus = styled(GenerateButton)`
     height: 3vh;
     border-radius: 7px;
     margin: 2vh 0;
+    color: ${({ theme }) => theme.colors.deepBlack};
 `;
 
 const ProfileInput = styled.input`
