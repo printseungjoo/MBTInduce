@@ -109,10 +109,12 @@ const GenerateButtonPlus = styled(GenerateButton)`
     border-radius: 7px;
     margin: 2vh 0;
     color: ${({ theme }) => theme.colors.deepBlack};
-
+    
     && {
-        color: ${({ theme }) => theme.colors.deepBlack};
-        -webkit-text-fill-color: ${({ theme }) => theme.colors.deepBlack};
+        color: ${({ theme }) => theme.colors.deepBlack} !important;
+        background-color: ${({ theme }) => theme.colors.brightWhite};
+        -webkit-text-fill-color: ${({ theme }) => theme.colors.deepBlack} !important;
+        color-scheme: only light;
     }
 `;
 
