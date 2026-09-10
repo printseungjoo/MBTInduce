@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
+import { NavLink } from 'react-router-dom'
 
-const PageButtonStyled = styled.button<{ clicked: boolean }>`
+const PageButtonStyled = styled(NavLink)<{ clicked: boolean }>`
     width: 95%;
     height: 5vh;
     margin-left: 0.5vw;
@@ -11,24 +12,21 @@ const PageButtonStyled = styled.button<{ clicked: boolean }>`
     padding-left: 0.5vw;
     display: flex;
     align-items: center;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box;
 `;
 
 interface PageButtonProps {
     name: string;
     clicked: boolean;
-    clickedName?: () => void;
-    text: string;
+    to: string;
 }
 
-export default function PageButton({ name, clicked, text }: PageButtonProps) {
-    const handleClick = () => {
-        if (text) {
-            location.href = `${text}`;
-        } 
-    };
-
+export default function PageButton({ name, clicked, to }: PageButtonProps) {
     return(
-        <PageButtonStyled clicked = { clicked } onClick = { handleClick }>
+        <PageButtonStyled clicked = { clicked } to = { to }>
             { name }
         </PageButtonStyled>
     )
