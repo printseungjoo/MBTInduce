@@ -239,7 +239,7 @@ export default function MypageScreen() {
             return;
         }
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/withdraw`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/withdraw`, {
                 method: 'DELETE',
                 credentials: 'include',
             });
