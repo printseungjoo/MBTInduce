@@ -9,15 +9,17 @@ interface OldSimulationModalProps {
     onSelectHistory: (history: History) => void;
 }
 
-interface ScenarioRequest {
+interface SimulationTemplate {
+    id: string;
     content: string;
 }
 
-interface TargetInfoRequest {
+interface UserProfile {
+    id: string;
     name: string;
     meOrNot: boolean;
     mbti: string;
-    content: string;
+    simulationTemplateId?: string | null;
 }
 
 interface History {
@@ -97,18 +99,21 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
             }
             const scenarioData = await scenarioRes.json();
             const targetData = await targetRes.json();
-            const scenarios: ScenarioRequest[] = scenarioData.simulationTemplate || [];
-            const targets: TargetInfoRequest[] = targetData.userProfiles || [];
-            const minLength = Math.min(scenarios.length, targets.length);
+            const scenarios: SimulationTemplate[] = scenarioData.simulationTemplate || [];
+            const targets: UserProfile[] = targetData.userProfiles || [];
+            const profileByTemplateId = new Map(
+                targets
+                    .filter((target) => target.simulationTemplateId)
+                    .map((target) => [target.simulationTemplateId as string, target])
+            );
             const merged: History[] = [];
-            for (let i = 0; i < minLength; i++) {
-                const s = scenarios[i];
-                const t = targets[i];
-                if (!s?.content || !t?.name || !t?.mbti) continue;
+            for (const scenario of scenarios) {
+                const target = profileByTemplateId.get(scenario.id);
+                if (!scenario.content || !target?.name || !target?.mbti) continue;
                 merged.push({
-                    scenario: s.content,
-                    name: t.name,
-                    mbti: t.mbti
+                    scenario: scenario.content,
+                    name: target.name,
+                    mbti: target.mbti
                 });
             }
             setHistory(merged);

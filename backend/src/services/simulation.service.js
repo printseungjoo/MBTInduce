@@ -9,6 +9,7 @@ function mapTemplate(row) {
   return {
     id: row.id,
     content: row.content,
+    createdAt: row.createdAt.toISOString(),
   };
 }
 
@@ -18,6 +19,8 @@ function mapProfile(row) {
     name: row.name,
     meOrNot: row.meOrNot,
     mbti: row.mbti,
+    simulationTemplateId: row.simulationTemplateId ?? null,
+    createdAt: row.createdAt.toISOString(),
   };
 }
 
@@ -82,12 +85,21 @@ export async function getUserProfiles(userId) {
 }
 
 export async function createUserProfile(userId, payload) {
+  const simulationTemplateId = payload.simulationTemplateId || null;
+  if (simulationTemplateId) {
+    const template = await prisma.simulationTemplate.findFirst({
+      where: { id: simulationTemplateId, userId },
+    });
+    if (!template) return null;
+  }
+
   const row = await prisma.userProfile.create({
     data: {
       userId,
       name: payload.name,
       meOrNot: Boolean(payload.meOrNot),
       mbti: String(payload.mbti || "").toUpperCase(),
+      simulationTemplateId,
     },
   });
   return mapProfile(row);

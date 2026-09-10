@@ -98,46 +98,48 @@ export default function MakeNewSimulationModal({ onSubmitSuccess }: MakeNewSimul
 
     const sendScenario = async() => {
         const simulationContent: ScenarioRequest = { content: scenario };
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/simulationTemplate`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(simulationContent),
-            })
-            if (!response.ok) {
-                throw new Error('Failed to send scenario')
-            }
-        } catch (error) {
-            console.error('Error transmitting scenario:', error);
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/simulationTemplate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(simulationContent)
+        })
+        if (!response.ok) {
+            throw new Error('Failed to send scenario')
         }
+        const data = await response.json();
+        const simulationTemplateId = data.simulationTemplate?.id;
+        if (typeof simulationTemplateId !== 'string' || simulationTemplateId === '') {
+            throw new Error('Failed to send scenario')
+        }
+        return simulationTemplateId;
     }
 
-    const sendTargetInfo = async() => {
+    const sendTargetInfo = async(simulationTemplateId: string) => {
         const targetInfo: TargetInfoRequest = { name: name, meOrNot: false, mbti: mbti };
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(targetInfo),
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                ...targetInfo,
+                simulationTemplateId
             })
-            if (!response.ok) {
-                throw new Error('Failed to send targetInfo')
-            }
-        } catch (error) {
-            console.error('Error transmitting targetInfo:', error);
+        })
+        if (!response.ok) {
+            throw new Error('Failed to send targetInfo')
         }
     }
 
     const clickSubmitButton = async () => {
+        if (!isValid) return;
         try {
-            await sendScenario();
-            await sendTargetInfo();
+            const simulationTemplateId = await sendScenario();
+            await sendTargetInfo(simulationTemplateId);
             onSubmitSuccess({
                 scenario,
                 name,

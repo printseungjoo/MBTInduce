@@ -24,6 +24,7 @@ interface UserProfile {
     meOrNot: boolean;
     mbti: string;
     createdAt?: string;
+    simulationTemplateId?: string | null;
 }
 
 interface BigCalendarEvent {
@@ -197,7 +198,7 @@ export default function HistoryScreen() {
         }
     }
 
-    async function deleteSimulationSession(selectedSimulationId: string, selectedUserId: string) {
+    async function deleteSimulationSession(selectedSimulationId: string, selectedUserId?: string) {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/simulationTemplate/${selectedSimulationId}`, {
                 method: 'DELETE',
@@ -211,19 +212,21 @@ export default function HistoryScreen() {
                 alert(data.message || 'Failed to delete simulation.');
                 return;
             }
-            const profileResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles/${selectedUserId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            });
-            const profileData = await profileResponse.json();
-            if (!profileResponse.ok) {
-                alert(profileData.message || 'Failed to delete schedule.');
-                return;
+            if (selectedUserId) {
+                const profileResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles/${selectedUserId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+                const profileData = await profileResponse.json();
+                if (!profileResponse.ok) {
+                    alert(profileData.message || 'Failed to delete simulation.');
+                    return;
+                }
             }
-            alert('Schedule deleted successfully.');
+            alert('Simulation deleted successfully.');
             window.location.reload();
         } catch (error) {
             console.error(error);
@@ -299,10 +302,16 @@ export default function HistoryScreen() {
                 )
             })}
             {isMainEditOpen && editingChatId && (<EditMainChat changedChatId = { editingChatId }/>)}
-            {optionSelected === 'Simulation History' && simulationTemplates.map((s, index) => {
-                const user = userProfiles[index];
+            {optionSelected === 'Simulation History' && simulationTemplates.map((s) => {
+                const user = userProfiles.find((profile) => profile.simulationTemplateId === s.id);
+                if (!user) {
+                    return(
+                        <HistoryDiv key = { s.id } title = { '' } description = { s.content } date = { s.createdAt || '' } etc = { '' } onClick = {() => { deleteSimulationSession(s.id) }}/>
+                    )
+                }
                 return(
-                    <HistoryDiv key = { s.id } title = { user?.name || '' } description = { s.content } date = { s.createdAt || '' } etc = { user?.mbti || '' } onClick = {() => { deleteSimulationSession(s.id, user.id) }} onEditClick = {() => { goToEditSimulation(user.name, user.mbti, s.content, user.id, s.id) }}/>)
+                    <HistoryDiv key = { s.id } title = { user.name } description = { s.content } date = { s.createdAt || '' } etc = { user.mbti } onClick = {() => { deleteSimulationSession(s.id, user.id) }} onEditClick = {() => { goToEditSimulation(user.name, user.mbti, s.content, user.id, s.id) }}/>
+                )
             })}
             {isSimulationEditOpen && editingSimulationId && (<InitialEditSimulation userName = { editingSimulationId.userName } userMbti = { editingSimulationId.userMbti } simulationContent = { editingSimulationId.simulationContent } userId = { editingSimulationId.userId } simulationId = { editingSimulationId.simulationId } onSelectEditTarget = { handleSelectEditTarget } />)}
             {isSimulationEditOpen && selectedEditTarget && (<EditSimulation content = { selectedEditContent } target = { selectedEditTarget } id = { selectedSimulationId }/>)}

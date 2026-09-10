@@ -82,7 +82,7 @@ export async function getUserProfilesHandler(req, res, next) {
 
 export async function postUserProfiles(req, res, next) {
   try {
-    const { name, meOrNot, mbti } = req.body || {};
+    const { name, meOrNot, mbti, simulationTemplateId } = req.body || {};
     if (!name || typeof name !== "string") {
       return res.status(400).json({ message: "name is required" });
     }
@@ -92,8 +92,14 @@ export async function postUserProfiles(req, res, next) {
     if (!mbti || typeof mbti !== "string") {
       return res.status(400).json({ message: "mbti is required" });
     }
+    if (simulationTemplateId !== undefined && (typeof simulationTemplateId !== "string" || !simulationTemplateId.trim())) {
+      return res.status(400).json({ message: "simulationTemplateId must be a non-empty string" });
+    }
 
-    const userProfiles = await createUserProfile(req.user.id, { name, meOrNot, mbti });
+    const userProfiles = await createUserProfile(req.user.id, { name, meOrNot, mbti, simulationTemplateId });
+    if (!userProfiles) {
+      return res.status(404).json({ message: "simulationTemplate not found" });
+    }
     return res.status(201).json({ userProfiles });
   } catch (error) {
     next(error);
