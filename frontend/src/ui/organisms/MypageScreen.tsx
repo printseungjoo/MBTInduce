@@ -278,7 +278,7 @@ export default function MypageScreen() {
                         <TwoMbti first = 'P' second = 'J' target = {(t) => t ? setPj('P') : setPj('J')}/>
                     </FlexDiv>
                     <Mbti> { ei }{ sn }{ ft }{ pj } </Mbti>
-                    <GenerateButtonPlus content = 'Go to start page' onClick = {() => navigate('/')}/>
+                    <GenerateButtonPlus content = 'Go to start page' onClick = {() => navigate('/Start')}/>
                     <RedButton onClick = { handleLogout }> Logout </RedButton>
                     <RedButton onClick = { handleWithdraw }> Withdrawal </RedButton>
                     <SaveButtonPlus onClick = { isSaved } />

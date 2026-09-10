@@ -204,7 +204,7 @@ export default function SignUpScreen() {
             return;
         }
         window.alert('It is successfully saved.');
-        navigate('/');
+        navigate('/Start');
     }
 
     return(
@@ -230,7 +230,7 @@ export default function SignUpScreen() {
                         <TwoMbti first = 'P' second = 'J' target = {(t) => t ? setPj('P') : setPj('J')}/>
                     </FlexDiv>
                     <Mbti> { ei }{ sn }{ ft }{ pj } </Mbti>
-                    <GenerateButtonPlus content = 'Go to start page' onClick = {() => navigate('/')}/>
+                    <GenerateButtonPlus content = 'Go to start page' onClick = {() => navigate('/Start')}/>
                     <SaveButtonPlus onClick = { isSaved } />
                 </WriteProfile>
             </MainContent>
