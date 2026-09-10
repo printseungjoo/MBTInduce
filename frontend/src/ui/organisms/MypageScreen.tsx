@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { apiFetch } from '../../api/client'
+import { useAuth } from '../../auth/AuthProvider'
 import type { Profile } from '../../types/profile'
 import SaveButton from '../atoms/SaveButton'
 import TwoMbti from '../molecules/TwoMbti'
@@ -146,6 +147,7 @@ const SaveButtonPlus = styled(SaveButton)`
 `;
 
 export default function MypageScreen() {
+    const { clearSession } = useAuth();
     const [ei, setEi] = useState<EI | null>(null);
     const [sn, setSn] = useState<SN | null>(null);
     const [ft, setFt] = useState<FT | null>(null);
@@ -202,6 +204,7 @@ export default function MypageScreen() {
             await apiFetch('/api/auth/logout', {
                 method: 'POST',
             });
+            clearSession();
             window.alert('Logged out successfully.');
             navigate('/');
         } catch (error) {
@@ -219,6 +222,7 @@ export default function MypageScreen() {
             await apiFetch('/api/auth/withdraw', {
                 method: 'DELETE',
             });
+            clearSession();
             window.alert('Your account has been deleted.');
             navigate('/');
         } catch (error) {

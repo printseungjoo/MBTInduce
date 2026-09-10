@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { apiFetch } from '../../api/client'
+import { useAuth } from '../../auth/AuthProvider'
 import LogoutButton from '../atoms/LogoutButton'
 import AdminLeftDiv from '../atoms/AdminLeftDiv'
 import AdminAverageRatingDiv from '../atoms/AdminAverageRatingDiv'
@@ -116,6 +117,7 @@ const RightDiv = styled.div`
 `;
 
 export default function AdminScreen() {
+    const { clearSession } = useAuth();
     const [statistics, setStatistics] = useState<StatisticsType | null>(null);
 
     const navigate = useNavigate();
@@ -134,6 +136,7 @@ export default function AdminScreen() {
             await apiFetch('/api/auth/logout', {
                 method: 'POST',
             });
+            clearSession();
             window.alert('Logged out successfully.');
             navigate('/');
         } catch (error) {

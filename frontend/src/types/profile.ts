@@ -3,4 +3,5 @@ export type Profile = {
     email: string;
     nickname: string | null;
     mbti: string | null;
+    isAdmin?: boolean;
 }
