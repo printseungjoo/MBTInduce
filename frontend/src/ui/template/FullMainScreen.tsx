@@ -291,7 +291,7 @@ export default function FullMainScreen() {
         return `${selectedName}-${selectedMbti}-${selectedScenario}`;
     }, [selectedName, selectedMbti, selectedScenario]);
     const isReadySimulation = isSimulationPage && showSimulation && selectedSimulationKey !== '';
-    const isMainChatModalOpen = location.pathname === '/MainChat' && !showSimulation;
+    const isMainChatModalOpen = location.pathname === '/MainChat' && !selectedMainChatSessionId;
     const isSimulationModalOpen = isSimulationPage && !showSimulation;
     const isBlockingModalOpen = isMainChatModalOpen || isSimulationModalOpen;
     const currentChatMessages = isSimulationPage
@@ -387,6 +387,7 @@ export default function FullMainScreen() {
     async function sendChatMessages(inputValue: string) {
         const trimmedValue = inputValue.trim();
         if (!trimmedValue || isLoading) return;
+        if (!isSimulationPage && !selectedMainChatSessionId) return;
         const rightScreenValues = !isSimulationPage
             ? await mainChatRightScreenRef.current?.sendMainChatRightScreenValues()
             : null;
@@ -546,7 +547,7 @@ export default function FullMainScreen() {
     return (
         <FullScreen>
             {location.pathname === '/Simulation' && !showSimulation && (<InitialSimulationModal onConfirm = { handleConfirm } onSelectHistory = { handleSelectHistory } />)}
-            {location.pathname === '/MainChat' && !showSimulation && (<InitialMainChatModal onConfirm = { handleConfirm } onSelectHistory={(history) => { 
+            {location.pathname === '/MainChat' && !selectedMainChatSessionId && (<InitialMainChatModal onConfirm = { handleConfirm } onSelectHistory={(history) => { 
                 setSelectedMainChatSessionId(history.id);
                 getMainChatSessionMessages(history.id);
                 }} 
@@ -585,7 +586,7 @@ export default function FullMainScreen() {
                             </ChatRow>
                         ))}
                     </ChatMessagesDiv>}
-                    {(location.pathname === '/' || location.pathname === '/MainChat') && !isBlockingModalOpen && (<MainChatTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
+                    {(location.pathname === '/' || location.pathname === '/MainChat') && !isBlockingModalOpen && (<MainChatTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading || !selectedMainChatSessionId } /> )}
                     {(location.pathname === '/Simulation') && !isBlockingModalOpen && (<SimulationTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                     {location.pathname === '/Calendar' && <CalendarScreen selectedRange = { selectedRange } setSelectedRange = { setSelectedRange } />}
                     {location.pathname === '/History' && <HistoryScreen />}
