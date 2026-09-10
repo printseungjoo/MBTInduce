@@ -1,5 +1,3 @@
-import './App.css'
-
 import { useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import type { ReactNode } from 'react'

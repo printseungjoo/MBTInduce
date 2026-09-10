@@ -16,6 +16,12 @@ export function GlobalStyle() {
                 margin: 0;
                 padding: 0;
                 background-color: ${theme.colors.midnightPurple};
+                font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+            }
+
+            button {
+                cursor: pointer;
+                font-family: inherit;
             }
             `}
         />
