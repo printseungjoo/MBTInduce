@@ -67,7 +67,7 @@ const RightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>(({ eVal
 
     return(
         <RightScreenStyled isMobileOpen = { isMobileOpen }>
-            {(location.pathname === '/MainChat' || location.pathname === '/' ) && (
+            {location.pathname === '/MainChat' && (
                 <MainChatRightScreen ref = { ref } eValues = { eValues } sValues = { sValues } fValues = { fValues } pValues = { pValues } setEValues = { setEValues } setSValues = { setSValues } setFValues = { setFValues } setPValues = { setPValues } />
             )}
             {location.pathname === '/Simulation' && showSimulation && (

@@ -282,7 +282,7 @@ export default function FullMainScreen() {
     const mainChatRightScreenRef = useRef<MainChatRightScreenRef | null>(null);
 
     const location = useLocation();
-    const hasRightScreen = location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar';
+    const hasRightScreen = location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar';
     const isSimulationPage = location.pathname === '/Simulation';
     const selectedSimulationKey = useMemo(() => {
         if (!selectedName || !selectedMbti || !selectedScenario) {
@@ -566,16 +566,16 @@ export default function FullMainScreen() {
                                     <Hamburger isClicked = { isClicked } isOpen = { isOpen } /> 
                                 </DesktopOnlyHamburger>
                             )}
-                            <Title title = { (location.pathname.replace('/', '') === '' || location.pathname.replace('/', '') === 'MainChat') ? 'Main Chat' : location.pathname.replace('/', '') } />
+                            <Title title = { location.pathname === '/MainChat' ? 'Main Chat' : location.pathname.replace('/', '') } />
                         </FlexDiv>
-                        {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && (
+                        {(location.pathname === '/MainChat' || location.pathname === '/Simulation') && (
                             <MobileRightHamburgerWrapper>
                                 <Hamburger isClicked = {() => setIsMobileRightOpen((prev) => !prev)} isOpen = { isMobileRightOpen }/>
                             </MobileRightHamburgerWrapper>
                         )}
                     </HeaderDiv>
                     {location.pathname === '/Start' && <StartPageAfterLogin />}
-                    {(location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isBlockingModalOpen && <ChatMessagesDiv ref = { chatMessagesRef }>
+                    {(location.pathname === '/MainChat' || location.pathname === '/Simulation') && !isBlockingModalOpen && <ChatMessagesDiv ref = { chatMessagesRef }>
                         {currentChatMessages.map((chatMessage) => (
                             <ChatRow key = {chatMessage.id} role = { chatMessage.role }>
                                 {chatMessage.role === 'user' ? (
@@ -586,14 +586,14 @@ export default function FullMainScreen() {
                             </ChatRow>
                         ))}
                     </ChatMessagesDiv>}
-                    {(location.pathname === '/' || location.pathname === '/MainChat') && !isBlockingModalOpen && (<MainChatTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading || !selectedMainChatSessionId } /> )}
+                    {location.pathname === '/MainChat' && !isBlockingModalOpen && (<MainChatTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading || !selectedMainChatSessionId } /> )}
                     {(location.pathname === '/Simulation') && !isBlockingModalOpen && (<SimulationTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } /> )}
                     {location.pathname === '/Calendar' && <CalendarScreen selectedRange = { selectedRange } setSelectedRange = { setSelectedRange } />}
                     {location.pathname === '/History' && <HistoryScreen />}
                     {location.pathname === '/Mypage' && <MypageScreen />}
                 </FlexColumnDiv>
             </MainContent>
-            {!isBlockingModalOpen && (location.pathname === '/' || location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} ref = { mainChatRightScreenRef } />}
+            {!isBlockingModalOpen && (location.pathname === '/MainChat' || location.pathname === '/Simulation' || location.pathname === '/Calendar') && <RightScreen eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } showSimulation = { showSimulation } selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } selectedRange = { selectedRange } isMobileOpen = { isMobileRightOpen } onMobileClose = {() => setIsMobileRightOpen((prev) => !prev)} ref = { mainChatRightScreenRef } />}
             {location.pathname === '/Calendar' && selectedRange.startDate && selectedRange.endDate && (
                 <CalendarModalOverlay onClick = {() => setSelectedRange({ startDate: null, endDate: null })}>
                     <CalendarModalContent onClick = {(event) => event.stopPropagation()}>
