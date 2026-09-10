@@ -3,16 +3,8 @@ import { useState, useEffect } from 'react'
 import type { KeyboardEvent } from 'react'
 
 import { apiFetch } from '../../api/client'
+import type { Template } from '../../types/template'
 import TextExample from '../atoms/TextExample'
-
-type TemplateType = {
-    id: string;
-    title: string;
-    content: string;
-    category: string;
-    isActive: boolean;
-    createdById: string;
-}
 
 interface TextInputBoxProps {
     onSubmit: (value: string) => void;
@@ -73,10 +65,10 @@ export default function SimulationTextInputBox({ onSubmit, disabled = false }: T
     const [text, setText] = useState<string>('');
     const [example, setExample] = useState<string>('');
     const [exampleShown, setExampleShown] = useState<boolean>(false);
-    const [templates, setTemplates] = useState<TemplateType[]>([]);
+    const [templates, setTemplates] = useState<Template[]>([]);
 
     async function getTemplates() {
-        const data = await apiFetch<{ templates: TemplateType[] }>('/api/simulation-question-templates');
+        const data = await apiFetch<{ templates: Template[] }>('/api/simulation-question-templates');
         setTemplates(data.templates);
     }
 

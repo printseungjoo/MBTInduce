@@ -2,14 +2,8 @@ import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
 import { apiFetch } from '../../api/client'
+import type { Template } from '../../types/template'
 import MainChatTemplateButton from '../atoms/MainChatTemplateButton'
-
-type TemplateType = {
-    id: string;
-    content: string;
-    category: string;
-    isActive: boolean;
-}
 
 const AdminRightMainChatDivStyled = styled.div`
     width: 100%;
@@ -62,11 +56,11 @@ const AddButton = styled.button`
 `;
 
 export default function AdminRightMainChatDiv() {
-    const [templates, setTemplates] = useState<TemplateType[]>([]);
+    const [templates, setTemplates] = useState<Template[]>([]);
     const [content, setContent] = useState<string>('');
 
     async function getTemplates() {
-        const data = await apiFetch<{ data: TemplateType[] }>('/api/admin/main-chat-question-templates');
+        const data = await apiFetch<{ data: Template[] }>('/api/admin/main-chat-question-templates');
         setTemplates(data.data);
     }
 

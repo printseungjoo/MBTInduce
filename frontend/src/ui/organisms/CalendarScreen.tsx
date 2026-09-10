@@ -6,36 +6,11 @@ import { useState, useEffect } from 'react'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
 import { apiFetch } from '../../api/client'
-
-interface SelectedRange {
-    startDate: Date | null;
-    endDate: Date | null;
-}
+import type { CalendarDisplayEvent, CalendarEvent, SelectedRange } from '../../types/calendar'
 
 interface CalendarScreenProps {
     selectedRange: SelectedRange;
     setSelectedRange: React.Dispatch<React.SetStateAction<SelectedRange>>;
-}
-
-interface BigCalendarEvent {
-    id: string;
-    title: string;
-    start: Date;
-    end: Date;
-    allDay: boolean;
-}
-
-interface CalendarEventResponse {
-    id: string;
-    title: string;
-    description: string | null;
-    startAt: string;
-    endAt: string;
-    allDay: boolean;
-    mbti: string | null;
-    planningNote: string | null;
-    createdAt: string;
-    updatedAt: string;
 }
 
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales: {} });
@@ -91,7 +66,7 @@ const CenterDiv = styled.div`
 `;
 
 export default function CalendarScreen({ selectedRange, setSelectedRange }: CalendarScreenProps) {
-    const [events, setEvents] = useState<BigCalendarEvent[]>([]);
+    const [events, setEvents] = useState<CalendarDisplayEvent[]>([]);
 
     useEffect(() => {
         loadCalendarEvents();
@@ -99,8 +74,8 @@ export default function CalendarScreen({ selectedRange, setSelectedRange }: Cale
 
     async function loadCalendarEvents() {
         try {
-            const result = await apiFetch<{ data: { events: CalendarEventResponse[] } }>('/api/calendarEvent');
-            const calendarEvents: CalendarEventResponse[] = result.data.events;
+            const result = await apiFetch<{ data: { events: CalendarEvent[] } }>('/api/calendarEvent');
+            const calendarEvents: CalendarEvent[] = result.data.events;
             const convertedEvents = calendarEvents.map((event) => ({
                 id: event.id,
                 title: event.title,

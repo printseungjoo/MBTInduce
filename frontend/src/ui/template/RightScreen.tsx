@@ -6,11 +6,7 @@ import MainChatRightScreen from '../organisms/MainChatRightScreen'
 import SimulationRightScreen from '../organisms/SimulationRightScreen'
 import CalendarRightScreen from '../organisms/CalendarRightScreen'
 import type { MainChatRightScreenRef } from '../organisms/MainChatRightScreen'
-
-interface SelectedRange {
-    startDate: Date | null;
-    endDate: Date | null;
-}
+import type { SelectedRange } from '../../types/calendar'
 
 interface RightScreenProps {
     eValues: number;

@@ -2,14 +2,8 @@ import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
 import { apiFetch } from '../../api/client'
+import type { Template } from '../../types/template'
 import SimulationTemplateButton from '../atoms/SimulationTemplateButton'
-
-type TemplateType = {
-    id: string;
-    content: string;
-    category: string;
-    isActive: boolean;
-}
 
 const AdminRightSimulationDivStyled = styled.div`
     width: 100%;
@@ -62,11 +56,11 @@ const AddButton = styled.button`
 `;
 
 export default function AdminRightSimulationDiv() {
-    const [templates, setTemplates] = useState<TemplateType[]>([]);
+    const [templates, setTemplates] = useState<Template[]>([]);
     const [content, setContent] = useState<string>('');
 
     async function getTemplates() {
-        const data = await apiFetch<{ data: TemplateType[] }>('/api/admin/simulation-question-templates');
+        const data = await apiFetch<{ data: Template[] }>('/api/admin/simulation-question-templates');
         setTemplates(data.data);
     }
 

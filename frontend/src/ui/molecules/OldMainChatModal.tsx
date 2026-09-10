@@ -2,24 +2,13 @@ import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
 import { apiFetch } from '../../api/client'
+import type { ChatSession } from '../../types/chat'
 import GoBackButton from '../atoms/GoBackButton'
 import OldMainChatButton from '../atoms/OldMainChatButton'
 
 interface OldMainChatModalProps {
     onConfirm: () => void;
     onSelectHistory: (history: ChatSession) => void;
-}
-
-interface ChatSession {
-    id: string;
-    userId: string;
-    title: string | null;
-    isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
-    _count: {
-        messages: number;
-    };
 }
 
 const OldMainChatModalStyled = styled.div`

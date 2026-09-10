@@ -2,6 +2,9 @@ import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
 import { apiFetch, getApiErrorMessage } from '../../api/client'
+import type { CalendarDisplayEvent, CalendarEvent } from '../../types/calendar'
+import type { ChatSession } from '../../types/chat'
+import type { SimulationProfile, SimulationTemplate } from '../../types/simulation'
 import HistoryDiv from '../molecules/HistoryDiv'
 import HistoryOptionButton from '../atoms/HistoryOptionButton'
 import EditMainChat from '../molecules/EditMainChat'
@@ -12,54 +15,6 @@ import EditSchedule from '../molecules/EditSchedule'
 
 type EditTarget = 'userName' | 'userMbti' | 'simulationContent';
 type EditScheduleTarget = 'title' | 'start' | 'end';
-
-interface SimulationTemplate {
-    id: string;
-    content: string;
-    createdAt?: string;
-}
-
-interface UserProfile {
-    id: string;
-    name: string;
-    meOrNot: boolean;
-    mbti: string;
-    createdAt?: string;
-    simulationTemplateId?: string | null;
-}
-
-interface BigCalendarEvent {
-    id: string;
-    title: string;
-    start: Date;
-    end: Date;
-    allDay: boolean;
-}
-
-interface CalendarEventResponse {
-    id: string;
-    title: string;
-    description: string | null;
-    startAt: string;
-    endAt: string;
-    allDay: boolean;
-    mbti: string | null;
-    planningNote: string | null;
-    createdAt: string;
-    updatedAt: string;
-}
-
-interface ChatSession {
-    id: string;
-    userId: string;
-    title: string | null;
-    isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
-    _count: {
-        messages: number;
-    };
-}
 
 const Option = styled.div`
     width: 100%;
@@ -85,8 +40,8 @@ const Option = styled.div`
 export default function HistoryScreen() {
     const [optionSelected, setOptionSelected] = useState('Chat History');
     const [simulationTemplates, setSimulationTemplates] = useState<SimulationTemplate[]>([]);
-    const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]);
-    const [events, setEvents] = useState<BigCalendarEvent[]>([]);
+    const [userProfiles, setUserProfiles] = useState<SimulationProfile[]>([]);
+    const [events, setEvents] = useState<CalendarDisplayEvent[]>([]);
     const [chatSessions, setChatSessions] = useState<ChatSession[] | null>(null);
     const [isMainEditOpen, setIsMainEditOpen] = useState<boolean>(false);
     const [editingChatId, setEditingChatId] = useState<string | null>(null);
@@ -115,7 +70,7 @@ export default function HistoryScreen() {
         try {
             const [templateData, profileData] = await Promise.all([
                 apiFetch<{ simulationTemplate: SimulationTemplate[] }>('/api/simulation/simulationTemplate'),
-                apiFetch<{ userProfiles: UserProfile[] }>('/api/simulation/userProfiles')
+                apiFetch<{ userProfiles: SimulationProfile[] }>('/api/simulation/userProfiles')
             ]);
             setSimulationTemplates(templateData.simulationTemplate);
             setUserProfiles(profileData.userProfiles);
@@ -126,8 +81,8 @@ export default function HistoryScreen() {
 
     async function loadCalendarEvents() {
         try {
-            const result = await apiFetch<{ data: { events: CalendarEventResponse[] } }>('/api/calendarEvent');
-            const calendarEvents: CalendarEventResponse[] = result.data.events;
+            const result = await apiFetch<{ data: { events: CalendarEvent[] } }>('/api/calendarEvent');
+            const calendarEvents: CalendarEvent[] = result.data.events;
             const convertedEvents = calendarEvents.map((event) => ({
                 id: event.id,
                 title: event.title,

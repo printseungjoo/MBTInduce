@@ -2,16 +2,12 @@ import styled from '@emotion/styled'
 import { useState } from 'react'
 
 import { apiFetch, getApiErrorMessage } from '../../api/client'
+import type { SelectedRange } from '../../types/calendar'
 import Title from '../atoms/Title'
 import SelectTime from '../molecules/SelectTime'
 import Checkbox from '../atoms/Checkbox'
 import GenerateButton from '../atoms/GenerateButton'
 import WebsiteIntro from '../atoms/WebsiteIntro'
-
-interface SelectedRange {
-    startDate: Date | null;
-    endDate: Date | null;
-}
 
 interface CalendarRightScreenProps {
     selectedRange: SelectedRange;

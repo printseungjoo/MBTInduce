@@ -2,25 +2,13 @@ import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
 import { apiFetch } from '../../api/client'
+import type { SimulationProfile, SimulationTemplate } from '../../types/simulation'
 import GoBackButton from '../atoms/GoBackButton'
 import OldSimulationButton from '../atoms/OldSimulationButton'
 
 interface OldSimulationModalProps {
     onConfirm: () => void;
     onSelectHistory: (history: History) => void;
-}
-
-interface SimulationTemplate {
-    id: string;
-    content: string;
-}
-
-interface UserProfile {
-    id: string;
-    name: string;
-    meOrNot: boolean;
-    mbti: string;
-    simulationTemplateId?: string | null;
 }
 
 interface History {
@@ -81,10 +69,10 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
         try {
             const [scenarioData, targetData] = await Promise.all([
                 apiFetch<{ simulationTemplate?: SimulationTemplate[] }>('/api/simulation/simulationTemplate'),
-                apiFetch<{ userProfiles?: UserProfile[] }>('/api/simulation/userProfiles'),
+                apiFetch<{ userProfiles?: SimulationProfile[] }>('/api/simulation/userProfiles'),
             ]);
             const scenarios: SimulationTemplate[] = scenarioData.simulationTemplate || [];
-            const targets: UserProfile[] = targetData.userProfiles || [];
+            const targets: SimulationProfile[] = targetData.userProfiles || [];
             const profileByTemplateId = new Map(
                 targets
                     .filter((target) => target.simulationTemplateId)

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
+import type { ChatSession } from '../../types/chat'
 import GenerateButton from '../atoms/GenerateButton'
 import MakeNewMainChatModal from './MakeNewMainChatModal'
 import CenterPurpleP from '../atoms/CenterPurpleP'
@@ -10,18 +11,6 @@ import OldMainChatModal from './OldMainChatModal'
 interface InitialMainChatModalProps {
     onConfirm: () => void;
     onSelectHistory: (history: ChatSession) => void;
-}
-
-interface ChatSession {
-    id: string;
-    userId: string;
-    title: string | null;
-    isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
-    _count?: {
-        messages: number;
-    };
 }
 
 const InitialMainChatModalStyled = styled.div`

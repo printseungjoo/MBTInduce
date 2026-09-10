@@ -3,6 +3,8 @@ import { useEffect, useState, useMemo, useRef } from 'react'
 import { useLocation, NavLink } from 'react-router-dom'
 
 import { apiFetch } from '../../api/client'
+import type { SelectedRange } from '../../types/calendar'
+import type { ChatMessage, ChatSession } from '../../types/chat'
 import NavigationDrawer from '../organisms/NavigationDrawer'
 import Hamburger from '../atoms/Hamburger'
 import Title from '../atoms/Title'
@@ -19,27 +21,6 @@ import StartPageAfterLogin from '../organisms/StartPageAfterLogin'
 import MypageScreen from '../organisms/MypageScreen'
 import CalendarRightScreen from '../organisms/CalendarRightScreen'
 import type { MainChatRightScreenRef } from '../organisms/MainChatRightScreen'
-
-interface MbtiRange {
-    eValue: number;
-    sValue: number;
-    fValue: number;
-    pValue: number;
-}
-
-interface ChatMessage {
-    id: string;
-    role: 'user' | 'ai';
-    content: string;
-    mbtiRange: MbtiRange;
-    createdAt: string;
-    rate?: number;
-}
-
-interface SelectedRange {
-  startDate: Date | null;
-  endDate: Date | null;
-}
 
 interface ApiMessage {
     id: string;
@@ -65,14 +46,7 @@ interface PostChatMessageResponse {
 }
 
 interface ChatSessionMessagesResponse {
-    session: {
-        id: string;
-        userId: string;
-        title: string | null;
-        isArchived: boolean;
-        createdAt: string;
-        updatedAt: string;
-    };
+    session: ChatSession;
     messages: ApiMessage[];
 }
 
@@ -410,7 +384,7 @@ export default function FullMainScreen() {
             if (isSimulationPage) {
                 const data = await apiFetch<ChatMessage[]>('/api/chat', {
                     method: 'POST',
-                    body,
+                    body
                 });
                 setSimulationChatMessages((prev) => ({
                     ...prev,
@@ -420,7 +394,7 @@ export default function FullMainScreen() {
             }
             const data = await apiFetch<PostChatMessageResponse>(`/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`, {
                 method: 'POST',
-                body,
+                body
             });
             const assistantSourceMessages = data.assistantMessages ?? [data.assistantMessage];
             const assistantMessages: ChatMessage[] = assistantSourceMessages.map((message) => ({
@@ -462,7 +436,7 @@ export default function FullMainScreen() {
         try {
             await apiFetch(`/api/chat/${messageId}`, {
                 method: 'PATCH',
-                body: { rate },
+                body: { rate }
             });
             if (isSimulationPage) {
                 setSimulationChatMessages((prev) => ({

@@ -2,20 +2,9 @@ import styled from '@emotion/styled'
 import { useState } from 'react'
 
 import { apiFetch } from '../../api/client'
+import type { ChatSession } from '../../types/chat'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
-
-interface ChatSession {
-    id: string;
-    userId: string;
-    title: string | null;
-    isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
-    _count?: {
-        messages: number;
-    };
-}
 
 interface MakeNewMainChatModalProps {
     onSubmitSuccess: (session: ChatSession) => void;

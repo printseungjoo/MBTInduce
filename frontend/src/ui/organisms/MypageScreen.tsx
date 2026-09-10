@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { apiFetch } from '../../api/client'
+import type { Profile } from '../../types/profile'
 import SaveButton from '../atoms/SaveButton'
 import TwoMbti from '../molecules/TwoMbti'
 import GenerateButton from '../atoms/GenerateButton'
@@ -11,12 +12,6 @@ type EI = 'E' | 'I'
 type SN = 'S' | 'N'
 type FT = 'F' | 'T'
 type PJ = 'P' | 'J'
-type profileInfo = {
-    id: string,
-    email: string,
-    nickname: string,
-    mbti: string
-}
 
 const MypageScreenStyled = styled.div`
     flex: 1;
@@ -156,7 +151,7 @@ export default function MypageScreen() {
     const [ft, setFt] = useState<FT | null>(null);
     const [pj, setPj] = useState<PJ | null>(null);
     const [nickname, setNickname] = useState<string>('');
-    const [profileInformation, setProfileInformation] = useState<profileInfo | null>(null);
+    const [profileInformation, setProfileInformation] = useState<Profile | null>(null);
 
     useEffect(() => {
         getEmail();
@@ -164,7 +159,7 @@ export default function MypageScreen() {
 
     async function getEmail() {
         try {
-            const data = await apiFetch<{ data: profileInfo }>('/api/profile');
+            const data = await apiFetch<{ data: Profile }>('/api/profile');
             setProfileInformation(data.data);
         } catch (error) {
             console.error(error);
@@ -173,7 +168,7 @@ export default function MypageScreen() {
 
     async function patchProfileInfo(mbtiValue: string) {
         try {
-            const data = await apiFetch<{ data: profileInfo }>('/api/profile', {
+            const data = await apiFetch<{ data: Profile }>('/api/profile', {
                 method: 'PATCH',
                 body: {
                     nickname,

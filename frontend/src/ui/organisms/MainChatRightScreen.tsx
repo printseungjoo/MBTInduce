@@ -2,17 +2,11 @@ import styled from '@emotion/styled'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 
 import { apiFetch } from '../../api/client'
+import type { MbtiRange } from '../../types/mbti'
 import Title from '../atoms/Title'
 import RangeBar from '../molecules/RangeBar'
 import TwoMBTIsButton from '../atoms/TwoMBTIsButton'
 import WebsiteIntro from '../atoms/WebsiteIntro'
-
-interface MbtIRangeRequest {
-    eValue: number;
-    sValue: number;
-    fValue: number;
-    pValue: number;
-}
 
 interface RightScreenProps {
     eValues: number;
@@ -27,12 +21,7 @@ interface RightScreenProps {
 
 export interface MainChatRightScreenRef {
     sendMainChatRightScreenValues: () => Promise<{
-        mbtiRange: {
-            eValue: number;
-            sValue: number;
-            fValue: number;
-            pValue: number;
-        };
+        mbtiRange: MbtiRange;
         showBoth: string[];
     }>;
 }
@@ -62,7 +51,7 @@ const MainChatRightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>
     const [clickedPJ, setClickedPJ] = useState<boolean>(false);
     
     const sendMbtiRange = async() => {
-        const mbtiRange: MbtIRangeRequest = { eValue: eValues, sValue: sValues, fValue: fValues, pValue: pValues };
+        const mbtiRange: MbtiRange = { eValue: eValues, sValue: sValues, fValue: fValues, pValue: pValues };
         try {
             await apiFetch('/api/mbtiRange', {
                 method: 'POST',
