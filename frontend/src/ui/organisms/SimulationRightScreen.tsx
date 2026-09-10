@@ -37,7 +37,7 @@ export default function SimulationRightScreen({ selectedScenario, selectedName, 
 
     async function getProfile() {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/profile`, {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
                 method: 'GET',
                 credentials: 'include',
             });
