@@ -1,29 +1,11 @@
 import styled from '@emotion/styled'
-import { useLocation } from 'react-router-dom'
-import { forwardRef } from 'react'
+import type { ReactNode } from 'react'
 
-import MainChatRightScreen from '../organisms/MainChatRightScreen'
-import SimulationRightScreen from '../organisms/SimulationRightScreen'
-import CalendarRightScreen from '../organisms/CalendarRightScreen'
-import type { MainChatRightScreenRef } from '../organisms/MainChatRightScreen'
-import type { SelectedRange } from '../../types/calendar'
+import { AppShellPortal } from './AppShellPortal'
 
 interface RightScreenProps {
-    eValues: number;
-    sValues: number;
-    fValues: number;
-    pValues: number;
-    setEValues: React.Dispatch<React.SetStateAction<number>>;
-    setSValues: React.Dispatch<React.SetStateAction<number>>;
-    setFValues: React.Dispatch<React.SetStateAction<number>>;
-    setPValues: React.Dispatch<React.SetStateAction<number>>;
-    selectedScenario: string;
-    selectedName: string;
-    selectedMbti: string;
-    showSimulation: boolean;
-    selectedRange: SelectedRange;
     isMobileOpen: boolean;
-    onMobileClose: () => void;
+    children: ReactNode;
 }
 
 const RightScreenStyled = styled.div<{ isMobileOpen: boolean }>`
@@ -58,22 +40,12 @@ const RightScreenStyled = styled.div<{ isMobileOpen: boolean }>`
     }
 `;
 
-const RightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>(({ eValues, sValues, fValues, pValues, setEValues, setSValues, setFValues, setPValues, selectedScenario, selectedName, selectedMbti, showSimulation, selectedRange, isMobileOpen }, ref) => {
-    const location = useLocation()
-
-    return(
-        <RightScreenStyled isMobileOpen = { isMobileOpen }>
-            {location.pathname === '/MainChat' && (
-                <MainChatRightScreen ref = { ref } eValues = { eValues } sValues = { sValues } fValues = { fValues } pValues = { pValues } setEValues = { setEValues } setSValues = { setSValues } setFValues = { setFValues } setPValues = { setPValues } />
-            )}
-            {location.pathname === '/Simulation' && showSimulation && (
-                <SimulationRightScreen selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti }/>
-            )}
-            {location.pathname === '/Calendar' && (
-                <CalendarRightScreen selectedRange = { selectedRange } />
-            )}
-        </RightScreenStyled>
-    )
-})
-
-export default RightScreen;
+export default function RightScreen({ isMobileOpen, children }: RightScreenProps) {
+    return (
+        <AppShellPortal>
+            <RightScreenStyled isMobileOpen = { isMobileOpen }>
+                { children }
+            </RightScreenStyled>
+        </AppShellPortal>
+    );
+}
