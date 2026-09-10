@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
+import { apiFetch } from '../../api/client'
 import CenterPurpleP from './CenterPurpleP'
 import GoBacktoAdminButton from './GoBacktoAdminButton'
 
@@ -71,19 +72,12 @@ export default function EditSimulationQuestionTemplate({ id }: EditSimulationQue
 
     async function patchTemplates(changedContent: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/simulation-question-templates/${id}`, {
+            await apiFetch(`/api/admin/simulation-question-templates/${id}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     content: changedContent
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch simulation question template');
-            }
             window.location.reload();
         } catch (error) {
             console.error(error);

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
+import { apiFetch } from '../../api/client'
 import GoBackButton from '../atoms/GoBackButton'
 import OldSimulationButton from '../atoms/OldSimulationButton'
 
@@ -78,27 +79,10 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
 
     const getHistory = async () => {
         try {
-            const [scenarioRes, targetRes] = await Promise.all([
-                fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/simulationTemplate`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json' 
-                    },
-                    credentials: 'include',
-                }),
-                fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles`, {
-                    method: 'GET',
-                    headers: { 
-                        'Content-Type': 'application/json' 
-                    },
-                    credentials: 'include',
-                })
+            const [scenarioData, targetData] = await Promise.all([
+                apiFetch<{ simulationTemplate?: SimulationTemplate[] }>('/api/simulation/simulationTemplate'),
+                apiFetch<{ userProfiles?: UserProfile[] }>('/api/simulation/userProfiles'),
             ]);
-            if (!scenarioRes.ok || !targetRes.ok) {
-                throw new Error('Failed to fetch data');
-            }
-            const scenarioData = await scenarioRes.json();
-            const targetData = await targetRes.json();
             const scenarios: SimulationTemplate[] = scenarioData.simulationTemplate || [];
             const targets: UserProfile[] = targetData.userProfiles || [];
             const profileByTemplateId = new Map(

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
 
+import { apiFetch } from './api/client'
 import StartPageBeforeLogin from './ui/template/StartPageBeforeLogin'
 import SignUpScreen from './ui/organisms/SignUpScreen'
 import FullMainScreen from './ui/template/FullMainScreen'
@@ -12,11 +13,8 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`, {
-          method: 'GET',
-          credentials: 'include',
-        });
-        setStatus(response.ok ? 'ok' : 'fail');
+        await apiFetch('/api/auth/me')
+        setStatus('ok')
       } catch (error) {
         console.error(error);
         setStatus('fail');
@@ -38,19 +36,11 @@ function AdminRoute({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function checkAdmin() {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`, {
-          method: 'GET',
-          credentials: 'include',
-        });
-        if (!response.ok) {
-          setStatus('fail');
-          return;
-        }
-        const data = await response.json();
+        const data = await apiFetch<{ data?: { isAdmin?: boolean } }>('/api/auth/me')
         if (data.data?.isAdmin) {
-          setStatus('ok');
+          setStatus('ok')
         } else {
-          setStatus('fail');
+          setStatus('fail')
         }
       } catch (error) {
         console.error(error);

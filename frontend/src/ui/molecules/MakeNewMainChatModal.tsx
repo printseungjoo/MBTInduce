@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
+import { apiFetch } from '../../api/client'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
 
@@ -82,20 +83,12 @@ export default function MakeNewMainChatModal({ onSubmitSuccess }: MakeNewMainCha
 
     async function createChatSession(title: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions`, {
+            const data = await apiFetch<{ session: ChatSession }>('/api/chatMessage/sessions', {
                 method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     title
-                }),
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to create chat session');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);

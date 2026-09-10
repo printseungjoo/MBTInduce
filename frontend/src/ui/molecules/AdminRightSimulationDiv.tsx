@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
+import { apiFetch } from '../../api/client'
 import SimulationTemplateButton from '../atoms/SimulationTemplateButton'
 
 type TemplateType = {
@@ -65,35 +66,21 @@ export default function AdminRightSimulationDiv() {
     const [content, setContent] = useState<string>('');
 
     async function getTemplates() {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/simulation-question-templates`, {
-            method: 'GET',
-            credentials: 'include'
-        });
-        if(!response.ok) {
-            throw new Error('Failed to get simulation question templates');
-        }
-        const data = await response.json();
+        const data = await apiFetch<{ data: TemplateType[] }>('/api/admin/simulation-question-templates');
         setTemplates(data.data);
     }
 
     async function postTemplates() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/simulation-question-templates`, {
+            await apiFetch('/api/admin/simulation-question-templates', {
                 method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     title: content.trim(),
                     content: content.trim(),
                     category: 'SIMULATION',
                     isActive: true,
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to post simulation question templates');
-            }
             window.location.reload();
         } catch (error) {
             console.error(error);

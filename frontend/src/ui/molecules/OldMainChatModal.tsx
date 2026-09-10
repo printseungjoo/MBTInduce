@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
+import { apiFetch } from '../../api/client'
 import GoBackButton from '../atoms/GoBackButton'
 import OldMainChatButton from '../atoms/OldMainChatButton'
 
@@ -77,14 +78,7 @@ export default function OldMainChatModal({ onConfirm, onSelectHistory }: OldMain
 
     async function getChatSessions() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions`, {
-                method: 'GET',
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get chat sessions');
-            }
-            const data = await response.json();
+            const data = await apiFetch<{ sessions: ChatSession[] }>('/api/chatMessage/sessions');
             const mainOnlySessions = data.sessions.filter((session: ChatSession) => !session.title?.startsWith('simulation:'));
             setChatSessions(mainOnlySessions);
         } catch (error) {

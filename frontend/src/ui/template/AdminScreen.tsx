@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { apiFetch } from '../../api/client'
 import LogoutButton from '../atoms/LogoutButton'
 import AdminLeftDiv from '../atoms/AdminLeftDiv'
 import AdminAverageRatingDiv from '../atoms/AdminAverageRatingDiv'
@@ -121,14 +122,7 @@ export default function AdminScreen() {
 
     async function getStatistics() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/statistics`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            if(!response.ok) {
-                throw new Error('Failed to get left statistics');
-            }
-            const data = await response.json();
+            const data = await apiFetch<{ data: StatisticsType }>('/api/admin/statistics');
             setStatistics(data.data);
         } catch(error) {
             console.error(error);
@@ -137,13 +131,9 @@ export default function AdminScreen() {
     
     async function handleLogout() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`, {
+            await apiFetch('/api/auth/logout', {
                 method: 'POST',
-                credentials: 'include',
             });
-            if (!response.ok) {
-                throw new Error('Failed to logout');
-            }
             window.alert('Logged out successfully.');
             navigate('/');
         } catch (error) {

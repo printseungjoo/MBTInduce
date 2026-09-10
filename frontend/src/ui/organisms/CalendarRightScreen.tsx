@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
+import { apiFetch, getApiErrorMessage } from '../../api/client'
 import Title from '../atoms/Title'
 import SelectTime from '../molecules/SelectTime'
 import Checkbox from '../atoms/Checkbox'
@@ -126,26 +127,17 @@ export default function CalendarRightScreen({ selectedRange }: CalendarRightScre
         };
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent`, {
+            await apiFetch('/api/calendarEvent', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                body: JSON.stringify(requestBody)
+                body: requestBody
             });
-            const data = await response.json();
-            if (!response.ok) {
-                alert(data.message || 'Failed to submit schedule.');
-                return;
-            }
             alert('Schedule submitted successfully.');
             setSchedule('');
             setSelectedOption('');
             window.location.reload();
         } catch (error) {
             console.error(error);
-            alert('Server connection failed.');
+            alert(getApiErrorMessage(error, 'Server connection failed.'));
         }
     }
     const { firstDate, secondDate } = getOrderedDates(

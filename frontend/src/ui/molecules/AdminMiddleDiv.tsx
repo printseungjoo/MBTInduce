@@ -2,6 +2,8 @@ import styled from '@emotion/styled'
 
 import { useState, useEffect } from 'react'
 
+import { apiFetch } from '../../api/client'
+
 interface RatingCounts {
     1: number
     2: number
@@ -110,14 +112,7 @@ export default function AdminMiddleDiv() {
 
     async function getRatingStatistics() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/statistics`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get middle statistics');
-            }
-            const data = await response.json();
+            const data = await apiFetch<{ data: { ratingStatistics: StatisticsType } }>('/api/admin/statistics');
             setRatingStatistics(data.data.ratingStatistics);
         } catch (error) {
             console.error(error);

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
+import { apiFetch, getApiErrorMessage } from '../../api/client'
 import EditButton from './EditButton'
 import DeleteButton from './DeleteButton'
 import EditSimulationQuestionTemplate from './EditSimulationQuestionTemplate'
@@ -35,23 +36,14 @@ export default function SimulationTemplateButton({ id, content }: SimulationTemp
 
     async function deleteTemplates() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/simulation-question-templates/${id}`, {
+            await apiFetch(`/api/admin/simulation-question-templates/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
             });
-            const data = await response.json();
-            if (!response.ok) {
-                alert(data.message || 'Failed to delete simulation question template');
-                return;
-            }
             alert('Simulation question template deleted successfully.');
             window.location.reload();
         } catch (error) {
             console.error(error);
-            alert('Server connection failed.');
+            alert(getApiErrorMessage(error, 'Server connection failed.'));
         }
     }
 

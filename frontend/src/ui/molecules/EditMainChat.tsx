@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
+import { apiFetch } from '../../api/client'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
 
@@ -71,20 +72,12 @@ export default function EditMainChat({ changedChatId }: EditMainChatProps) {
 
     async function editChatSession(targetId: string, changedTitle: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions/${targetId}`, {
+            const data = await apiFetch<{ session: unknown }>(`/api/chatMessage/sessions/${targetId}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     title: changedTitle
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch chat title');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);

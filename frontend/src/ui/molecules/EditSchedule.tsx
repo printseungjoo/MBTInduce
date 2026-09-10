@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
+import { apiFetch } from '../../api/client'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
 import SelectTime from './SelectTime'
@@ -75,20 +76,12 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
 
     async function editTitle(title: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent/${id}`, {
+            const data = await apiFetch<{ session: unknown }>(`/api/calendarEvent/${id}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     title: title
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch schedule title');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);
@@ -97,20 +90,12 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
 
     async function editStart(start: Date | string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent/${id}`, {
+            const data = await apiFetch<{ session: unknown }>(`/api/calendarEvent/${id}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     startAt: start instanceof Date ? start.toISOString() : start
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch start schedule');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);
@@ -119,20 +104,12 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
 
     async function editEnd(end: Date | string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent/${id}`, {
+            const data = await apiFetch<{ session: unknown }>(`/api/calendarEvent/${id}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     endAt: end instanceof Date ? end.toISOString() : end
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch end schedule');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);

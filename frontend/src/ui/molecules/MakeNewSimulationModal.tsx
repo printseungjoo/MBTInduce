@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
+import { apiFetch } from '../../api/client'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import Input from '../atoms/Input'
 import GoBackButton from '../atoms/GoBackButton'
@@ -98,18 +99,10 @@ export default function MakeNewSimulationModal({ onSubmitSuccess }: MakeNewSimul
 
     const sendScenario = async() => {
         const simulationContent: ScenarioRequest = { content: scenario };
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/simulationTemplate`, {
+        const data = await apiFetch<{ simulationTemplate?: { id?: string } }>('/api/simulation/simulationTemplate', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify(simulationContent)
+            body: simulationContent
         })
-        if (!response.ok) {
-            throw new Error('Failed to send scenario')
-        }
-        const data = await response.json();
         const simulationTemplateId = data.simulationTemplate?.id;
         if (typeof simulationTemplateId !== 'string' || simulationTemplateId === '') {
             throw new Error('Failed to send scenario')
@@ -119,20 +112,13 @@ export default function MakeNewSimulationModal({ onSubmitSuccess }: MakeNewSimul
 
     const sendTargetInfo = async(simulationTemplateId: string) => {
         const targetInfo: TargetInfoRequest = { name: name, meOrNot: false, mbti: mbti };
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles`, {
+        await apiFetch('/api/simulation/userProfiles', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify({
+            body: {
                 ...targetInfo,
                 simulationTemplateId
-            })
+            }
         })
-        if (!response.ok) {
-            throw new Error('Failed to send targetInfo')
-        }
     }
 
     const clickSubmitButton = async () => {

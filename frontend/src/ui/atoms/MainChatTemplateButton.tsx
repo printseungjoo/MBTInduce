@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
+import { apiFetch, getApiErrorMessage } from '../../api/client'
 import EditButton from './EditButton'
 import DeleteButton from './DeleteButton'
 import EditMainChatQuestionTemplate from './EditMainChatQuestionTemplate'
@@ -35,23 +36,14 @@ export default function MainChatTemplateButton({ id, content }: MainChatTemplate
     
     async function deleteTemplates() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/main-chat-question-templates/${id}`, {
+            await apiFetch(`/api/admin/main-chat-question-templates/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
             });
-            const data = await response.json();
-            if (!response.ok) {
-                alert(data.message || 'Failed to delete main chat question template');
-                return;
-            }
             alert('Main chat question template deleted successfully.');
             window.location.reload();
         } catch (error) {
             console.error(error);
-            alert('Server connection failed.');
+            alert(getApiErrorMessage(error, 'Server connection failed.'));
         }
     }
 

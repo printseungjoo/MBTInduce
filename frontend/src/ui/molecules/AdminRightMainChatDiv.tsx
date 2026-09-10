@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
+import { apiFetch } from '../../api/client'
 import MainChatTemplateButton from '../atoms/MainChatTemplateButton'
 
 type TemplateType = {
@@ -65,35 +66,21 @@ export default function AdminRightMainChatDiv() {
     const [content, setContent] = useState<string>('');
 
     async function getTemplates() {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/main-chat-question-templates`, {
-            method: 'GET',
-            credentials: 'include'
-        });
-        if(!response.ok) {
-            throw new Error('Failed to get main chat question templates');
-        }
-        const data = await response.json();
+        const data = await apiFetch<{ data: TemplateType[] }>('/api/admin/main-chat-question-templates');
         setTemplates(data.data);
     }
 
     async function postTemplates() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/main-chat-question-templates`, {
+            await apiFetch('/api/admin/main-chat-question-templates', {
                 method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     title: content.trim(),
                     content: content.trim(),
                     category: 'MAIN_CHAT',
                     isActive: true,
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to post main chat question templates');
-            }
             window.location.reload();
         } catch (error) {
             console.error(error);

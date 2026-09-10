@@ -5,6 +5,8 @@ import { format, parse, startOfWeek, getDay } from 'date-fns'
 import { useState, useEffect } from 'react'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
+import { apiFetch } from '../../api/client'
+
 interface SelectedRange {
     startDate: Date | null;
     endDate: Date | null;
@@ -97,17 +99,7 @@ export default function CalendarScreen({ selectedRange, setSelectedRange }: Cale
 
     async function loadCalendarEvents() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get calendar events');
-            }
-            const result = await response.json();
+            const result = await apiFetch<{ data: { events: CalendarEventResponse[] } }>('/api/calendarEvent');
             const calendarEvents: CalendarEventResponse[] = result.data.events;
             const convertedEvents = calendarEvents.map((event) => ({
                 id: event.id,

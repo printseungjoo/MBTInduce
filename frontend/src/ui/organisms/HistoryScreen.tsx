@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
+import { apiFetch, getApiErrorMessage } from '../../api/client'
 import HistoryDiv from '../molecules/HistoryDiv'
 import HistoryOptionButton from '../atoms/HistoryOptionButton'
 import EditMainChat from '../molecules/EditMainChat'
@@ -112,19 +113,10 @@ export default function HistoryScreen() {
 
     async function getSimulationData() {
         try {
-            const templateResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/simulationTemplate`, {
-                method: 'GET',
-                credentials: 'include',
-            });
-            const profileResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles`, {
-                method: 'GET',
-                credentials: 'include',
-            });
-            if (!templateResponse.ok || !profileResponse.ok) {
-                throw new Error('Failed to fetch simulation data');
-            }
-            const templateData = await templateResponse.json();
-            const profileData = await profileResponse.json();
+            const [templateData, profileData] = await Promise.all([
+                apiFetch<{ simulationTemplate: SimulationTemplate[] }>('/api/simulation/simulationTemplate'),
+                apiFetch<{ userProfiles: UserProfile[] }>('/api/simulation/userProfiles')
+            ]);
             setSimulationTemplates(templateData.simulationTemplate);
             setUserProfiles(profileData.userProfiles);
         } catch (error) {
@@ -134,17 +126,7 @@ export default function HistoryScreen() {
 
     async function loadCalendarEvents() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get calendar events');
-            }
-            const result = await response.json();
+            const result = await apiFetch<{ data: { events: CalendarEventResponse[] } }>('/api/calendarEvent');
             const calendarEvents: CalendarEventResponse[] = result.data.events;
             const convertedEvents = calendarEvents.map((event) => ({
                 id: event.id,
@@ -161,14 +143,7 @@ export default function HistoryScreen() {
 
     async function getChatSessions() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions`, {
-                method: 'GET',
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get chat sessions');
-            }
-            const data = await response.json();
+            const data = await apiFetch<{ sessions: ChatSession[] }>('/api/chatMessage/sessions');
             const mainOnlySessions = data.sessions.filter((session: ChatSession) => !session.title?.startsWith('simulation:'));
             setChatSessions(mainOnlySessions);
         } catch (error) {
@@ -178,81 +153,45 @@ export default function HistoryScreen() {
 
     async function deleteChatSession(selectedChatId: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions/${selectedChatId}`, {
+            await apiFetch(`/api/chatMessage/sessions/${selectedChatId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
             });
-            const data = await response.json();
-            if (!response.ok) {
-                alert(data.message || 'Failed to delete chat session.');
-                return;
-            }
             alert('Chat session deleted successfully.');
             window.location.reload();
         } catch (error) {
             console.error(error);
-            alert('Server connection failed.');
+            alert(getApiErrorMessage(error, 'Server connection failed.'));
         }
     }
 
     async function deleteSimulationSession(selectedSimulationId: string, selectedUserId?: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/simulationTemplate/${selectedSimulationId}`, {
+            await apiFetch(`/api/simulation/simulationTemplate/${selectedSimulationId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
             });
-            const data = await response.json();
-            if (!response.ok) {
-                alert(data.message || 'Failed to delete simulation.');
-                return;
-            }
             if (selectedUserId) {
-                const profileResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles/${selectedUserId}`, {
+                await apiFetch(`/api/simulation/userProfiles/${selectedUserId}`, {
                     method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include'
                 });
-                const profileData = await profileResponse.json();
-                if (!profileResponse.ok) {
-                    alert(profileData.message || 'Failed to delete simulation.');
-                    return;
-                }
             }
             alert('Simulation deleted successfully.');
             window.location.reload();
         } catch (error) {
             console.error(error);
-            alert('Server connection failed.');
+            alert(getApiErrorMessage(error, 'Server connection failed.'));
         }
     }
 
     async function deleteSchedule(selectedEventId: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent/${selectedEventId}`, {
+            await apiFetch(`/api/calendarEvent/${selectedEventId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
             });
-            const data = await response.json();
-            if (!response.ok) {
-                alert(data.message || 'Failed to delete schedule.');
-                return;
-            }
             alert('Schedule deleted successfully.');
             window.location.reload();
         } catch (error) {
             console.error(error);
-            alert('Server connection failed.');
+            alert(getApiErrorMessage(error, 'Server connection failed.'));
         }
     }
 

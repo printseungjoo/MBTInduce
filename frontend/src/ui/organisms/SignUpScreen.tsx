@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { apiFetch } from '../../api/client'
 import SaveButton from '../atoms/SaveButton'
 import TwoMbti from '../molecules/TwoMbti'
 import GenerateButton from '../atoms/GenerateButton'
@@ -154,14 +155,7 @@ export default function SignUpScreen() {
 
     async function getEmail() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
-                method: 'GET',
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get email');
-            }
-            const data = await response.json();
+            const data = await apiFetch<{ data: profileInfo }>('/api/profile');
             setProfileInformation(data.data);
         } catch (error) {
             console.error(error);
@@ -170,21 +164,13 @@ export default function SignUpScreen() {
 
     async function patchProfileInfo(nickname: string, mbtiValue: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
+            const data = await apiFetch<{ data: profileInfo }>('/api/profile', {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
+                body: {
                     nickname: nickname,
                     mbti: mbtiValue
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to save profile info');
-            }
-            const data = await response.json();
             return data.data;
         } catch(error) {
             console.error(error);

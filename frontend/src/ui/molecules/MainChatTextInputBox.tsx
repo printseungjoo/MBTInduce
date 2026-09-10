@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 import type { KeyboardEvent } from 'react'
 
+import { apiFetch } from '../../api/client'
 import TextExample from '../atoms/TextExample'
 
 type TemplateType = {
@@ -75,14 +76,7 @@ export default function MainChatTextInputBox({ onSubmit, disabled = false }: Tex
     const [templates, setTemplates] = useState<TemplateType[]>([]);
 
     async function getTemplates() {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/templates`, {
-            method: 'GET',
-            credentials: 'include'
-        });
-        if(!response.ok) {
-            throw new Error('Failed to get main chat question templates');
-        }
-        const data = await response.json();
+        const data = await apiFetch<{ templates: TemplateType[] }>('/api/templates');
         setTemplates(data.templates);
     }
 

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 
+import { apiFetch } from '../../api/client'
 import Title from '../atoms/Title'
 import RangeBar from '../molecules/RangeBar'
 import TwoMBTIsButton from '../atoms/TwoMBTIsButton'
@@ -63,17 +64,10 @@ const MainChatRightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>
     const sendMbtiRange = async() => {
         const mbtiRange: MbtIRangeRequest = { eValue: eValues, sValue: sValues, fValue: fValues, pValue: pValues };
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/mbtiRange`, {
+            await apiFetch('/api/mbtiRange', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(mbtiRange),
+                body: mbtiRange
             })
-            if (!response.ok) {
-                throw new Error('Failed to send mbtiRange')
-            }
         } catch (error) {
             console.error('Error transmitting mbtiRange:', error);
         }
@@ -91,17 +85,10 @@ const MainChatRightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>
     const sendTwoMBTIs = async() => {
         const selectedDualModes = getSelectedDualModes();
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/showBoth`, {
+            await apiFetch('/api/showBoth', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(selectedDualModes),
+                body: selectedDualModes
             })
-            if (!response.ok) {
-                throw new Error('TwoMBTIs transmission failed')
-            }
         } catch (error) {
             console.error('Error transmitting twoMBTIs:', error)
         }

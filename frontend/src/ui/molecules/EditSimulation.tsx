@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
+import { apiFetch } from '../../api/client'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
 
@@ -72,20 +73,12 @@ export default function EditSimulation({ target, id }: EditSimulationProps) {
 
     async function editUserName(userName: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles/${id}`, {
+            const data = await apiFetch<{ session: unknown }>(`/api/simulation/userProfiles/${id}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     name: userName
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch simulation user name');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);
@@ -94,20 +87,12 @@ export default function EditSimulation({ target, id }: EditSimulationProps) {
 
     async function editUserMbti(userMbti: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles/${id}`, {
+            const data = await apiFetch<{ session: unknown }>(`/api/simulation/userProfiles/${id}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     mbti: userMbti
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch simulation user mbti');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);
@@ -116,20 +101,12 @@ export default function EditSimulation({ target, id }: EditSimulationProps) {
 
     async function editSimulationContent(simulationContent: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/simulationTemplate/${id}`, {
+            const data = await apiFetch<{ session: unknown }>(`/api/simulation/simulationTemplate/${id}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     content: simulationContent
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch simulation content');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);

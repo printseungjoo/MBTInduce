@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { useLocation, NavLink } from 'react-router-dom'
 
+import { apiFetch } from '../../api/client'
 import NavigationDrawer from '../organisms/NavigationDrawer'
 import Hamburger from '../atoms/Hamburger'
 import Title from '../atoms/Title'
@@ -345,18 +346,8 @@ export default function FullMainScreen() {
         const key = simKey ?? selectedSimulationKey;
         const onSimPage = location.pathname === '/Simulation';
         try {
-            const url = onSimPage && key ? `${import.meta.env.VITE_API_BASE_URL}/api/chat?pageType=simulation&simulationKey=${encodeURIComponent(key)}` : `${import.meta.env.VITE_API_BASE_URL}/api/chat?pageType=main`;
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get chatMessages');
-            }
-            const data: ChatMessage[] = await response.json();
+            const path = onSimPage && key ? `/api/chat?pageType=simulation&simulationKey=${encodeURIComponent(key)}` : `/api/chat?pageType=main`;
+            const data = await apiFetch<ChatMessage[]>(path);
             if (onSimPage && key) {
                 setSimulationChatMessages((prev) => ({
                     ...prev,
@@ -408,36 +399,29 @@ export default function FullMainScreen() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(
-                isSimulationPage
-                    ? `${import.meta.env.VITE_API_BASE_URL}/api/chat`
-                    : `${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`,
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        content: trimmedValue,
-                        role: 'user',
-                        mbtiRange: { eValue, sValue, fValue, pValue },
-                        showBoth: rightScreenValues?.showBoth ?? [],
-                        pageType: isSimulationPage ? 'simulation' : 'main',
-                        simulationKey: isSimulationPage ? selectedSimulationKey : '',
-                    }),
-                }
-            );
-            if (!response.ok) {
-                throw new Error('Failed to post chatMessage');
-            }
+            const body = {
+                content: trimmedValue,
+                role: 'user',
+                mbtiRange: { eValue, sValue, fValue, pValue },
+                showBoth: rightScreenValues?.showBoth ?? [],
+                pageType: isSimulationPage ? 'simulation' : 'main',
+                simulationKey: isSimulationPage ? selectedSimulationKey : '',
+            };
             if (isSimulationPage) {
-                const data: ChatMessage[] = await response.json();
+                const data = await apiFetch<ChatMessage[]>('/api/chat', {
+                    method: 'POST',
+                    body,
+                });
                 setSimulationChatMessages((prev) => ({
                     ...prev,
                     [selectedSimulationKey]: data,
                 }));
                 return;
             }
-            const data: PostChatMessageResponse = await response.json();
+            const data = await apiFetch<PostChatMessageResponse>(`/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`, {
+                method: 'POST',
+                body,
+            });
             const assistantSourceMessages = data.assistantMessages ?? [data.assistantMessage];
             const assistantMessages: ChatMessage[] = assistantSourceMessages.map((message) => ({
                 id: message.id,
@@ -476,19 +460,10 @@ export default function FullMainScreen() {
 
     async function patchChatMessageRate(messageId: string, rate: number) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chat/${messageId}`, {
+            await apiFetch(`/api/chat/${messageId}`, {
                 method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({
-                    rate,
-                }),
+                body: { rate },
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch chatMessage');
-            }
             if (isSimulationPage) {
                 setSimulationChatMessages((prev) => ({
                     ...prev,
@@ -507,14 +482,7 @@ export default function FullMainScreen() {
     }
 
     async function getMainChatSessionMessages(sessionId: string) {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions/${sessionId}`, {
-            method: 'GET',
-            credentials: 'include',
-        });
-        if (!response.ok) {
-            throw new Error('Failed to get main chat session messages');
-        }
-        const data: ChatSessionMessagesResponse = await response.json();
+        const data = await apiFetch<ChatSessionMessagesResponse>(`/api/chatMessage/sessions/${sessionId}`);
         const messages: ChatMessage[] = data.messages.map((message) => ({
             id: message.id,
             role: message.role === 'USER' ? 'user' : 'ai',

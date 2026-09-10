@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
+import { apiFetch } from '../../api/client'
 import Title from '../atoms/Title'
 import WebsiteIntro from '../atoms/WebsiteIntro'
 import TargetProfile from '../atoms/TargetProfile'
@@ -37,14 +38,7 @@ export default function SimulationRightScreen({ selectedScenario, selectedName, 
 
     async function getProfile() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
-                method: 'GET',
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get profile');
-            }
-            const data = await response.json();
+            const data = await apiFetch<{ data: profileInfo }>('/api/profile');
             setProfileInformation(data.data);
         } catch (error) {
             console.error(error);
