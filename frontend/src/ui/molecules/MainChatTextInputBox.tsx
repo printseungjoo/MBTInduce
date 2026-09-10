@@ -5,6 +5,7 @@ import type { KeyboardEvent } from 'react'
 import TextExample from '../atoms/TextExample'
 
 type TemplateType = {
+    id: string;
     title: string;
     content: string;
     category: string;
@@ -111,7 +112,7 @@ export default function MainChatTextInputBox({ onSubmit, disabled = false }: Tex
         <TextInputDiv>
             {exampleShown && <ExamplesDiv>
                 {templates.map((t) => {
-                    return <TextExample content = { t.content } clicked = { textExampleClicked } />
+                    return <TextExample key = { t.id } content = { t.content } clicked = { textExampleClicked } />
                 })}
             </ExamplesDiv>}
             <TextInputBoxDiv>

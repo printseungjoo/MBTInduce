@@ -126,8 +126,8 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
         <>
             {!remove && <OldSimulationModalStyled>
                 <CenterBox>
-                    {history.map((h, index) => (
-                        <div key = { index } onClick = {() => clickHistory(h)}>
+                    {history.map((h) => (
+                        <div key = { `${h.name}-${h.mbti}-${h.scenario}` } onClick = {() => clickHistory(h)}>
                             <OldSimulationButton targetName = { h.name } targetMbti = { h.mbti } scenarioContent = { h.scenario } />
                         </div>
                     ))}

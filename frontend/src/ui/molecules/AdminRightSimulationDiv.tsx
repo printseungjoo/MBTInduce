@@ -109,7 +109,7 @@ export default function AdminRightSimulationDiv() {
             <PurpleP> Simulation Question Template </PurpleP>
             <Templates>
                 {templates.map((t) => {
-                    return <SimulationTemplateButton id = { t.id } content = { t.content } />
+                    return <SimulationTemplateButton key = { t.id } id = { t.id } content = { t.content } />
                 })}
             </Templates>
             <FlexDiv>

@@ -43,7 +43,7 @@ const CalendarStyled = styled.div`
     height: 85%;
     background-color: ${({ theme }) => theme.colors.lightWhite};
     color-scheme: only light;
-    olor: ${({ theme }) => theme.colors.deepBlack};
+    color: ${({ theme }) => theme.colors.deepBlack};
 
     .rbc-calendar {
         background-color: ${({ theme }) => theme.colors.lightWhite};

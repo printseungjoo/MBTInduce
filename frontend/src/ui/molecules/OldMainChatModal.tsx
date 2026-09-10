@@ -97,8 +97,8 @@ export default function OldMainChatModal({ onConfirm, onSelectHistory }: OldMain
             {!remove && <OldMainChatModalStyled>
                 <CenterBox>
                     {chatSessions?.length === 0 ? ( <NoChatText> There is no chat room left </NoChatText>) : 
-                        (chatSessions?.map((c, index) => (
-                            <div key = { index } onClick = {() => clickHistory(c)}>
+                        (chatSessions?.map((c) => (
+                            <div key = { c.id } onClick = {() => clickHistory(c)}>
                                 <OldMainChatButton chatContent = { c.title } />
                             </div>
                     )))}

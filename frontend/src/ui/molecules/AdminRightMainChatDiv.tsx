@@ -109,7 +109,7 @@ export default function AdminRightMainChatDiv() {
             <PurpleP> Main Chat Question Template </PurpleP>
             <Templates>
                 {templates.map((t) => {
-                    return <MainChatTemplateButton id = { t.id } content = { t.content } />
+                    return <MainChatTemplateButton key = { t.id } id = { t.id } content = { t.content } />
                 })}
             </Templates>
             <FlexDiv>

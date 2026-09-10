@@ -1,7 +1,5 @@
 import styled from '@emotion/styled'
 
-import EditSimulation from '../molecules/EditSimulation'
-
 type EditTarget = 'userName' | 'userMbti' | 'simulationContent';
 
 interface EditOptionButton {
@@ -19,7 +17,6 @@ const EditOptionButtonStyled = styled.button`
 export default function EditOptionButton({ content, target, id, onSelect }: EditOptionButton) {
     const goToEditSimulation = () => {
         onSelect(target, content, id);
-        <EditSimulation content = { content } target = { target } id = { id }/>
     }
 
     return(

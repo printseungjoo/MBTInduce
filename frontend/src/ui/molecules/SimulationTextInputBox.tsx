@@ -5,6 +5,7 @@ import type { KeyboardEvent } from 'react'
 import TextExample from '../atoms/TextExample'
 
 type TemplateType = {
+    id: string;
     title: string;
     content: string;
     category: string;
@@ -67,7 +68,7 @@ const TextInputBoxStyled = styled.input`
     color: ${({ theme }) => theme.colors.deepBlack};
 `;
 
-export default function SimulationextInputBox({ onSubmit, disabled = false }: TextInputBoxProps) {
+export default function SimulationTextInputBox({ onSubmit, disabled = false }: TextInputBoxProps) {
     const [text, setText] = useState<string>('');
     const [example, setExample] = useState<string>('');
     const [exampleShown, setExampleShown] = useState<boolean>(false);
@@ -111,7 +112,7 @@ export default function SimulationextInputBox({ onSubmit, disabled = false }: Te
         <TextInputDiv>
             {exampleShown && <ExamplesDiv>
                 {templates.map((t) => {
-                    return <TextExample content = { t.content } clicked = { textExampleClicked } />
+                    return <TextExample key = { t.id } content = { t.content } clicked = { textExampleClicked } />
                 })}
             </ExamplesDiv>}
             <TextInputBoxDiv>
