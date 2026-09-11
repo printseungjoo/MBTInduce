@@ -7,6 +7,8 @@ import type { ChatSession } from '../../types/chat'
 import type { SimulationProfile, SimulationTemplate } from '../../types/simulation'
 import HistoryDiv from '../molecules/HistoryDiv'
 import HistoryOptionButton from '../atoms/HistoryOptionButton'
+import ListSkeleton from '../molecules/ListSkeleton'
+import StatusMessage from '../molecules/StatusMessage'
 import EditMainChat from '../molecules/EditMainChat'
 import InitialEditSimulation from '../molecules/InitialEditSimulation'
 import EditSimulation from '../molecules/EditSimulation'
@@ -15,6 +17,7 @@ import EditSchedule from '../molecules/EditSchedule'
 
 type EditTarget = 'userName' | 'userMbti' | 'simulationContent';
 type EditScheduleTarget = 'title' | 'start' | 'end';
+type LoadState = 'loading' | 'ready' | 'error';
 
 const Option = styled.div`
     width: 100%;
@@ -42,7 +45,10 @@ export default function HistoryScreen() {
     const [simulationTemplates, setSimulationTemplates] = useState<SimulationTemplate[]>([]);
     const [userProfiles, setUserProfiles] = useState<SimulationProfile[]>([]);
     const [events, setEvents] = useState<CalendarDisplayEvent[]>([]);
-    const [chatSessions, setChatSessions] = useState<ChatSession[] | null>(null);
+    const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+    const [chatStatus, setChatStatus] = useState<LoadState>('loading');
+    const [simulationStatus, setSimulationStatus] = useState<LoadState>('loading');
+    const [scheduleStatus, setScheduleStatus] = useState<LoadState>('loading');
     const [isMainEditOpen, setIsMainEditOpen] = useState<boolean>(false);
     const [editingChatId, setEditingChatId] = useState<string | null>(null);
     const [isSimulationEditOpen, setIsSimulationEditOpen] = useState<boolean>(false);
@@ -67,6 +73,7 @@ export default function HistoryScreen() {
     }
 
     async function getSimulationData() {
+        setSimulationStatus('loading');
         try {
             const [templateData, profileData] = await Promise.all([
                 apiFetch<{ simulationTemplate: SimulationTemplate[] }>('/api/simulation/simulationTemplate'),
@@ -74,12 +81,15 @@ export default function HistoryScreen() {
             ]);
             setSimulationTemplates(templateData.simulationTemplate);
             setUserProfiles(profileData.userProfiles);
+            setSimulationStatus('ready');
         } catch (error) {
             console.error(error);
+            setSimulationStatus('error');
         }
     }
 
     async function loadCalendarEvents() {
+        setScheduleStatus('loading');
         try {
             const result = await apiFetch<{ data: { events: CalendarEvent[] } }>('/api/calendarEvent');
             const calendarEvents: CalendarEvent[] = result.data.events;
@@ -91,18 +101,23 @@ export default function HistoryScreen() {
                 allDay: event.allDay
             }));
             setEvents(convertedEvents);
+            setScheduleStatus('ready');
         } catch (error) {
             console.error(error);
+            setScheduleStatus('error');
         }
     }
 
     async function getChatSessions() {
+        setChatStatus('loading');
         try {
             const data = await apiFetch<{ sessions: ChatSession[] }>('/api/chatMessage/sessions');
             const mainOnlySessions = data.sessions.filter((session: ChatSession) => !session.title?.startsWith('simulation:'));
             setChatSessions(mainOnlySessions);
+            setChatStatus('ready');
         } catch (error) {
             console.error(error);
+            setChatStatus('error');
         }
     }
 
@@ -190,13 +205,27 @@ export default function HistoryScreen() {
                 <HistoryOptionButton name = 'Simulation History' clicked = {() => setOptionSelected('Simulation History')} selected = {optionSelected === 'Simulation History'} />
                 <HistoryOptionButton name = 'Schedule' clicked = {() => setOptionSelected('Schedule')} selected = {optionSelected === 'Schedule'} />
             </Option>
-            {optionSelected === 'Chat History' && chatSessions?.map((c) => {
+            {optionSelected === 'Chat History' && chatStatus === 'loading' && <ListSkeleton />}
+            {optionSelected === 'Chat History' && chatStatus === 'error' && (
+                <StatusMessage message = 'Could not load chat history.' onRetry = { getChatSessions } />
+            )}
+            {optionSelected === 'Chat History' && chatStatus === 'ready' && chatSessions.length === 0 && (
+                <StatusMessage message = 'There is no chat room left' />
+            )}
+            {optionSelected === 'Chat History' && chatStatus === 'ready' && chatSessions.map((c) => {
                 return(
                     <HistoryDiv key = { c.id } title = { 'Chat' } description = { c.title || '' } date = { '' } etc = { '' } onClick = {() => { deleteChatSession(c.id) }} onEditClick = {() => { goToEditMainChat(c.id) }}/>
                 )
             })}
             {isMainEditOpen && editingChatId && (<EditMainChat changedChatId = { editingChatId }/>)}
-            {optionSelected === 'Simulation History' && simulationTemplates.map((s) => {
+            {optionSelected === 'Simulation History' && simulationStatus === 'loading' && <ListSkeleton />}
+            {optionSelected === 'Simulation History' && simulationStatus === 'error' && (
+                <StatusMessage message = 'Could not load simulation history.' onRetry = { getSimulationData } />
+            )}
+            {optionSelected === 'Simulation History' && simulationStatus === 'ready' && simulationTemplates.length === 0 && (
+                <StatusMessage message = 'There is no simulation history left' />
+            )}
+            {optionSelected === 'Simulation History' && simulationStatus === 'ready' && simulationTemplates.map((s) => {
                 const user = userProfiles.find((profile) => profile.simulationTemplateId === s.id);
                 if (!user) {
                     return(
@@ -209,7 +238,14 @@ export default function HistoryScreen() {
             })}
             {isSimulationEditOpen && editingSimulationId && (<InitialEditSimulation userName = { editingSimulationId.userName } userMbti = { editingSimulationId.userMbti } simulationContent = { editingSimulationId.simulationContent } userId = { editingSimulationId.userId } simulationId = { editingSimulationId.simulationId } onSelectEditTarget = { handleSelectEditTarget } />)}
             {isSimulationEditOpen && selectedEditTarget && (<EditSimulation content = { selectedEditContent } target = { selectedEditTarget } id = { selectedSimulationId }/>)}
-            {optionSelected === 'Schedule' && events.map((e) => {
+            {optionSelected === 'Schedule' && scheduleStatus === 'loading' && <ListSkeleton />}
+            {optionSelected === 'Schedule' && scheduleStatus === 'error' && (
+                <StatusMessage message = 'Could not load schedules.' onRetry = { loadCalendarEvents } />
+            )}
+            {optionSelected === 'Schedule' && scheduleStatus === 'ready' && events.length === 0 && (
+                <StatusMessage message = 'There is no schedule left' />
+            )}
+            {optionSelected === 'Schedule' && scheduleStatus === 'ready' && events.map((e) => {
                 return(
                     <HistoryDiv key = { e.id } title = { e.title } description = { formatDisplayDate(e.start) + ' ' + formatDisplayTime(e.start) + ' - ' + formatDisplayDate(e.end) + ' ' + formatDisplayTime(e.end)} date = { '' } etc = { '' } onClick = {() => { deleteSchedule(e.id) }} onEditClick = {() => { goToEditSchedule(e.id, e.title, e.start, e.end) }}/>
                 )

@@ -6,6 +6,7 @@ import { NavLink, Outlet, useLocation, useMatches, useNavigate } from 'react-rou
 import NavigationDrawer from '../organisms/NavigationDrawer'
 import Hamburger from '../atoms/Hamburger'
 import Title from '../atoms/Title'
+import ErrorBoundary from './ErrorBoundary'
 
 export type AppShellHandle = {
     title: string;
@@ -197,7 +198,9 @@ export default function AppShell() {
                             </MobileRightHamburgerWrapper>
                         )}
                     </HeaderDiv>
-                    <Outlet context = { outletContext } />
+                    <ErrorBoundary fullPage = { false }>
+                        <Outlet context = { outletContext } />
+                    </ErrorBoundary>
                 </FlexColumnDiv>
             </MainContent>
             <MobileBottomNav>

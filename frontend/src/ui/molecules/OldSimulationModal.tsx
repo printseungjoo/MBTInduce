@@ -5,6 +5,8 @@ import { apiFetch } from '../../api/client'
 import type { SimulationProfile, SimulationTemplate } from '../../types/simulation'
 import GoBackButton from '../atoms/GoBackButton'
 import OldSimulationButton from '../atoms/OldSimulationButton'
+import ListSkeleton from './ListSkeleton'
+import StatusMessage from './StatusMessage'
 import Modal from './Modal'
 
 interface OldSimulationModalProps {
@@ -22,6 +24,7 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
     const navigate = useNavigate();
     const [remove, setRemove] = useState<boolean>(false);
     const [history, setHistory] = useState<History[]>([]);
+    const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
     const removeModal = () => {
         setRemove(true);
@@ -38,6 +41,7 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
     }, []);
 
     const getHistory = async () => {
+        setStatus('loading');
         try {
             const [scenarioData, targetData] = await Promise.all([
                 apiFetch<{ simulationTemplate?: SimulationTemplate[] }>('/api/simulation/simulationTemplate'),
@@ -61,8 +65,10 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
                 });
             }
             setHistory(merged);
+            setStatus('ready');
         } catch (error) {
             console.error('Error getting history:', error);
+            setStatus('error');
         }
     };
 
@@ -70,11 +76,18 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
         <>
             {!remove && (
                 <Modal desktopWidth = '50vw' onClose = {() => navigate('/Start')}>
-                    {history.map((h) => (
-                        <div key = { `${h.name}-${h.mbti}-${h.scenario}` } onClick = {() => clickHistory(h)}>
-                            <OldSimulationButton targetName = { h.name } targetMbti = { h.mbti } scenarioContent = { h.scenario } />
-                        </div>
-                    ))}
+                { status === 'loading' && <ListSkeleton count = { 2 } /> }
+                { status === 'error' && (
+                    <StatusMessage message = 'Could not load simulations.' onRetry = { getHistory } />
+                )}
+                { status === 'ready' && history.length === 0 && (
+                    <StatusMessage message = 'There is no simulation history left' />
+                )}
+                { status === 'ready' && history.map((h) => (
+                    <div key = { `${h.name}-${h.mbti}-${h.scenario}` } onClick = {() => clickHistory(h)}>
+                        <OldSimulationButton targetName = { h.name } targetMbti = { h.mbti } scenarioContent = { h.scenario } />
+                    </div>
+                ))}
                     <GoBackButton />
                 </Modal>
             )}

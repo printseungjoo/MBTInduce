@@ -8,6 +8,8 @@ import { AppShellPortal } from '../template/AppShellPortal'
 import RightScreen from '../template/RightScreen'
 import ChatTextInputBox from '../molecules/ChatTextInputBox'
 import ChatMessagesList from '../molecules/ChatMessagesList'
+import ChatSkeleton from '../molecules/ChatSkeleton'
+import StatusMessage from '../molecules/StatusMessage'
 import InitialMainChatModal from '../molecules/InitialMainChatModal'
 import MainChatRightScreen from './MainChatRightScreen'
 import type { MainChatRightScreenRef } from './MainChatRightScreen'
@@ -49,6 +51,7 @@ export default function MainChatScreen() {
     const [fValue, setFValue] = useState<number>(50);
     const [pValue, setPValue] = useState<number>(50);
     const [mainChatMessages, setMainChatMessages] = useState<ChatMessage[]>([]);
+    const [messagesStatus, setMessagesStatus] = useState<'loading' | 'ready' | 'error'>('ready');
     const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
     const mainChatRightScreenRef = useRef<MainChatRightScreenRef | null>(null);
     const isBlockingModalOpen = !selectedMainChatSessionId;
@@ -58,24 +61,33 @@ export default function MainChatScreen() {
         if (!reset) return;
         setSelectedMainChatSessionId(null);
         setMainChatMessages([]);
+        setMessagesStatus('ready');
     }, [location.state]);
 
     async function getMainChatSessionMessages(sessionId: string) {
-        const data = await apiFetch<ChatSessionMessagesResponse>(`/api/chatMessage/sessions/${sessionId}`);
-        const messages: ChatMessage[] = data.messages.map((message) => ({
-            id: message.id,
-            role: message.role === 'USER' ? 'user' : 'ai',
-            content: message.content,
-            mbtiRange: {
-                eValue,
-                sValue,
-                fValue,
-                pValue
-            },
-            createdAt: message.createdAt,
-            rate: 0
-        }));
-        setMainChatMessages(messages);
+        setMessagesStatus('loading');
+        try {
+            const data = await apiFetch<ChatSessionMessagesResponse>(`/api/chatMessage/sessions/${sessionId}`);
+            const messages: ChatMessage[] = data.messages.map((message) => ({
+                id: message.id,
+                role: message.role === 'USER' ? 'user' : 'ai',
+                content: message.content,
+                mbtiRange: {
+                    eValue,
+                    sValue,
+                    fValue,
+                    pValue
+                },
+                createdAt: message.createdAt,
+                rate: 0
+            }));
+            setMainChatMessages(messages);
+            setMessagesStatus('ready');
+        } catch (error) {
+            console.error(error);
+            setMainChatMessages([]);
+            setMessagesStatus('error');
+        }
     }
 
     async function sendChatMessages(inputValue: string) {
@@ -177,7 +189,23 @@ export default function MainChatScreen() {
             )}
             {!isBlockingModalOpen && (
                 <>
-                    <ChatMessagesList messages = { mainChatMessages } onRate = { patchChatMessageRate } />
+                    {messagesStatus === 'loading' && <ChatSkeleton />}
+                    {messagesStatus === 'error' && (
+                        <StatusMessage
+                            message = 'Could not load messages.'
+                            onRetry = {() => {
+                                if (selectedMainChatSessionId) {
+                                    getMainChatSessionMessages(selectedMainChatSessionId);
+                                }
+                            }}
+                        />
+                    )}
+                    {messagesStatus === 'ready' && mainChatMessages.length === 0 && (
+                        <StatusMessage message = 'No messages yet' />
+                    )}
+                    {messagesStatus === 'ready' && mainChatMessages.length > 0 && (
+                        <ChatMessagesList messages = { mainChatMessages } onRate = { patchChatMessageRate } />
+                    )}
                     <ChatTextInputBox page = 'main' onSubmit = { sendChatMessages } disabled = { isLoading || !selectedMainChatSessionId } />
                     <RightScreen isMobileOpen = { isMobileRightOpen }>
                         <MainChatRightScreen ref = { mainChatRightScreenRef } eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } />

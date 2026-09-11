@@ -8,6 +8,8 @@ import { AppShellPortal } from '../template/AppShellPortal'
 import RightScreen from '../template/RightScreen'
 import ChatTextInputBox from '../molecules/ChatTextInputBox'
 import ChatMessagesList from '../molecules/ChatMessagesList'
+import ChatSkeleton from '../molecules/ChatSkeleton'
+import StatusMessage from '../molecules/StatusMessage'
 import InitialSimulationModal from '../molecules/InitialSimulationModal'
 import SimulationRightScreen from './SimulationRightScreen'
 
@@ -24,6 +26,7 @@ export default function SimulationScreen() {
     const [selectedName, setSelectedName] = useState<string>('');
     const [selectedMbti, setSelectedMbti] = useState<string>('');
     const [simulationChatMessages, setSimulationChatMessages] = useState<Record<string, ChatMessage[]>>({});
+    const [messagesStatus, setMessagesStatus] = useState<'loading' | 'ready' | 'error'>('ready');
     const selectedSimulationKey = useMemo(() => {
         if (!selectedName || !selectedMbti || !selectedScenario) {
             return '';
@@ -41,6 +44,7 @@ export default function SimulationScreen() {
         setSelectedScenario('');
         setSelectedName('');
         setSelectedMbti('');
+        setMessagesStatus('ready');
     }, [location.state]);
 
     useEffect(() => {
@@ -57,6 +61,7 @@ export default function SimulationScreen() {
 
     async function getChatMessages(simKey?: string) {
         const key = simKey ?? selectedSimulationKey;
+        setMessagesStatus('loading');
         try {
             const path = key ? `/api/chat?pageType=simulation&simulationKey=${encodeURIComponent(key)}` : `/api/chat?pageType=main`;
             const data = await apiFetch<ChatMessage[]>(path);
@@ -66,8 +71,10 @@ export default function SimulationScreen() {
                     [key]: data
                 }));
             }
+            setMessagesStatus('ready');
         } catch (error) {
             console.error(error);
+            setMessagesStatus('error');
         }
     }
 
@@ -174,7 +181,19 @@ export default function SimulationScreen() {
             )}
             {!isBlockingModalOpen && (
                 <>
-                    <ChatMessagesList messages = { currentChatMessages } onRate = { patchChatMessageRate } />
+                    {messagesStatus === 'loading' && <ChatSkeleton />}
+                    {messagesStatus === 'error' && (
+                        <StatusMessage
+                            message = 'Could not load messages.'
+                            onRetry = {() => getChatMessages(selectedSimulationKey)}
+                        />
+                    )}
+                    {messagesStatus === 'ready' && currentChatMessages.length === 0 && (
+                        <StatusMessage message = 'No messages yet' />
+                    )}
+                    {messagesStatus === 'ready' && currentChatMessages.length > 0 && (
+                        <ChatMessagesList messages = { currentChatMessages } onRate = { patchChatMessageRate } />
+                    )}
                     <ChatTextInputBox page = 'simulation' onSubmit = { sendChatMessages } disabled = { isLoading } />
                     {showSimulation && (
                         <RightScreen isMobileOpen = { isMobileRightOpen }>

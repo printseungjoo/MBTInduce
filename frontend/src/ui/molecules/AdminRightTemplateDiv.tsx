@@ -5,6 +5,7 @@ import { apiFetch, getApiErrorMessage } from '../../api/client'
 import type { Template } from '../../types/template'
 import MainChatTemplateButton from '../atoms/MainChatTemplateButton'
 import SimulationTemplateButton from '../atoms/SimulationTemplateButton'
+import Skeleton from '../atoms/Skeleton'
 
 interface AdminRightTemplateDivProps {
     page: 'main' | 'simulation';
@@ -75,14 +76,47 @@ const AddButton = styled.button`
     align-items: center;
 `;
 
+const TemplateStatus = styled.p`
+    color: ${({ theme }) => theme.colors.paleLavender};
+    text-align: center;
+    padding: 1.2vh 1%;
+    font-weight: bold;
+`;
+
+const TemplateRetry = styled.button`
+    display: block;
+    margin: 0 auto 1vh;
+    background-color: ${({ theme }) => theme.colors.paleLavender};
+    color: ${({ theme }) => theme.colors.dustyPurple};
+    border-radius: 5px;
+    height: 3vh;
+    padding: 0 0.8vw;
+    font-weight: bolder;
+`;
+
+const TemplateSkeletonWrap = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.8vh;
+    padding: 1vh 1%;
+`;
+
 export default function AdminRightTemplateDiv({ page }: AdminRightTemplateDivProps) {
     const { title, path, category, Button } = PANEL[page];
     const [templates, setTemplates] = useState<Template[]>([]);
     const [content, setContent] = useState<string>('');
+    const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
     async function getTemplates() {
-        const data = await apiFetch<{ data: Template[] }>(path);
-        setTemplates(data.data);
+        setStatus('loading');
+        try {
+            const data = await apiFetch<{ data: Template[] }>(path);
+            setTemplates(data.data);
+            setStatus('ready');
+        } catch (error) {
+            console.error(error);
+            setStatus('error');
+        }
     }
 
     async function postTemplates() {
@@ -138,7 +172,22 @@ export default function AdminRightTemplateDiv({ page }: AdminRightTemplateDivPro
         <AdminRightTemplateDivStyled>
             <PurpleP> { title } </PurpleP>
             <Templates>
-                {templates.map((t) => {
+                {status === 'loading' && (
+                    <TemplateSkeletonWrap>
+                        <Skeleton height = '2.4rem' />
+                        <Skeleton height = '2.4rem' />
+                    </TemplateSkeletonWrap>
+                )}
+                {status === 'error' && (
+                    <>
+                        <TemplateStatus> Could not load templates. </TemplateStatus>
+                        <TemplateRetry type = "button" onClick = { getTemplates }> Try again </TemplateRetry>
+                    </>
+                )}
+                {status === 'ready' && templates.length === 0 && (
+                    <TemplateStatus> There is no template left </TemplateStatus>
+                )}
+                {status === 'ready' && templates.map((t) => {
                     return <Button key = { t.id } content = { t.content } onDelete = {() => deleteTemplate(t.id)} onSubmit = {(changedContent) => patchTemplate(t.id, changedContent)} />
                 })}
             </Templates>
