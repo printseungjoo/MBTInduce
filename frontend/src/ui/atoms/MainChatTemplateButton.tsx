@@ -1,14 +1,14 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
-import { apiFetch, getApiErrorMessage } from '../../api/client'
 import EditButton from './EditButton'
 import DeleteButton from './DeleteButton'
 import EditMainChatQuestionTemplate from './EditMainChatQuestionTemplate'
 
 interface MainChatTemplateButtonProps {
-    id: string;
     content: string;
+    onDelete: () => void;
+    onSubmit: (content: string) => void | Promise<void>;
 }
 
 const MainChatTemplateButtonStyled = styled.button`
@@ -31,21 +31,8 @@ const FlexDiv = styled.div`
     gap: 0.5vw;
 `;
 
-export default function MainChatTemplateButton({ id, content }: MainChatTemplateButtonProps) {
+export default function MainChatTemplateButton({ content, onDelete, onSubmit }: MainChatTemplateButtonProps) {
     const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
-    
-    async function deleteTemplates() {
-        try {
-            await apiFetch(`/api/admin/main-chat-question-templates/${id}`, {
-                method: 'DELETE'
-            });
-            alert('Main chat question template deleted successfully.');
-            window.location.reload();
-        } catch (error) {
-            console.error(error);
-            alert(getApiErrorMessage(error, 'Server connection failed.'));
-        }
-    }
 
     return(
         <>
@@ -53,10 +40,10 @@ export default function MainChatTemplateButton({ id, content }: MainChatTemplate
                 <ContentP> { content } </ContentP>
                 <FlexDiv>
                     <EditButton onClick = {() => setIsEditOpen(true)} />
-                    <DeleteButton onClick = {() => deleteTemplates()}/>
+                    <DeleteButton onClick = { onDelete }/>
                 </FlexDiv>
             </MainChatTemplateButtonStyled>
-            {isEditOpen && <EditMainChatQuestionTemplate id = { id }/>}
+            {isEditOpen && <EditMainChatQuestionTemplate onSubmit = { onSubmit }/>}
         </>
     )
 }

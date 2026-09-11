@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
-import { apiFetch } from '../../api/client'
+import { apiFetch, getApiErrorMessage } from '../../api/client'
 import type { Template } from '../../types/template'
 import MainChatTemplateButton from '../atoms/MainChatTemplateButton'
 import SimulationTemplateButton from '../atoms/SimulationTemplateButton'
@@ -102,6 +102,34 @@ export default function AdminRightTemplateDiv({ page }: AdminRightTemplateDivPro
         }
     }
 
+    async function deleteTemplate(id: string) {
+        try {
+            await apiFetch(`${path}/${id}`, {
+                method: 'DELETE'
+            });
+            alert(page === 'main' ? 'Main chat question template deleted successfully.' : 'Simulation question template deleted successfully.');
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+            alert(getApiErrorMessage(error, 'Server connection failed.'));
+        }
+    }
+
+    async function patchTemplate(id: string, changedContent: string) {
+        try {
+            await apiFetch(`${path}/${id}`, {
+                method: 'PATCH',
+                body: {
+                    content: changedContent
+                }
+            });
+            window.alert('It is successfully changed.');
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     useEffect(() => {
         getTemplates();
     }, [page])
@@ -111,7 +139,7 @@ export default function AdminRightTemplateDiv({ page }: AdminRightTemplateDivPro
             <PurpleP> { title } </PurpleP>
             <Templates>
                 {templates.map((t) => {
-                    return <Button key = { t.id } id = { t.id } content = { t.content } />
+                    return <Button key = { t.id } content = { t.content } onDelete = {() => deleteTemplate(t.id)} onSubmit = {(changedContent) => patchTemplate(t.id, changedContent)} />
                 })}
             </Templates>
             <FlexDiv>

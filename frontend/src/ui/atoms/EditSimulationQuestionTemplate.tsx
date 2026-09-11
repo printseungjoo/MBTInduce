@@ -1,13 +1,12 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
-import { apiFetch } from '../../api/client'
 import CenterPurpleP from './CenterPurpleP'
 import GoBacktoAdminButton from './GoBacktoAdminButton'
 import Modal from '../molecules/Modal'
 
 interface EditSimulationQuestionTemplateProps {
-    id: string;
+    onSubmit: (content: string) => void | Promise<void>;
 }
 
 const SimulationQuestionTemplateTextArea = styled.textarea`
@@ -38,31 +37,15 @@ const SubmitButton = styled.button<{isValid: boolean}>`
     color: ${({ theme }) => theme.colors.deepBlack};
 `;
 
-export default function EditSimulationQuestionTemplate({ id }: EditSimulationQuestionTemplateProps) {
+export default function EditSimulationQuestionTemplate({ onSubmit }: EditSimulationQuestionTemplateProps) {
     const [changedContent, setChangedContent] = useState<string>('');
-
-    async function patchTemplates(changedContent: string) {
-        try {
-            await apiFetch(`/api/admin/simulation-question-templates/${id}`, {
-                method: 'PATCH',
-                body: {
-                    content: changedContent
-                }
-            });
-            window.location.reload();
-        } catch (error) {
-            console.error(error);
-        }
-    }
 
     const isValid = changedContent.trim() !== '';
 
     const clickSubmitButton = async () => {
         if (!isValid) return;
         try {
-            await patchTemplates(changedContent);
-            window.alert('It is successfully changed.')
-            window.location.reload();
+            await onSubmit(changedContent);
         } catch (error) {
             console.error(error);
         }
