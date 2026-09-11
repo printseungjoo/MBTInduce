@@ -9,9 +9,10 @@ interface NavigationDrawerProps {
     className?: string;
     isOpen: boolean;
     children?: React.ReactNode;
+    id?: string;
 }
 
-const NavigationDrawerStyled = styled.div<{ isOpen: boolean }>`
+const NavigationDrawerStyled = styled.nav<{ isOpen: boolean }>`
     width: 20%;
     height: 100vh;
     background-color: ${({ theme }) => theme.colors.deepPlum};
@@ -40,7 +41,7 @@ const Subtitle = styled.p`
 
 type clickedNameGeneric = 'Start Page' | 'Main Chat' | 'Simulation' | 'Calendar' | 'History' | 'My Page'
 
-export default function NavigationDrawer({ className, isOpen, children }: NavigationDrawerProps) {
+export default function NavigationDrawer({ className, isOpen, children, id }: NavigationDrawerProps) {
     const location = useLocation();
 
     const pathMap: Record<string, clickedNameGeneric> = {
@@ -55,7 +56,7 @@ export default function NavigationDrawer({ className, isOpen, children }: Naviga
     const clickedName = pathMap[location.pathname] ?? 'Main Chat';
 
     return (
-        <NavigationDrawerStyled className = { className } isOpen = { isOpen }>
+        <NavigationDrawerStyled className = { className } isOpen = { isOpen } id = { id } aria-label = 'Main' aria-hidden = { !isOpen }>
             <PaddingLeftWithLine>
                 <FlexDiv>
                     <Title title = 'MBTInduce' />

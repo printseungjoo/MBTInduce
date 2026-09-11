@@ -9,6 +9,7 @@ interface ModalProps {
     children: ReactNode;
     onClose?: () => void;
     desktopWidth?: DesktopWidth;
+    label?: string;
 }
 
 const Overlay = styled.div`
@@ -50,7 +51,7 @@ const FOCUSABLE_SELECTOR = [
     '[tabindex]:not([tabindex="-1"])'
 ].join(', ');
 
-export default function Modal({ children, onClose, desktopWidth = '30vw' }: ModalProps) {
+export default function Modal({ children, onClose, desktopWidth = '30vw', label = 'Dialog' }: ModalProps) {
     const panelRef = useRef<HTMLDivElement>(null);
     const onCloseRef = useRef(onClose);
     onCloseRef.current = onClose;
@@ -106,14 +107,9 @@ export default function Modal({ children, onClose, desktopWidth = '30vw' }: Moda
 
     return createPortal(
         <Overlay>
-            <Panel
-                ref = { panelRef }
-                role = 'dialog'
-                aria-modal = 'true'
-                tabIndex = { -1 }
-                desktopWidth = { desktopWidth }
-            >
-                {children}
+            <Panel ref = { panelRef } role = 'dialog' aria-modal = 'true' aria-label = { label }
+                tabIndex = { -1 } desktopWidth = { desktopWidth }>
+                { children }
             </Panel>
         </Overlay>,
         document.body

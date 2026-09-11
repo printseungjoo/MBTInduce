@@ -176,9 +176,9 @@ export default function AppShell() {
 
     return (
         <FullScreen>
-            <NavigationDrawerPlus isOpen = { isOpen }>
+            <NavigationDrawerPlus isOpen = { isOpen } id = 'app-navigation-drawer'>
                 <DesktopOnlyHamburger>
-                    <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
+                    <Hamburger isClicked = { isClicked } isOpen = { isOpen } label = { isOpen ? 'Close navigation' : 'Open navigation' } controls = 'app-navigation-drawer' />
                 </DesktopOnlyHamburger>
             </NavigationDrawerPlus>
             <MainContent isOpen = { isOpen } hasRightScreen = { hasRightScreen }>
@@ -187,14 +187,14 @@ export default function AppShell() {
                         <FlexDiv>
                             {!isOpen && (
                                 <DesktopOnlyHamburger>
-                                    <Hamburger isClicked = { isClicked } isOpen = { isOpen } />
+                                    <Hamburger isClicked = { isClicked } isOpen = { isOpen } label = 'Open navigation' controls = 'app-navigation-drawer' />
                                 </DesktopOnlyHamburger>
                             )}
                             <Title title = { handle.title } />
                         </FlexDiv>
                         {hasMobileRightPanel && (
                             <MobileRightHamburgerWrapper>
-                                <Hamburger isClicked = {() => setIsMobileRightOpen((prev) => !prev)} isOpen = { isMobileRightOpen } />
+                                <Hamburger isClicked = {() => setIsMobileRightOpen((prev) => !prev)} isOpen = { isMobileRightOpen } label = { isMobileRightOpen ? 'Close side panel' : 'Open side panel' } controls = 'app-right-panel' />
                             </MobileRightHamburgerWrapper>
                         )}
                     </HeaderDiv>
@@ -203,13 +203,13 @@ export default function AppShell() {
                     </ErrorBoundary>
                 </FlexColumnDiv>
             </MainContent>
-            <MobileBottomNav>
-                <MobileBottomNavItem to = "/Start"> 👋🏻 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/MainChat" onClick = {() => handleSameTabClick('/MainChat')}> 💬 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/Simulation" onClick = {() => handleSameTabClick('/Simulation')}> 👥 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/Calendar"> 📅 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/History"> 📄 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/Mypage"> 👤 </MobileBottomNavItem>
+            <MobileBottomNav aria-label = 'Main'>
+                <MobileBottomNavItem to = "/Start" aria-label = 'Start'> 👋🏻 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/MainChat" aria-label = 'Main Chat' onClick = {() => handleSameTabClick('/MainChat')}> 💬 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Simulation" aria-label = 'Simulation' onClick = {() => handleSameTabClick('/Simulation')}> 👥 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Calendar" aria-label = 'Calendar'> 📅 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/History" aria-label = 'History'> 📄 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Mypage" aria-label = 'My Page'> 👤 </MobileBottomNavItem>
             </MobileBottomNav>
         </FullScreen>
     );

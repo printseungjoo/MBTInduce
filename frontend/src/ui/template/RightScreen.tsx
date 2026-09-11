@@ -43,7 +43,7 @@ const RightScreenStyled = styled.div<{ isMobileOpen: boolean }>`
 export default function RightScreen({ isMobileOpen, children }: RightScreenProps) {
     return (
         <AppShellPortal>
-            <RightScreenStyled isMobileOpen = { isMobileOpen }>
+            <RightScreenStyled isMobileOpen = { isMobileOpen } id = 'app-right-panel'>
                 { children }
             </RightScreenStyled>
         </AppShellPortal>

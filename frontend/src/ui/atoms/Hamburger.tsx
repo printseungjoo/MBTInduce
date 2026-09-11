@@ -54,11 +54,20 @@ const HamburgerButton = styled.button<{ isOpen?: boolean }>`
 interface HamburgerProps {
     isClicked?: () => void;
     isOpen?: boolean;
+    label?: string;
+    controls?: string;
 }
 
-export default function Hamburger({ isClicked, isOpen = false }: HamburgerProps) {
+export default function Hamburger({ isClicked, isOpen = false, label, controls }: HamburgerProps) {
     return (
-        <HamburgerButton type = 'button' onClick = { isClicked } isOpen = { isOpen }>
+        <HamburgerButton
+            type = 'button'
+            onClick = { isClicked }
+            isOpen = { isOpen }
+            aria-expanded = { isOpen }
+            aria-label = { label ?? (isOpen ? 'Close menu' : 'Open menu') }
+            aria-controls = { controls }
+        >
             <span></span>
             <span></span>
             <span></span>
