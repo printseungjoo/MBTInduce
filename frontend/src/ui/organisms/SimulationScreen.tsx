@@ -6,7 +6,7 @@ import type { ChatMessage } from '../../types/chat'
 import type { AppShellOutletContext } from '../template/AppShell'
 import { AppShellPortal } from '../template/AppShellPortal'
 import RightScreen from '../template/RightScreen'
-import SimulationTextInputBox from '../molecules/SimulationTextInputBox'
+import ChatTextInputBox from '../molecules/ChatTextInputBox'
 import ChatMessagesList from '../molecules/ChatMessagesList'
 import InitialSimulationModal from '../molecules/InitialSimulationModal'
 import SimulationRightScreen from './SimulationRightScreen'
@@ -175,7 +175,7 @@ export default function SimulationScreen() {
             {!isBlockingModalOpen && (
                 <>
                     <ChatMessagesList messages = { currentChatMessages } onRate = { patchChatMessageRate } />
-                    <SimulationTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading } />
+                    <ChatTextInputBox page = 'simulation' onSubmit = { sendChatMessages } disabled = { isLoading } />
                     {showSimulation && (
                         <RightScreen isMobileOpen = { isMobileRightOpen }>
                             <SimulationRightScreen selectedScenario = { selectedScenario } selectedName = { selectedName } selectedMbti = { selectedMbti } />

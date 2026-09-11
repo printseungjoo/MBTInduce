@@ -6,7 +6,7 @@ import type { ChatMessage, ChatSession } from '../../types/chat'
 import type { AppShellOutletContext } from '../template/AppShell'
 import { AppShellPortal } from '../template/AppShellPortal'
 import RightScreen from '../template/RightScreen'
-import MainChatTextInputBox from '../molecules/MainChatTextInputBox'
+import ChatTextInputBox from '../molecules/ChatTextInputBox'
 import ChatMessagesList from '../molecules/ChatMessagesList'
 import InitialMainChatModal from '../molecules/InitialMainChatModal'
 import MainChatRightScreen from './MainChatRightScreen'
@@ -178,7 +178,7 @@ export default function MainChatScreen() {
             {!isBlockingModalOpen && (
                 <>
                     <ChatMessagesList messages = { mainChatMessages } onRate = { patchChatMessageRate } />
-                    <MainChatTextInputBox onSubmit = { sendChatMessages } disabled = { isLoading || !selectedMainChatSessionId } />
+                    <ChatTextInputBox page = 'main' onSubmit = { sendChatMessages } disabled = { isLoading || !selectedMainChatSessionId } />
                     <RightScreen isMobileOpen = { isMobileRightOpen }>
                         <MainChatRightScreen ref = { mainChatRightScreenRef } eValues = { eValue } sValues = { sValue } fValues = { fValue } pValues = { pValue } setEValues = { setEValue } setSValues = { setSValue } setFValues = { setFValue } setPValues = { setPValue } />
                     </RightScreen>

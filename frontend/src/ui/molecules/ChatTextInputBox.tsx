@@ -6,10 +6,16 @@ import { apiFetch } from '../../api/client'
 import type { Template } from '../../types/template'
 import TextExample from '../atoms/TextExample'
 
-interface TextInputBoxProps {
+interface ChatTextInputBoxProps {
+    page: 'main' | 'simulation';
     onSubmit: (value: string) => void;
     disabled?: boolean;
 }
+
+const TEMPLATE_PATH = {
+    main: '/api/templates',
+    simulation: '/api/simulation-question-templates'
+} as const
 
 const TextInputDiv = styled.div`
     display: flex;
@@ -61,14 +67,14 @@ const TextInputBoxStyled = styled.input`
     color: ${({ theme }) => theme.colors.deepBlack};
 `;
 
-export default function MainChatTextInputBox({ onSubmit, disabled = false }: TextInputBoxProps) {
+export default function ChatTextInputBox({ page, onSubmit, disabled = false }: ChatTextInputBoxProps) {
     const [text, setText] = useState<string>('');
     const [example, setExample] = useState<string>('');
     const [exampleShown, setExampleShown] = useState<boolean>(false);
     const [templates, setTemplates] = useState<Template[]>([]);
 
     async function getTemplates() {
-        const data = await apiFetch<{ templates: Template[] }>('/api/templates');
+        const data = await apiFetch<{ templates: Template[] }>(TEMPLATE_PATH[page]);
         setTemplates(data.templates);
     }
 
@@ -78,7 +84,7 @@ export default function MainChatTextInputBox({ onSubmit, disabled = false }: Tex
 
     useEffect(() => {
         getTemplates();
-    }, [])
+    }, [page])
 
     useEffect(() => {
         setText(text + ' ' + example);
