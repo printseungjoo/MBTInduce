@@ -37,7 +37,7 @@ export default function SimulationTemplateButton({ id, content }: SimulationTemp
     async function deleteTemplates() {
         try {
             await apiFetch(`/api/admin/simulation-question-templates/${id}`, {
-                method: 'DELETE',
+                method: 'DELETE'
             });
             alert('Simulation question template deleted successfully.');
             window.location.reload();

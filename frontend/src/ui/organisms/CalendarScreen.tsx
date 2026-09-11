@@ -81,7 +81,7 @@ export default function CalendarScreen({ selectedRange, setSelectedRange }: Cale
                 title: event.title,
                 start: new Date(event.startAt),
                 end: new Date(event.endAt),
-                allDay: event.allDay,
+                allDay: event.allDay
             }));
             setEvents(convertedEvents);
         } catch (error) {
@@ -120,7 +120,7 @@ export default function CalendarScreen({ selectedRange, setSelectedRange }: Cale
 
         setSelectedRange({
             startDate: toCalendarDate(startDate),
-            endDate: clicked,
+            endDate: clicked
         });
     }
     function dayPropGetter(date: Date) {

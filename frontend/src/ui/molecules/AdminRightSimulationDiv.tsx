@@ -72,7 +72,7 @@ export default function AdminRightSimulationDiv() {
                     title: content.trim(),
                     content: content.trim(),
                     category: 'SIMULATION',
-                    isActive: true,
+                    isActive: true
                 }
             });
             window.location.reload();

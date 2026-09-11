@@ -72,7 +72,7 @@ export default function AdminRightMainChatDiv() {
                     title: content.trim(),
                     content: content.trim(),
                     category: 'MAIN_CHAT',
-                    isActive: true,
+                    isActive: true
                 }
             });
             window.location.reload();

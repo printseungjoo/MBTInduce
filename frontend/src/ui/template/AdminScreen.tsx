@@ -134,7 +134,7 @@ export default function AdminScreen() {
     async function handleLogout() {
         try {
             await apiFetch('/api/auth/logout', {
-                method: 'POST',
+                method: 'POST'
             });
             clearSession();
             window.alert('Logged out successfully.');

@@ -62,7 +62,7 @@ export default function HistoryScreen() {
     function formatDisplayTime(date: Date) {
         return date.toLocaleTimeString([], {
             hour: 'numeric',
-            minute: '2-digit',
+            minute: '2-digit'
         });
     }
 
@@ -88,7 +88,7 @@ export default function HistoryScreen() {
                 title: event.title,
                 start: new Date(event.startAt),
                 end: new Date(event.endAt),
-                allDay: event.allDay,
+                allDay: event.allDay
             }));
             setEvents(convertedEvents);
         } catch (error) {
@@ -109,7 +109,7 @@ export default function HistoryScreen() {
     async function deleteChatSession(selectedChatId: string) {
         try {
             await apiFetch(`/api/chatMessage/sessions/${selectedChatId}`, {
-                method: 'DELETE',
+                method: 'DELETE'
             });
             alert('Chat session deleted successfully.');
             window.location.reload();
@@ -122,11 +122,11 @@ export default function HistoryScreen() {
     async function deleteSimulationSession(selectedSimulationId: string, selectedUserId?: string) {
         try {
             await apiFetch(`/api/simulation/simulationTemplate/${selectedSimulationId}`, {
-                method: 'DELETE',
+                method: 'DELETE'
             });
             if (selectedUserId) {
                 await apiFetch(`/api/simulation/userProfiles/${selectedUserId}`, {
-                    method: 'DELETE',
+                    method: 'DELETE'
                 });
             }
             alert('Simulation deleted successfully.');
@@ -140,7 +140,7 @@ export default function HistoryScreen() {
     async function deleteSchedule(selectedEventId: string) {
         try {
             await apiFetch(`/api/calendarEvent/${selectedEventId}`, {
-                method: 'DELETE',
+                method: 'DELETE'
             });
             alert('Schedule deleted successfully.');
             window.location.reload();

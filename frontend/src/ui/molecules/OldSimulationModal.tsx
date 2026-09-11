@@ -69,7 +69,7 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
         try {
             const [scenarioData, targetData] = await Promise.all([
                 apiFetch<{ simulationTemplate?: SimulationTemplate[] }>('/api/simulation/simulationTemplate'),
-                apiFetch<{ userProfiles?: SimulationProfile[] }>('/api/simulation/userProfiles'),
+                apiFetch<{ userProfiles?: SimulationProfile[] }>('/api/simulation/userProfiles')
             ]);
             const scenarios: SimulationTemplate[] = scenarioData.simulationTemplate || [];
             const targets: SimulationProfile[] = targetData.userProfiles || [];

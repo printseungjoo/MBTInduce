@@ -37,7 +37,7 @@ export default function MainChatTemplateButton({ id, content }: MainChatTemplate
     async function deleteTemplates() {
         try {
             await apiFetch(`/api/admin/main-chat-question-templates/${id}`, {
-                method: 'DELETE',
+                method: 'DELETE'
             });
             alert('Main chat question template deleted successfully.');
             window.location.reload();
