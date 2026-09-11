@@ -8,8 +8,7 @@ import LogoutButton from '../atoms/LogoutButton'
 import AdminLeftDiv from '../atoms/AdminLeftDiv'
 import AdminAverageRatingDiv from '../atoms/AdminAverageRatingDiv'
 import AdminMiddleDiv from '../molecules/AdminMiddleDiv'
-import AdminRightMainChatDiv from '../molecules/AdminRightMainChatDiv'
-import AdminRightSimulationDiv from '../molecules/AdminRightSimulationDiv'
+import AdminRightTemplateDiv from '../molecules/AdminRightTemplateDiv'
 
 type StatisticsType = {
     totalUsers: number;
@@ -166,8 +165,8 @@ export default function AdminScreen() {
                     <AdminMiddleDiv />
                 </MiddleDiv>
                 <RightDiv>
-                    <AdminRightMainChatDiv />
-                    <AdminRightSimulationDiv />
+                    <AdminRightTemplateDiv page = 'main' />
+                    <AdminRightTemplateDiv page = 'simulation' />
                 </RightDiv>
             </MainContentFlexDiv>
         </AdminScreenStyled>

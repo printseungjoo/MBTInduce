@@ -3,9 +3,29 @@ import { useState, useEffect } from 'react'
 
 import { apiFetch } from '../../api/client'
 import type { Template } from '../../types/template'
+import MainChatTemplateButton from '../atoms/MainChatTemplateButton'
 import SimulationTemplateButton from '../atoms/SimulationTemplateButton'
 
-const AdminRightSimulationDivStyled = styled.div`
+interface AdminRightTemplateDivProps {
+    page: 'main' | 'simulation';
+}
+
+const PANEL = {
+    main: {
+        title: 'Main Chat Question Template',
+        path: '/api/admin/main-chat-question-templates',
+        category: 'MAIN_CHAT',
+        Button: MainChatTemplateButton
+    },
+    simulation: {
+        title: 'Simulation Question Template',
+        path: '/api/admin/simulation-question-templates',
+        category: 'SIMULATION',
+        Button: SimulationTemplateButton
+    }
+} as const
+
+const AdminRightTemplateDivStyled = styled.div`
     width: 100%;
     height: 25.7vh;
     background-color: ${({ theme }) => theme.colors.dustyPurple};
@@ -55,23 +75,24 @@ const AddButton = styled.button`
     align-items: center;
 `;
 
-export default function AdminRightSimulationDiv() {
+export default function AdminRightTemplateDiv({ page }: AdminRightTemplateDivProps) {
+    const { title, path, category, Button } = PANEL[page];
     const [templates, setTemplates] = useState<Template[]>([]);
     const [content, setContent] = useState<string>('');
 
     async function getTemplates() {
-        const data = await apiFetch<{ data: Template[] }>('/api/admin/simulation-question-templates');
+        const data = await apiFetch<{ data: Template[] }>(path);
         setTemplates(data.data);
     }
 
     async function postTemplates() {
         try {
-            await apiFetch('/api/admin/simulation-question-templates', {
+            await apiFetch(path, {
                 method: 'POST',
                 body: {
                     title: content.trim(),
                     content: content.trim(),
-                    category: 'SIMULATION',
+                    category,
                     isActive: true
                 }
             });
@@ -83,20 +104,20 @@ export default function AdminRightSimulationDiv() {
 
     useEffect(() => {
         getTemplates();
-    }, [])
+    }, [page])
 
     return(
-        <AdminRightSimulationDivStyled>
-            <PurpleP> Simulation Question Template </PurpleP>
+        <AdminRightTemplateDivStyled>
+            <PurpleP> { title } </PurpleP>
             <Templates>
                 {templates.map((t) => {
-                    return <SimulationTemplateButton key = { t.id } id = { t.id } content = { t.content } />
+                    return <Button key = { t.id } id = { t.id } content = { t.content } />
                 })}
             </Templates>
             <FlexDiv>
                 <InputBox onChange = {(e) => setContent(e.target.value)} />
                 <AddButton onClick = { postTemplates }> Add </AddButton>
             </FlexDiv>
-        </AdminRightSimulationDivStyled>
+        </AdminRightTemplateDivStyled>
     )
 }
