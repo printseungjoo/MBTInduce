@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useOutletContext } from 'react-router-dom'
 
-import { apiFetch } from '../../api/client'
+import { apiFetch, apiStream, getStreamDeltaText } from '../../api/client'
 import type { ChatMessage } from '../../types/chat'
 import type { AppShellOutletContext } from '../template/AppShell'
 import { AppShellPortal } from '../template/AppShellPortal'
@@ -78,17 +78,6 @@ export default function SimulationScreen() {
         }
     }
 
-    function addCurrentChatMessage(newMessage: ChatMessage) {
-        if (!isReadySimulation) return;
-        setSimulationChatMessages((prev) => ({
-            ...prev,
-            [selectedSimulationKey]: [
-                ...(prev[selectedSimulationKey] ?? []),
-                newMessage
-            ]
-        }));
-    }
-
     const handleSelectHistory = (h: { scenario: string, name: string, mbti: string }) => {
         setSelectedScenario(h.scenario);
         setSelectedName(h.name);
@@ -116,7 +105,29 @@ export default function SimulationScreen() {
             createdAt: new Date().toISOString(),
             rate: 0
         };
-        addCurrentChatMessage(newUserChatMessage);
+        const pendingAssistantId = crypto.randomUUID();
+        const pendingAssistant: ChatMessage = {
+            id: pendingAssistantId,
+            role: 'ai',
+            content: '',
+            mbtiRange: {
+                eValue,
+                sValue,
+                fValue,
+                pValue
+            },
+            createdAt: new Date().toISOString(),
+            rate: 0,
+            isStreaming: true
+        };
+        setSimulationChatMessages((prev) => ({
+            ...prev,
+            [selectedSimulationKey]: [
+                ...(prev[selectedSimulationKey] ?? []),
+                newUserChatMessage,
+                pendingAssistant
+            ]
+        }));
         setIsLoading(true);
 
         try {
@@ -128,14 +139,33 @@ export default function SimulationScreen() {
                 pageType: 'simulation',
                 simulationKey: selectedSimulationKey
             };
-            const data = await apiFetch<ChatMessage[]>('/api/chat', {
+            await apiStream('/api/chat/stream', {
                 method: 'POST',
-                body
+                body,
+                onEvent: (event, data) => {
+                    if (event === 'delta') {
+                        const text = getStreamDeltaText(data);
+                        if (!text) return;
+                        setSimulationChatMessages((prev) => ({
+                            ...prev,
+                            [selectedSimulationKey]: (prev[selectedSimulationKey] ?? []).map((chatMessage) =>
+                                chatMessage.id === pendingAssistantId
+                                    ? { ...chatMessage, content: chatMessage.content + text } : chatMessage
+                            )
+                        }));
+                        return;
+                    }
+                    if (event !== 'done') return;
+                    if (!data || typeof data !== 'object' || !('messages' in data) || !Array.isArray(data.messages)) {
+                        return;
+                    }
+                    const messages = data.messages as ChatMessage[];
+                    setSimulationChatMessages((prev) => ({
+                        ...prev,
+                        [selectedSimulationKey]: messages
+                    }));
+                }
             });
-            setSimulationChatMessages((prev) => ({
-                ...prev,
-                [selectedSimulationKey]: data
-            }));
         } catch (error) {
             console.error(error);
             const errorMessage: ChatMessage = {
@@ -151,7 +181,13 @@ export default function SimulationScreen() {
                 createdAt: new Date().toISOString(),
                 rate: 0
             };
-            addCurrentChatMessage(errorMessage);
+            setSimulationChatMessages((prev) => ({
+                ...prev,
+                [selectedSimulationKey]: [
+                    ...(prev[selectedSimulationKey] ?? []).filter((chatMessage) => chatMessage.id !== pendingAssistantId),
+                    errorMessage
+                ]
+            }));
         } finally {
             setIsLoading(false);
         }
@@ -181,17 +217,17 @@ export default function SimulationScreen() {
             )}
             {!isBlockingModalOpen && (
                 <>
-                    {messagesStatus === 'loading' && <ChatSkeleton />}
-                    {messagesStatus === 'error' && (
+                    { messagesStatus === 'loading' && <ChatSkeleton /> }
+                    { messagesStatus === 'error' && (
                         <StatusMessage
                             message = 'Could not load messages.'
                             onRetry = {() => getChatMessages(selectedSimulationKey)}
                         />
                     )}
-                    {messagesStatus === 'ready' && currentChatMessages.length === 0 && (
+                    { messagesStatus === 'ready' && currentChatMessages.length === 0 && (
                         <StatusMessage message = 'No messages yet' />
                     )}
-                    {messagesStatus === 'ready' && currentChatMessages.length > 0 && (
+                    { messagesStatus === 'ready' && currentChatMessages.length > 0 && (
                         <ChatMessagesList messages = { currentChatMessages } onRate = { patchChatMessageRate } />
                     )}
                     <ChatTextInputBox page = 'simulation' onSubmit = { sendChatMessages } disabled = { isLoading } />

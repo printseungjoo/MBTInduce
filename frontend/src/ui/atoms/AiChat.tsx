@@ -5,6 +5,7 @@ interface AiChatProps {
     messageId: string;
     content: string;
     selectedRating?: number;
+    isStreaming?: boolean;
     onRate: (messageId: string, rating: number) => void;
 }
 
@@ -79,7 +80,7 @@ const ShowBothTitle = styled.div`
     margin-bottom: 0.4rem;
 `;
 
-export default function AiChat({ messageId, content, selectedRating, onRate }: AiChatProps) {
+export default function AiChat({ messageId, content, selectedRating, isStreaming = false, onRate }: AiChatProps) {
     const [hovered, setHovered] = useState<number | null>(null);
     const [localRating, setLocalRating] = useState<number | undefined>(selectedRating);
 
@@ -109,15 +110,17 @@ export default function AiChat({ messageId, content, selectedRating, onRate }: A
                     ))}
                 </ShowBothWrapper>
             ) : (
-                <div> { content } </div>
+                <div> { content }{ isStreaming ? '▍' : '' } </div>
             )}
-            <StarsRow>
-                {[1, 2, 3, 4, 5].map((star) => (
-                    <StarButton key = { star } type = "button" active={ hovered !== null ? star <= hovered : (localRating ?? selectedRating ?? 0) >= star} onMouseEnter={() => setHovered(star)} onMouseLeave={() => setHovered(null)} onClick={() => {setLocalRating(star); onRate(messageId, star);}}>
-                        ★
-                    </StarButton>
-                ))}
-            </StarsRow>
+            {!isStreaming && (
+                <StarsRow>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <StarButton key = { star } type = "button" active={ hovered !== null ? star <= hovered : (localRating ?? selectedRating ?? 0) >= star} onMouseEnter={() => setHovered(star)} onMouseLeave={() => setHovered(null)} onClick={() => {setLocalRating(star); onRate(messageId, star);}}>
+                            ★
+                        </StarButton>
+                    ))}
+                </StarsRow>
+            )}
         </AiChatStyled>
     );
 }

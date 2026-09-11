@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useOutletContext } from 'react-router-dom'
 
-import { apiFetch } from '../../api/client'
+import { apiFetch, apiStream, getStreamDeltaText } from '../../api/client'
 import type { ChatMessage, ChatSession } from '../../types/chat'
 import type { AppShellOutletContext } from '../template/AppShell'
 import { AppShellPortal } from '../template/AppShellPortal'
@@ -23,7 +23,7 @@ interface ApiMessage {
 
 interface PostChatMessageResponse {
     userMessage: ApiMessage;
-    assistantMessage: ApiMessage;
+    assistantMessage: ApiMessage | null;
     assistantMessages?: ApiMessage[];
     appliedMbti?: {
         energy: string;
@@ -40,6 +40,33 @@ interface PostChatMessageResponse {
 interface ChatSessionMessagesResponse {
     session: ChatSession;
     messages: ApiMessage[];
+}
+
+function toAssistantChatMessages(
+    messages: Array<ApiMessage | null | undefined>,
+    mbtiRange: ChatMessage['mbtiRange']
+): ChatMessage[] {
+    return messages
+        .filter((message): message is ApiMessage => Boolean(message))
+        .map((message) => ({
+            id: message.id,
+            role: 'ai' as const,
+            content: message.content,
+            mbtiRange,
+            createdAt: message.createdAt,
+            rate: 0
+        }));
+}
+
+function readStreamDoneResult(data: unknown): PostChatMessageResponse | null {
+    if (!data || typeof data !== 'object' || !('userMessage' in data)) {
+        return null;
+    }
+    const result = data as PostChatMessageResponse;
+    if (!result.userMessage) {
+        return null;
+    }
+    return result;
 }
 
 export default function MainChatScreen() {
@@ -94,66 +121,109 @@ export default function MainChatScreen() {
         const trimmedValue = inputValue.trim();
         if (!trimmedValue || isLoading || !selectedMainChatSessionId) return;
         const rightScreenValues = await mainChatRightScreenRef.current?.sendMainChatRightScreenValues();
+        const mbtiRange = rightScreenValues?.mbtiRange ?? {
+            eValue,
+            sValue,
+            fValue,
+            pValue
+        };
+        const showBoth = rightScreenValues?.showBoth ?? [];
         const newUserChatMessage: ChatMessage = {
             id: crypto.randomUUID(),
             role: 'user',
             content: trimmedValue,
-            mbtiRange: {
-                eValue,
-                sValue,
-                fValue,
-                pValue
-            },
+            mbtiRange,
             createdAt: new Date().toISOString(),
             rate: 0
         };
-        setMainChatMessages((prev) => [...prev, newUserChatMessage]);
+        const pendingAssistantId = crypto.randomUUID();
+        const usesStream = showBoth.length === 0;
+        if (usesStream) {
+            const pendingAssistant: ChatMessage = {
+                id: pendingAssistantId,
+                role: 'ai',
+                content: '',
+                mbtiRange,
+                createdAt: new Date().toISOString(),
+                rate: 0,
+                isStreaming: true
+            };
+            setMainChatMessages((prev) => [...prev, newUserChatMessage, pendingAssistant]);
+        } else {
+            setMainChatMessages((prev) => [...prev, newUserChatMessage]);
+        }
         setIsLoading(true);
 
+        const body = {
+            content: trimmedValue,
+            role: 'user',
+            mbtiRange: { eValue, sValue, fValue, pValue },
+            showBoth,
+            pageType: 'main',
+            simulationKey: ''
+        };
+
         try {
-            const body = {
-                content: trimmedValue,
-                role: 'user',
-                mbtiRange: { eValue, sValue, fValue, pValue },
-                showBoth: rightScreenValues?.showBoth ?? [],
-                pageType: 'main',
-                simulationKey: ''
-            };
-            const data = await apiFetch<PostChatMessageResponse>(`/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`, {
+            if (!usesStream) {
+                const data = await apiFetch<PostChatMessageResponse>(`/api/chatMessage/sessions/${selectedMainChatSessionId}/messages`, {
+                    method: 'POST',
+                    body
+                });
+                const assistantSourceMessages = data.assistantMessages ?? [data.assistantMessage];
+                setMainChatMessages((prev) => [...prev, ...toAssistantChatMessages(assistantSourceMessages, mbtiRange)]);
+                return;
+            }
+
+            await apiStream(`/api/chatMessage/sessions/${selectedMainChatSessionId}/messages/stream`, {
                 method: 'POST',
-                body
+                body,
+                onEvent: (event, data) => {
+                    if (event === 'delta') {
+                        const text = getStreamDeltaText(data);
+                        if (!text) return;
+                        setMainChatMessages((prev) =>
+                            prev.map((message) =>
+                                message.id === pendingAssistantId
+                                    ? { ...message, content: message.content + text }
+                                    : message
+                            )
+                        );
+                        return;
+                    }
+                    if (event !== 'done') return;
+                    const result = readStreamDoneResult(data);
+                    if (!result) return;
+                    const assistantSourceMessages = result.assistantMessages ?? [result.assistantMessage];
+                    setMainChatMessages((prev) => {
+                        const withoutTemp = prev.filter((message) =>
+                            message.id !== pendingAssistantId && message.id !== newUserChatMessage.id
+                        );
+                        const userMessage: ChatMessage = {
+                            id: result.userMessage.id,
+                            role: 'user',
+                            content: result.userMessage.content,
+                            mbtiRange,
+                            createdAt: result.userMessage.createdAt,
+                            rate: 0
+                        };
+                        return [...withoutTemp, userMessage, ...toAssistantChatMessages(assistantSourceMessages, mbtiRange)];
+                    });
+                }
             });
-            const assistantSourceMessages = data.assistantMessages ?? [data.assistantMessage];
-            const assistantMessages: ChatMessage[] = assistantSourceMessages.map((message) => ({
-                id: message.id,
-                role: 'ai',
-                content: message.content,
-                mbtiRange: rightScreenValues?.mbtiRange ?? {
-                    eValue,
-                    sValue,
-                    fValue,
-                    pValue
-                },
-                createdAt: message.createdAt,
-                rate: 0
-            }));
-            setMainChatMessages((prev) => [...prev, ...assistantMessages]);
         } catch (error) {
             console.error(error);
             const errorMessage: ChatMessage = {
                 id: crypto.randomUUID(),
                 role: 'ai',
                 content: 'Sorry. Please try later.',
-                mbtiRange: {
-                    eValue,
-                    sValue,
-                    fValue,
-                    pValue
-                },
+                mbtiRange,
                 createdAt: new Date().toISOString(),
                 rate: 0
             };
-            setMainChatMessages((prev) => [...prev, errorMessage]);
+            setMainChatMessages((prev) => {
+                const withoutPending = prev.filter((message) => message.id !== pendingAssistantId);
+                return [...withoutPending, errorMessage];
+            });
         } finally {
             setIsLoading(false);
         }
@@ -189,10 +259,9 @@ export default function MainChatScreen() {
             )}
             {!isBlockingModalOpen && (
                 <>
-                    {messagesStatus === 'loading' && <ChatSkeleton />}
-                    {messagesStatus === 'error' && (
-                        <StatusMessage
-                            message = 'Could not load messages.'
+                    { messagesStatus === 'loading' && <ChatSkeleton /> }
+                    { messagesStatus === 'error' && (
+                        <StatusMessage message = 'Could not load messages.'
                             onRetry = {() => {
                                 if (selectedMainChatSessionId) {
                                     getMainChatSessionMessages(selectedMainChatSessionId);
@@ -200,10 +269,10 @@ export default function MainChatScreen() {
                             }}
                         />
                     )}
-                    {messagesStatus === 'ready' && mainChatMessages.length === 0 && (
+                    { messagesStatus === 'ready' && mainChatMessages.length === 0 && (
                         <StatusMessage message = 'No messages yet' />
                     )}
-                    {messagesStatus === 'ready' && mainChatMessages.length > 0 && (
+                    { messagesStatus === 'ready' && mainChatMessages.length > 0 && (
                         <ChatMessagesList messages = { mainChatMessages } onRate = { patchChatMessageRate } />
                     )}
                     <ChatTextInputBox page = 'main' onSubmit = { sendChatMessages } disabled = { isLoading || !selectedMainChatSessionId } />

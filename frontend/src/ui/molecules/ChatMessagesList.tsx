@@ -55,7 +55,7 @@ export default function ChatMessagesList({ messages, onRate }: ChatMessagesListP
                     {chatMessage.role === 'user' ? (
                         <UserChat content = { chatMessage.content } />
                     ) : (
-                        <AiChat messageId = { chatMessage.id } content = { chatMessage.content } selectedRating = { chatMessage.rate } onRate = { onRate } />
+                        <AiChat messageId = { chatMessage.id } content = { chatMessage.content } selectedRating = { chatMessage.rate } isStreaming = { chatMessage.isStreaming } onRate = { onRate } />
                     )}
                 </ChatRow>
             ))}

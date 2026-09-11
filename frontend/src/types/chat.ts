@@ -19,4 +19,5 @@ export type ChatMessage = {
     mbtiRange: MbtiRange;
     createdAt: string;
     rate?: number;
+    isStreaming?: boolean;
 }
