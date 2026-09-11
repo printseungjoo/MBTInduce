@@ -1,44 +1,16 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { apiFetch } from '../../api/client'
 import type { ChatSession } from '../../types/chat'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
+import Modal from './Modal'
 
 interface MakeNewMainChatModalProps {
     onSubmitSuccess: (session: ChatSession) => void;
 }
-
-const InitialMainChatModalStyled = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-`;
-
-const CenterBox = styled.div`
-    width: min(90vw, 36rem);
-    max-height: 85vh;
-    overflow-y: auto;
-    background-color: ${({ theme }) => theme.colors.lightWhite};
-    border-radius: 1rem;
-    padding: 2vh 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-    box-sizing: border-box;
-
-    @media screen and (min-width: 768px) {
-        width: 40vw;
-        padding: 2vh 1vw;
-    }
-`;
 
 const MainChatTextArea = styled.textarea`
     width: 98%;
@@ -68,6 +40,7 @@ const SubmitButton = styled.button<{isValid: boolean}>`
 `;
 
 export default function MakeNewMainChatModal({ onSubmitSuccess }: MakeNewMainChatModalProps) {
+    const navigate = useNavigate();
     const [briefChatInfo, setBriefChatInfo] = useState<string>('');
 
     async function createChatSession(title: string) {
@@ -98,13 +71,11 @@ export default function MakeNewMainChatModal({ onSubmitSuccess }: MakeNewMainCha
     };
 
     return (
-        <InitialMainChatModalStyled>
-            <CenterBox>
-                <CenterPurpleP content = 'Write down the brief information of chat you are going to talk about' />
-                <MainChatTextArea value = { briefChatInfo } onChange = {(e) => setBriefChatInfo(e.target.value)}/>
-                <GoBackButton />
-                <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
-            </CenterBox>
-        </InitialMainChatModalStyled>
+        <Modal desktopWidth = '40vw' onClose = {() => navigate('/Start')}>
+            <CenterPurpleP content = 'Write down the brief information of chat you are going to talk about' />
+            <MainChatTextArea value = { briefChatInfo } onChange = {(e) => setBriefChatInfo(e.target.value)}/>
+            <GoBackButton />
+            <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
+        </Modal>
     )
 }

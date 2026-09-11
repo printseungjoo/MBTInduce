@@ -1,45 +1,17 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { apiFetch } from '../../api/client'
 import type { ChatSession } from '../../types/chat'
 import GoBackButton from '../atoms/GoBackButton'
 import OldMainChatButton from '../atoms/OldMainChatButton'
+import Modal from './Modal'
 
 interface OldMainChatModalProps {
     onConfirm: () => void;
     onSelectHistory: (history: ChatSession) => void;
 }
-
-const OldMainChatModalStyled = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-`;
-
-const CenterBox = styled.div`
-    width: min(90vw, 36rem);
-    max-height: 85vh;
-    overflow-y: auto;
-    background-color: ${({ theme }) => theme.colors.lightWhite};
-    border-radius: 1rem;
-    padding: 2vh 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-    box-sizing: border-box;
-
-    @media screen and (min-width: 768px) {
-        width: 50vw;
-        padding: 2vh 1vw;
-    }
-`;
 
 const NoChatText = styled.p`
     color: ${({ theme }) => theme.colors.deepPlum};
@@ -48,6 +20,7 @@ const NoChatText = styled.p`
 `;
 
 export default function OldMainChatModal({ onConfirm, onSelectHistory }: OldMainChatModalProps) {
+    const navigate = useNavigate();
     const [remove, setRemove] = useState<boolean>(false);
     const [chatSessions, setChatSessions] = useState<ChatSession[] | null>(null);
 
@@ -77,8 +50,8 @@ export default function OldMainChatModal({ onConfirm, onSelectHistory }: OldMain
 
     return (
         <>
-            {!remove && <OldMainChatModalStyled>
-                <CenterBox>
+            {!remove && (
+                <Modal desktopWidth = '50vw' onClose = {() => navigate('/Start')}>
                     {chatSessions?.length === 0 ? ( <NoChatText> There is no chat room left </NoChatText>) : 
                         (chatSessions?.map((c) => (
                             <div key = { c.id } onClick = {() => clickHistory(c)}>
@@ -86,8 +59,8 @@ export default function OldMainChatModal({ onConfirm, onSelectHistory }: OldMain
                             </div>
                     )))}
                     <GoBackButton />
-                </CenterBox>
-            </OldMainChatModalStyled>}
+                </Modal>
+            )}
         </>
     )
 }

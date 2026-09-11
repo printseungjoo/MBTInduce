@@ -4,40 +4,11 @@ import { useState } from 'react'
 import { apiFetch } from '../../api/client'
 import CenterPurpleP from './CenterPurpleP'
 import GoBacktoAdminButton from './GoBacktoAdminButton'
+import Modal from '../molecules/Modal'
 
 interface EditMainChatQuestionTemplateProps {
     id: string;
 }
-
-const EditMainChatQuestionTemplateModalStyled = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-`;
-
-const CenterBox = styled.div`
-    width: min(90vw, 36rem);
-    max-height: 85vh;
-    overflow-y: auto;
-    background-color: ${({ theme }) => theme.colors.lightWhite};
-    border-radius: 1rem;
-    padding: 2vh 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-    box-sizing: border-box;
-
-    @media screen and (min-width: 768px) {
-        width: 30vw;
-        padding: 2vh 1vw;
-    }
-`;
 
 const MainChatQuestionTemplateTextArea = styled.textarea`
     width: 98%;
@@ -97,13 +68,11 @@ export default function EditMainChatQuestionTemplate({ id }: EditMainChatQuestio
     };
 
     return (
-        <EditMainChatQuestionTemplateModalStyled>
-            <CenterBox>
-                <CenterPurpleP content = 'If you want to modify the main chat question template, please write down the content here.' />
-                <MainChatQuestionTemplateTextArea value = { changedContent} onChange = {(e) => setChangedContent(e.target.value)}/>
-                <GoBacktoAdminButton />
-                <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
-            </CenterBox>
-        </EditMainChatQuestionTemplateModalStyled>
+        <Modal onClose = {() => { window.location.reload() }}>
+            <CenterPurpleP content = 'If you want to modify the main chat question template, please write down the content here.' />
+            <MainChatQuestionTemplateTextArea value = { changedContent} onChange = {(e) => setChangedContent(e.target.value)}/>
+            <GoBacktoAdminButton />
+            <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
+        </Modal>
     )
 }

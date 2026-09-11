@@ -1,10 +1,11 @@
-import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { apiFetch } from '../../api/client'
 import type { SimulationProfile, SimulationTemplate } from '../../types/simulation'
 import GoBackButton from '../atoms/GoBackButton'
 import OldSimulationButton from '../atoms/OldSimulationButton'
+import Modal from './Modal'
 
 interface OldSimulationModalProps {
     onConfirm: () => void;
@@ -17,37 +18,8 @@ interface History {
     mbti: string;
 }
 
-const OldSimulationModalStyled = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-`;
-
-const CenterBox = styled.div`
-    width: min(90vw, 36rem);
-    max-height: 85vh;
-    overflow-y: auto;
-    background-color: ${({ theme }) => theme.colors.lightWhite};
-    border-radius: 1rem;
-    padding: 2vh 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-    box-sizing: border-box;
-
-    @media screen and (min-width: 768px) {
-        width: 50vw;
-        padding: 2vh 1vw;
-    }
-`;
-
 export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSimulationModalProps) {
+    const navigate = useNavigate();
     const [remove, setRemove] = useState<boolean>(false);
     const [history, setHistory] = useState<History[]>([]);
 
@@ -96,16 +68,16 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
 
     return (
         <>
-            {!remove && <OldSimulationModalStyled>
-                <CenterBox>
+            {!remove && (
+                <Modal desktopWidth = '50vw' onClose = {() => navigate('/Start')}>
                     {history.map((h) => (
                         <div key = { `${h.name}-${h.mbti}-${h.scenario}` } onClick = {() => clickHistory(h)}>
                             <OldSimulationButton targetName = { h.name } targetMbti = { h.mbti } scenarioContent = { h.scenario } />
                         </div>
                     ))}
                     <GoBackButton />
-                </CenterBox>
-            </OldSimulationModalStyled>}
+                </Modal>
+            )}
         </>
     )
 }

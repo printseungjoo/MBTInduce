@@ -1,10 +1,12 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { apiFetch } from '../../api/client'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import Input from '../atoms/Input'
 import GoBackButton from '../atoms/GoBackButton'
+import Modal from './Modal'
 
 interface ScenarioRequest {
     content: string;
@@ -25,36 +27,6 @@ interface SimulationSelection {
 interface MakeNewSimulationModalProps {
     onSubmitSuccess: (selection: SimulationSelection) => void;
 }
-
-const InitialSimulationModalStyled = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-`;
-
-const CenterBox = styled.div`
-    width: min(90vw, 36rem);
-    max-height: 85vh;
-    overflow-y: auto;
-    background-color: ${({ theme }) => theme.colors.lightWhite};
-    border-radius: 1rem;
-    padding: 2vh 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-    box-sizing: border-box;
-
-    @media screen and (min-width: 768px) {
-        width: 40vw;
-        padding: 2vh 1vw;
-    }
-`;
 
 const ScenarioTextArea = styled.textarea`
     width: 98%;
@@ -89,6 +61,7 @@ const SubmitButton = styled.button<{isValid: boolean}>`
 `;
 
 export default function MakeNewSimulationModal({ onSubmitSuccess }: MakeNewSimulationModalProps) {
+    const navigate = useNavigate();
     const [mbti, setMbti] = useState<string>('');
     const [name, setName] = useState<string>('');
     const [scenario, setScenario] = useState<string>('');
@@ -137,18 +110,16 @@ export default function MakeNewSimulationModal({ onSubmitSuccess }: MakeNewSimul
     };
 
     return (
-        <InitialSimulationModalStyled>
-            <CenterBox>
-                <CenterPurpleP content = 'Write down the situation where you want to turn simulation' />
-                <ScenarioTextArea value = { scenario } onChange = {(e) => setScenario(e.target.value)}/>
-                <CenterPurpleP content = 'Write down the name and MBTI of the person you want to turn simulation' />
-                <FlexDiv>
-                    <Input placeholder = 'Name' value = { name } onChange = {(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)} />
-                    <Input placeholder = 'MBTI' value = { mbti } onChange = {(e: React.ChangeEvent<HTMLInputElement>) => setMbti(e.target.value)} />
-                </FlexDiv>
-                <GoBackButton />
-                <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
-            </CenterBox>
-        </InitialSimulationModalStyled>
+        <Modal desktopWidth = '40vw' onClose = {() => navigate('/Start')}>
+            <CenterPurpleP content = 'Write down the situation where you want to turn simulation' />
+            <ScenarioTextArea value = { scenario } onChange = {(e) => setScenario(e.target.value)}/>
+            <CenterPurpleP content = 'Write down the name and MBTI of the person you want to turn simulation' />
+            <FlexDiv>
+                <Input placeholder = 'Name' value = { name } onChange = {(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)} />
+                <Input placeholder = 'MBTI' value = { mbti } onChange = {(e: React.ChangeEvent<HTMLInputElement>) => setMbti(e.target.value)} />
+            </FlexDiv>
+            <GoBackButton />
+            <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
+        </Modal>
     )
 }

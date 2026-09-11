@@ -1,45 +1,17 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { apiFetch } from '../../api/client'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
+import Modal from './Modal'
 
 interface EditSimulationProps {
     content: string;
     target: string;
     id: string;
 }
-
-const EditSimulationModalStyled = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-`;
-
-const CenterBox = styled.div`
-    width: min(90vw, 36rem);
-    max-height: 85vh;
-    overflow-y: auto;
-    background-color: ${({ theme }) => theme.colors.lightWhite};
-    border-radius: 1rem;
-    padding: 2vh 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-    box-sizing: border-box;
-
-    @media screen and (min-width: 768px) {
-        width: 30vw;
-        padding: 2vh 1vw;
-    }
-`;
 
 const SimulationTextArea = styled.textarea`
     width: 98%;
@@ -69,6 +41,7 @@ const SubmitButton = styled.button<{isValid: boolean}>`
 `;
 
 export default function EditSimulation({ target, id }: EditSimulationProps) {
+    const navigate = useNavigate();
     const [changedContent, setChangedContent] = useState<string>('');
 
     async function editUserName(userName: string) {
@@ -140,13 +113,11 @@ export default function EditSimulation({ target, id }: EditSimulationProps) {
     };
 
     return (
-        <EditSimulationModalStyled>
-            <CenterBox>
-                <CenterPurpleP content = 'If you want to modify what you selected, please write down the content here.' />
-                <SimulationTextArea value = { changedContent } onChange = {(e) => setChangedContent(e.target.value)}/>
-                <GoBackButton />
-                <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
-            </CenterBox>
-        </EditSimulationModalStyled>
+        <Modal onClose = {() => navigate('/Start')}>
+            <CenterPurpleP content = 'If you want to modify what you selected, please write down the content here.' />
+            <SimulationTextArea value = { changedContent } onChange = {(e) => setChangedContent(e.target.value)}/>
+            <GoBackButton />
+            <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
+        </Modal>
     )
 }
