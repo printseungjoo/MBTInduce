@@ -2,12 +2,13 @@ import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { apiFetch } from '../../api/client'
+import { useAuth } from '../../auth/AuthProvider'
 import LogoutButton from '../atoms/LogoutButton'
 import AdminLeftDiv from '../atoms/AdminLeftDiv'
 import AdminAverageRatingDiv from '../atoms/AdminAverageRatingDiv'
 import AdminMiddleDiv from '../molecules/AdminMiddleDiv'
-import AdminRightMainChatDiv from '../molecules/AdminRightMainChatDiv'
-import AdminRightSimulationDiv from '../molecules/AdminRightSimulationDiv'
+import AdminRightTemplateDiv from '../molecules/AdminRightTemplateDiv'
 
 type StatisticsType = {
     totalUsers: number;
@@ -115,20 +116,14 @@ const RightDiv = styled.div`
 `;
 
 export default function AdminScreen() {
+    const { clearSession } = useAuth();
     const [statistics, setStatistics] = useState<StatisticsType | null>(null);
 
     const navigate = useNavigate();
 
     async function getStatistics() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/statistics`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            if(!response.ok) {
-                throw new Error('Failed to get left statistics');
-            }
-            const data = await response.json();
+            const data = await apiFetch<{ data: StatisticsType }>('/api/admin/statistics');
             setStatistics(data.data);
         } catch(error) {
             console.error(error);
@@ -137,13 +132,10 @@ export default function AdminScreen() {
     
     async function handleLogout() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`, {
-                method: 'POST',
-                credentials: 'include',
+            await apiFetch('/api/auth/logout', {
+                method: 'POST'
             });
-            if (!response.ok) {
-                throw new Error('Failed to logout');
-            }
+            clearSession();
             window.alert('Logged out successfully.');
             navigate('/');
         } catch (error) {
@@ -173,8 +165,8 @@ export default function AdminScreen() {
                     <AdminMiddleDiv />
                 </MiddleDiv>
                 <RightDiv>
-                    <AdminRightMainChatDiv />
-                    <AdminRightSimulationDiv />
+                    <AdminRightTemplateDiv page = 'main' />
+                    <AdminRightTemplateDiv page = 'simulation' />
                 </RightDiv>
             </MainContentFlexDiv>
         </AdminScreenStyled>

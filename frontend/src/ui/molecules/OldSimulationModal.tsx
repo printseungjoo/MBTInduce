@@ -1,23 +1,17 @@
-import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { apiFetch } from '../../api/client'
+import type { SimulationProfile, SimulationTemplate } from '../../types/simulation'
 import GoBackButton from '../atoms/GoBackButton'
 import OldSimulationButton from '../atoms/OldSimulationButton'
+import ListSkeleton from './ListSkeleton'
+import StatusMessage from './StatusMessage'
+import Modal from './Modal'
 
 interface OldSimulationModalProps {
     onConfirm: () => void;
     onSelectHistory: (history: History) => void;
-}
-
-interface ScenarioRequest {
-    content: string;
-}
-
-interface TargetInfoRequest {
-    name: string;
-    meOrNot: boolean;
-    mbti: string;
-    content: string;
 }
 
 interface History {
@@ -26,39 +20,11 @@ interface History {
     mbti: string;
 }
 
-const OldSimulationModalStyled = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-`;
-
-const CenterBox = styled.div`
-    width: min(90vw, 36rem);
-    max-height: 85vh;
-    overflow-y: auto;
-    background-color: ${({ theme }) => theme.colors.lightWhite};
-    border-radius: 1rem;
-    padding: 2vh 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-    box-sizing: border-box;
-
-    @media screen and (min-width: 768px) {
-        width: 50vw;
-        padding: 2vh 1vw;
-    }
-`;
-
 export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSimulationModalProps) {
+    const navigate = useNavigate();
     const [remove, setRemove] = useState<boolean>(false);
     const [history, setHistory] = useState<History[]>([]);
+    const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
     const removeModal = () => {
         setRemove(true);
@@ -75,60 +41,56 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
     }, []);
 
     const getHistory = async () => {
+        setStatus('loading');
         try {
-            const [scenarioRes, targetRes] = await Promise.all([
-                fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/simulationTemplate`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json' 
-                    },
-                    credentials: 'include',
-                }),
-                fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation/userProfiles`, {
-                    method: 'GET',
-                    headers: { 
-                        'Content-Type': 'application/json' 
-                    },
-                    credentials: 'include',
-                })
+            const [scenarioData, targetData] = await Promise.all([
+                apiFetch<{ simulationTemplate?: SimulationTemplate[] }>('/api/simulation/simulationTemplate'),
+                apiFetch<{ userProfiles?: SimulationProfile[] }>('/api/simulation/userProfiles')
             ]);
-            if (!scenarioRes.ok || !targetRes.ok) {
-                throw new Error('Failed to fetch data');
-            }
-            const scenarioData = await scenarioRes.json();
-            const targetData = await targetRes.json();
-            const scenarios: ScenarioRequest[] = scenarioData.simulationTemplate || [];
-            const targets: TargetInfoRequest[] = targetData.userProfiles || [];
-            const minLength = Math.min(scenarios.length, targets.length);
+            const scenarios: SimulationTemplate[] = scenarioData.simulationTemplate || [];
+            const targets: SimulationProfile[] = targetData.userProfiles || [];
+            const profileByTemplateId = new Map(
+                targets
+                    .filter((target) => target.simulationTemplateId)
+                    .map((target) => [target.simulationTemplateId as string, target])
+            );
             const merged: History[] = [];
-            for (let i = 0; i < minLength; i++) {
-                const s = scenarios[i];
-                const t = targets[i];
-                if (!s?.content || !t?.name || !t?.mbti) continue;
+            for (const scenario of scenarios) {
+                const target = profileByTemplateId.get(scenario.id);
+                if (!scenario.content || !target?.name || !target?.mbti) continue;
                 merged.push({
-                    scenario: s.content,
-                    name: t.name,
-                    mbti: t.mbti
+                    scenario: scenario.content,
+                    name: target.name,
+                    mbti: target.mbti
                 });
             }
             setHistory(merged);
+            setStatus('ready');
         } catch (error) {
             console.error('Error getting history:', error);
+            setStatus('error');
         }
     };
 
     return (
         <>
-            {!remove && <OldSimulationModalStyled>
-                <CenterBox>
-                    {history.map((h, index) => (
-                        <div key = { index } onClick = {() => clickHistory(h)}>
-                            <OldSimulationButton targetName = { h.name } targetMbti = { h.mbti } scenarioContent = { h.scenario } />
-                        </div>
-                    ))}
+            {!remove && (
+                <Modal desktopWidth = '50vw' onClose = {() => navigate('/Start')}>
+                { status === 'loading' && <ListSkeleton count = { 2 } /> }
+                { status === 'error' && (
+                    <StatusMessage message = 'Could not load simulations.' onRetry = { getHistory } />
+                )}
+                { status === 'ready' && history.length === 0 && (
+                    <StatusMessage message = 'There is no simulation history left' />
+                )}
+                { status === 'ready' && history.map((h) => (
+                    <div key = { `${h.name}-${h.mbti}-${h.scenario}` } onClick = {() => clickHistory(h)}>
+                        <OldSimulationButton targetName = { h.name } targetMbti = { h.mbti } scenarioContent = { h.scenario } />
+                    </div>
+                ))}
                     <GoBackButton />
-                </CenterBox>
-            </OldSimulationModalStyled>}
+                </Modal>
+            )}
         </>
     )
 }

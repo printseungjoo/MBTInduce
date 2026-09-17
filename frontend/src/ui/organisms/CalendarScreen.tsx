@@ -5,35 +5,12 @@ import { format, parse, startOfWeek, getDay } from 'date-fns'
 import { useState, useEffect } from 'react'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 
-interface SelectedRange {
-    startDate: Date | null;
-    endDate: Date | null;
-}
+import { apiFetch } from '../../api/client'
+import type { CalendarDisplayEvent, CalendarEvent, SelectedRange } from '../../types/calendar'
 
 interface CalendarScreenProps {
     selectedRange: SelectedRange;
     setSelectedRange: React.Dispatch<React.SetStateAction<SelectedRange>>;
-}
-
-interface BigCalendarEvent {
-    id: string;
-    title: string;
-    start: Date;
-    end: Date;
-    allDay: boolean;
-}
-
-interface CalendarEventResponse {
-    id: string;
-    title: string;
-    description: string | null;
-    startAt: string;
-    endAt: string;
-    allDay: boolean;
-    mbti: string | null;
-    planningNote: string | null;
-    createdAt: string;
-    updatedAt: string;
 }
 
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales: {} });
@@ -43,7 +20,7 @@ const CalendarStyled = styled.div`
     height: 85%;
     background-color: ${({ theme }) => theme.colors.lightWhite};
     color-scheme: only light;
-    olor: ${({ theme }) => theme.colors.deepBlack};
+    color: ${({ theme }) => theme.colors.deepBlack};
 
     .rbc-calendar {
         background-color: ${({ theme }) => theme.colors.lightWhite};
@@ -89,7 +66,7 @@ const CenterDiv = styled.div`
 `;
 
 export default function CalendarScreen({ selectedRange, setSelectedRange }: CalendarScreenProps) {
-    const [events, setEvents] = useState<BigCalendarEvent[]>([]);
+    const [events, setEvents] = useState<CalendarDisplayEvent[]>([]);
 
     useEffect(() => {
         loadCalendarEvents();
@@ -97,24 +74,14 @@ export default function CalendarScreen({ selectedRange, setSelectedRange }: Cale
 
     async function loadCalendarEvents() {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get calendar events');
-            }
-            const result = await response.json();
-            const calendarEvents: CalendarEventResponse[] = result.data.events;
+            const result = await apiFetch<{ data: { events: CalendarEvent[] } }>('/api/calendarEvent');
+            const calendarEvents: CalendarEvent[] = result.data.events;
             const convertedEvents = calendarEvents.map((event) => ({
                 id: event.id,
                 title: event.title,
                 start: new Date(event.startAt),
                 end: new Date(event.endAt),
-                allDay: event.allDay,
+                allDay: event.allDay
             }));
             setEvents(convertedEvents);
         } catch (error) {
@@ -153,7 +120,7 @@ export default function CalendarScreen({ selectedRange, setSelectedRange }: Cale
 
         setSelectedRange({
             startDate: toCalendarDate(startDate),
-            endDate: clicked,
+            endDate: clicked
         });
     }
     function dayPropGetter(date: Date) {

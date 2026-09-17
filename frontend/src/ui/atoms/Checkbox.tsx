@@ -19,11 +19,13 @@ const CheckboxLabel = styled.label`
     font-size: 0.85rem;
 `;
 
-export default function Checkbox({ text, checked }: CheckboxProps) {
+export default function Checkbox({ text, checked, onClick }: CheckboxProps) {
+    const id = `checkbox-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+
     return(
         <CheckboxDiv>
-            <CheckboxInput type = 'checkbox' id = 'scales' checked = { checked } readOnly />
-            <CheckboxLabel htmlFor = 'scales'> { text } </CheckboxLabel>
+            <CheckboxInput type = 'checkbox' id = { id } checked = { checked } readOnly onClick = { onClick } />
+            <CheckboxLabel htmlFor = { id }> { text } </CheckboxLabel>
         </CheckboxDiv>
     )
 }

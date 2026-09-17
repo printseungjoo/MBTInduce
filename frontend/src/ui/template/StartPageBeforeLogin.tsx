@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { useEffect } from 'react'
 
+import { apiUrl } from '../../api/client'
 import GenerateButton from '../atoms/GenerateButton'
 
 const StartPageBeforeLoginStyled = styled.div`
@@ -93,16 +94,16 @@ export default function StartPageBeforeLogin() {
         if (error === 'not_registered') {
             window.alert("You don't have an account yet. Please sign up first.");
             window.history.replaceState({}, '', window.location.pathname);
-            window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google?mode=signup`;
+            window.location.href = apiUrl('/auth/google?mode=signup');
         }
     }, []);
 
     const goToGoogleSignUp = () => {
-        window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google?mode=signup`;
+        window.location.href = apiUrl('/auth/google?mode=signup');
     };
 
     const goToGoogleLogin = () => {
-        window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google?mode=login`;
+        window.location.href = apiUrl('/auth/google?mode=login');
     };
 
     return(

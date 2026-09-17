@@ -1,17 +1,12 @@
 import styled from '@emotion/styled'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 
+import { apiFetch } from '../../api/client'
+import type { MbtiRange } from '../../types/mbti'
 import Title from '../atoms/Title'
 import RangeBar from '../molecules/RangeBar'
 import TwoMBTIsButton from '../atoms/TwoMBTIsButton'
 import WebsiteIntro from '../atoms/WebsiteIntro'
-
-interface MbtIRangeRequest {
-    eValue: number;
-    sValue: number;
-    fValue: number;
-    pValue: number;
-}
 
 interface RightScreenProps {
     eValues: number;
@@ -26,12 +21,7 @@ interface RightScreenProps {
 
 export interface MainChatRightScreenRef {
     sendMainChatRightScreenValues: () => Promise<{
-        mbtiRange: {
-            eValue: number;
-            sValue: number;
-            fValue: number;
-            pValue: number;
-        };
+        mbtiRange: MbtiRange;
         showBoth: string[];
     }>;
 }
@@ -61,19 +51,12 @@ const MainChatRightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>
     const [clickedPJ, setClickedPJ] = useState<boolean>(false);
     
     const sendMbtiRange = async() => {
-        const mbtiRange: MbtIRangeRequest = { eValue: eValues, sValue: sValues, fValue: fValues, pValue: pValues };
+        const mbtiRange: MbtiRange = { eValue: eValues, sValue: sValues, fValue: fValues, pValue: pValues };
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/mbtiRange`, {
+            await apiFetch('/api/mbtiRange', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(mbtiRange),
+                body: mbtiRange
             })
-            if (!response.ok) {
-                throw new Error('Failed to send mbtiRange')
-            }
         } catch (error) {
             console.error('Error transmitting mbtiRange:', error);
         }
@@ -91,17 +74,10 @@ const MainChatRightScreen = forwardRef<MainChatRightScreenRef, RightScreenProps>
     const sendTwoMBTIs = async() => {
         const selectedDualModes = getSelectedDualModes();
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/showBoth`, {
+            await apiFetch('/api/showBoth', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(selectedDualModes),
+                body: selectedDualModes
             })
-            if (!response.ok) {
-                throw new Error('TwoMBTIs transmission failed')
-            }
         } catch (error) {
             console.error('Error transmitting twoMBTIs:', error)
         }

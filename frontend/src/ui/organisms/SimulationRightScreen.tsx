@@ -1,16 +1,11 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 
+import { apiFetch } from '../../api/client'
+import type { Profile } from '../../types/profile'
 import Title from '../atoms/Title'
 import WebsiteIntro from '../atoms/WebsiteIntro'
 import TargetProfile from '../atoms/TargetProfile'
-
-type profileInfo = {
-    id: string,
-    email: string,
-    nickname: string | null,
-    mbti: string | null
-}
 
 interface SimulationRightScreenProps {
     selectedScenario: string;
@@ -33,18 +28,11 @@ const FlexColumnDiv = styled.div`
 `;
 
 export default function SimulationRightScreen({ selectedScenario, selectedName, selectedMbti }: SimulationRightScreenProps) {
-    const [profileInformation, setProfileInformation] = useState<profileInfo | null>(null);
+    const [profileInformation, setProfileInformation] = useState<Profile | null>(null);
 
     async function getProfile() {
         try {
-            const response = await fetch(`${import.meta.env.API_BASE_URL}/api/profile`, {
-                method: 'GET',
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get profile');
-            }
-            const data = await response.json();
+            const data = await apiFetch<{ data: Profile }>('/api/profile');
             setProfileInformation(data.data);
         } catch (error) {
             console.error(error);

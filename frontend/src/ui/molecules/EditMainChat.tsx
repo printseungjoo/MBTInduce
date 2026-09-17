@@ -1,42 +1,15 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { apiFetch } from '../../api/client'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
+import Modal from './Modal'
 
 interface EditMainChatProps {
     changedChatId: string;
 }
-
-const EditMainChatModalStyled = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-`;
-
-const CenterBox = styled.div`
-    width: min(90vw, 36rem);
-    max-height: 85vh;
-    overflow-y: auto;
-    background-color: ${({ theme }) => theme.colors.lightWhite};
-    border-radius: 1rem;
-    padding: 2vh 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-    box-sizing: border-box;
-
-    @media screen and (min-width: 768px) {
-        width: 30vw;
-        padding: 2vh 1vw;
-    }
-`;
 
 const MainChatTextArea = styled.textarea`
     width: 98%;
@@ -67,24 +40,17 @@ const SubmitButton = styled.button<{isValid: boolean}>`
 `;
 
 export default function EditMainChat({ changedChatId }: EditMainChatProps) {
+    const navigate = useNavigate();
     const [changedChatInfo, setChangedChatInfo] = useState<string>('');
 
     async function editChatSession(targetId: string, changedTitle: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions/${targetId}`, {
+            const data = await apiFetch<{ session: unknown }>(`/api/chatMessage/sessions/${targetId}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     title: changedTitle
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch chat title');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);
@@ -106,13 +72,11 @@ export default function EditMainChat({ changedChatId }: EditMainChatProps) {
     };
 
     return (
-        <EditMainChatModalStyled>
-            <CenterBox>
-                <CenterPurpleP content = 'If you want to modify the main chat, please write down the content here.' />
-                <MainChatTextArea value = { changedChatInfo } onChange = {(e) => setChangedChatInfo(e.target.value)}/>
-                <GoBackButton />
-                <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
-            </CenterBox>
-        </EditMainChatModalStyled>
+        <Modal onClose = {() => navigate('/Start')}>
+            <CenterPurpleP content = 'If you want to modify the main chat, please write down the content here.' />
+            <MainChatTextArea value = { changedChatInfo } onChange = {(e) => setChangedChatInfo(e.target.value)}/>
+            <GoBackButton />
+            <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
+        </Modal>
     )
 }

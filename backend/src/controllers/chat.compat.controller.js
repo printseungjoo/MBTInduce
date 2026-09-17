@@ -4,7 +4,7 @@ import {
   findActiveChatSession,
   resolveChatSessionTitle,
 } from "../services/chat.service.js";
-import { postMessageCore } from "./chat.controller.js";
+import { endSseError, initSse, postMessageCore, writeSse } from "./chat.controller.js";
 
 async function getOrCreateChatSession(userId, pageType, simulationKey) {
   let session = await findActiveChatSession(userId, pageType, simulationKey);
@@ -112,6 +112,48 @@ export async function postMainChatFlat(req, res, next) {
       return res.status(error.status).json({ message: error.message });
     }
     next(error);
+  }
+}
+
+/**
+ * POST /api/chat/stream — same as POST /api/chat, tokens as SSE then done messages.
+ */
+export async function postMainChatFlatStream(req, res, next) {
+  const abortController = new AbortController();
+  const onClose = () => {
+    if (!res.writableEnded) {
+      abortController.abort();
+    }
+  };
+  req.on("close", onClose);
+
+  try {
+    const pageType = req.body?.pageType || "main";
+    const simulationKey = req.body?.simulationKey || "";
+    const session = await getOrCreateChatSession(
+      req.user.id,
+      pageType,
+      simulationKey
+    );
+    initSse(res);
+    await postMessageCore(req.user.id, session.id, req.body || {}, {
+      onDelta: (text) => writeSse(res, "delta", { text }),
+      signal: abortController.signal
+    });
+    if (abortController.signal.aborted || res.writableEnded) {
+      return;
+    }
+    const payload = await buildFrontendChatArray(req.user.id, session.id);
+    writeSse(res, "done", { messages: payload });
+    res.end();
+  } catch (error) {
+    if (abortController.signal.aborted) {
+      if (!res.writableEnded) res.end();
+      return;
+    }
+    endSseError(res, next, error);
+  } finally {
+    req.off("close", onClose);
   }
 }
 

@@ -6,8 +6,9 @@ import DeleteButton from './DeleteButton'
 import EditSimulationQuestionTemplate from './EditSimulationQuestionTemplate'
 
 interface SimulationTemplateButtonProps {
-    id: string;
     content: string;
+    onDelete: () => void;
+    onSubmit: (content: string) => void | Promise<void>;
 }
 
 const SimulationTemplateButtonStyled = styled.button`
@@ -30,30 +31,8 @@ const FlexDiv = styled.div`
     gap: 0.5vw;
 `;
 
-export default function SimulationTemplateButton({ id, content }: SimulationTemplateButtonProps) {
+export default function SimulationTemplateButton({ content, onDelete, onSubmit }: SimulationTemplateButtonProps) {
     const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
-
-    async function deleteTemplates() {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/simulation-question-templates/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                alert(data.message || 'Failed to delete simulation question template');
-                return;
-            }
-            alert('Simulation question template deleted successfully.');
-            window.location.reload();
-        } catch (error) {
-            console.error(error);
-            alert('Server connection failed.');
-        }
-    }
 
     return(
         <>
@@ -61,10 +40,10 @@ export default function SimulationTemplateButton({ id, content }: SimulationTemp
                 <ContentP> { content } </ContentP>
                 <FlexDiv>
                     <EditButton onClick = {() => setIsEditOpen(true)} />
-                    <DeleteButton onClick = {() => deleteTemplates()}/>
+                    <DeleteButton onClick = { onDelete }/>
                 </FlexDiv>
             </SimulationTemplateButtonStyled>
-            {isEditOpen && <EditSimulationQuestionTemplate id = { id }/>}
+            {isEditOpen && <EditSimulationQuestionTemplate onSubmit = { onSubmit }/>}
         </>
     )
 }

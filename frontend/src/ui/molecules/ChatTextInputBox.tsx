@@ -2,20 +2,20 @@ import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
 import type { KeyboardEvent } from 'react'
 
+import { apiFetch } from '../../api/client'
+import type { Template } from '../../types/template'
 import TextExample from '../atoms/TextExample'
 
-type TemplateType = {
-    title: string;
-    content: string;
-    category: string;
-    isActive: boolean;
-    createdById: string;
-}
-
-interface TextInputBoxProps {
+interface ChatTextInputBoxProps {
+    page: 'main' | 'simulation';
     onSubmit: (value: string) => void;
     disabled?: boolean;
 }
+
+const TEMPLATE_PATH = {
+    main: '/api/templates',
+    simulation: '/api/simulation-question-templates'
+} as const
 
 const TextInputDiv = styled.div`
     display: flex;
@@ -67,21 +67,14 @@ const TextInputBoxStyled = styled.input`
     color: ${({ theme }) => theme.colors.deepBlack};
 `;
 
-export default function SimulationextInputBox({ onSubmit, disabled = false }: TextInputBoxProps) {
+export default function ChatTextInputBox({ page, onSubmit, disabled = false }: ChatTextInputBoxProps) {
     const [text, setText] = useState<string>('');
     const [example, setExample] = useState<string>('');
     const [exampleShown, setExampleShown] = useState<boolean>(false);
-    const [templates, setTemplates] = useState<TemplateType[]>([]);
+    const [templates, setTemplates] = useState<Template[]>([]);
 
     async function getTemplates() {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/simulation-question-templates`, {
-            method: 'GET',
-            credentials: 'include'
-        });
-        if(!response.ok) {
-            throw new Error('Failed to get simulation question templates');
-        }
-        const data = await response.json();
+        const data = await apiFetch<{ templates: Template[] }>(TEMPLATE_PATH[page]);
         setTemplates(data.templates);
     }
 
@@ -91,7 +84,7 @@ export default function SimulationextInputBox({ onSubmit, disabled = false }: Te
 
     useEffect(() => {
         getTemplates();
-    }, [])
+    }, [page])
 
     useEffect(() => {
         setText(text + ' ' + example);
@@ -111,7 +104,7 @@ export default function SimulationextInputBox({ onSubmit, disabled = false }: Te
         <TextInputDiv>
             {exampleShown && <ExamplesDiv>
                 {templates.map((t) => {
-                    return <TextExample content = { t.content } clicked = { textExampleClicked } />
+                    return <TextExample key = { t.id } content = { t.content } clicked = { textExampleClicked } />
                 })}
             </ExamplesDiv>}
             <TextInputBoxDiv>

@@ -1,144 +1,83 @@
-import './App.css'
+import { Routes, Route } from 'react-router-dom'
 
-import { useEffect, useState } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
-import type { ReactNode } from 'react'
-
+import { AdminRoute, ProtectedRoute } from './auth/ProtectedRoute'
+import { AuthProvider } from './auth/AuthProvider'
+import type { AppShellHandle } from './ui/template/AppShell'
+import AppShell from './ui/template/AppShell'
+import ErrorBoundary from './ui/template/ErrorBoundary'
 import StartPageBeforeLogin from './ui/template/StartPageBeforeLogin'
 import SignUpScreen from './ui/organisms/SignUpScreen'
-import FullMainScreen from './ui/template/FullMainScreen'
+import StartPageAfterLogin from './ui/organisms/StartPageAfterLogin'
+import MainChatScreen from './ui/organisms/MainChatScreen'
+import SimulationScreen from './ui/organisms/SimulationScreen'
+import CalendarPage from './ui/organisms/CalendarPage'
+import HistoryScreen from './ui/organisms/HistoryScreen'
+import MypageScreen from './ui/organisms/MypageScreen'
 import AdminScreen from './ui/template/AdminScreen'
-
-function ProtectedRoute({ children }: { children: ReactNode }) {
-  const [status, setStatus] = useState<'loading' | 'ok' | 'fail'>('loading');
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`, {
-          method: 'GET',
-          credentials: 'include',
-        });
-        setStatus(response.ok ? 'ok' : 'fail');
-      } catch (error) {
-        console.error(error);
-        setStatus('fail');
-      }
-    }
-    checkAuth();
-  }, []);
-  if (status === 'loading') {
-    return null;
-  }
-  if (status === 'fail') {
-    return <Navigate to="/" replace />;
-  }
-  return children;
-}
-
-function AdminRoute({ children }: { children: ReactNode }) {
-  const [status, setStatus] = useState<'loading' | 'ok' | 'fail'>('loading');
-  useEffect(() => {
-    async function checkAdmin() {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`, {
-          method: 'GET',
-          credentials: 'include',
-        });
-        if (!response.ok) {
-          setStatus('fail');
-          return;
-        }
-        const data = await response.json();
-        if (data.data?.isAdmin) {
-          setStatus('ok');
-        } else {
-          setStatus('fail');
-        }
-      } catch (error) {
-        console.error(error);
-        setStatus('fail');
-      }
-    }
-    checkAdmin();
-  }, []);
-  if (status === 'loading') {
-    return null;
-  }
-  if (status === 'fail') {
-    return <Navigate to="/" replace />;
-  }
-  return children;
-}
 
 function App() {
   return (
-    <Routes>
-      <Route path = "/" element = {<StartPageBeforeLogin />} />
-      <Route
-        path = "/SignUp"
-        element = {
-          <ProtectedRoute>
-            <SignUpScreen />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path = "/Start"
-        element = {
-          <ProtectedRoute>
-            <FullMainScreen />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path = "/MainChat"
-        element = {
-          <ProtectedRoute>
-            <FullMainScreen />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path = "/Simulation"
-        element = {
-          <ProtectedRoute>
-            <FullMainScreen />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path = "/Calendar"
-        element = {
-          <ProtectedRoute>
-            <FullMainScreen />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path = "/History"
-        element = {
-          <ProtectedRoute>
-            <FullMainScreen />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path = "/Mypage"
-        element = {
-          <ProtectedRoute>
-            <FullMainScreen />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path = "/Admin"
-        element = {
-          <AdminRoute>
-            <AdminScreen />
-          </AdminRoute>
-        }
-      />
-    </Routes>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Routes>
+          <Route path = "/" element = {<StartPageBeforeLogin />} />
+          <Route
+            path = "/SignUp"
+            element = {
+              <ProtectedRoute>
+                <SignUpScreen />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            element = {
+              <ProtectedRoute>
+                <AppShell />
+              </ProtectedRoute>
+            }
+          >
+            <Route
+              path = "/Start"
+              element = {<StartPageAfterLogin />}
+              handle = {{ title: 'Start' } satisfies AppShellHandle}
+            />
+            <Route
+              path = "/MainChat"
+              element = {<MainChatScreen />}
+              handle = {{ title: 'Main Chat', hasRightScreen: true, hasMobileRightPanel: true } satisfies AppShellHandle}
+            />
+            <Route
+              path = "/Simulation"
+              element = {<SimulationScreen />}
+              handle = {{ title: 'Simulation', hasRightScreen: true, hasMobileRightPanel: true } satisfies AppShellHandle}
+            />
+            <Route
+              path = "/Calendar"
+              element = {<CalendarPage />}
+              handle = {{ title: 'Calendar', hasRightScreen: true } satisfies AppShellHandle}
+            />
+            <Route
+              path = "/History"
+              element = {<HistoryScreen />}
+              handle = {{ title: 'History' } satisfies AppShellHandle}
+            />
+            <Route
+              path = "/Mypage"
+              element = {<MypageScreen />}
+              handle = {{ title: 'Mypage' } satisfies AppShellHandle}
+            />
+          </Route>
+          <Route
+            path = "/Admin"
+            element = {
+              <AdminRoute>
+                <AdminScreen />
+              </AdminRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }
 

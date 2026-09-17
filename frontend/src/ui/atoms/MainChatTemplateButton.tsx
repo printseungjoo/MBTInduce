@@ -6,8 +6,9 @@ import DeleteButton from './DeleteButton'
 import EditMainChatQuestionTemplate from './EditMainChatQuestionTemplate'
 
 interface MainChatTemplateButtonProps {
-    id: string;
     content: string;
+    onDelete: () => void;
+    onSubmit: (content: string) => void | Promise<void>;
 }
 
 const MainChatTemplateButtonStyled = styled.button`
@@ -30,30 +31,8 @@ const FlexDiv = styled.div`
     gap: 0.5vw;
 `;
 
-export default function MainChatTemplateButton({ id, content }: MainChatTemplateButtonProps) {
+export default function MainChatTemplateButton({ content, onDelete, onSubmit }: MainChatTemplateButtonProps) {
     const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
-    
-    async function deleteTemplates() {
-        try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/admin/main-chat-question-templates/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                alert(data.message || 'Failed to delete main chat question template');
-                return;
-            }
-            alert('Main chat question template deleted successfully.');
-            window.location.reload();
-        } catch (error) {
-            console.error(error);
-            alert('Server connection failed.');
-        }
-    }
 
     return(
         <>
@@ -61,10 +40,10 @@ export default function MainChatTemplateButton({ id, content }: MainChatTemplate
                 <ContentP> { content } </ContentP>
                 <FlexDiv>
                     <EditButton onClick = {() => setIsEditOpen(true)} />
-                    <DeleteButton onClick = {() => deleteTemplates()}/>
+                    <DeleteButton onClick = { onDelete }/>
                 </FlexDiv>
             </MainChatTemplateButtonStyled>
-            {isEditOpen && <EditMainChatQuestionTemplate id = { id }/>}
+            {isEditOpen && <EditMainChatQuestionTemplate onSubmit = { onSubmit }/>}
         </>
     )
 }

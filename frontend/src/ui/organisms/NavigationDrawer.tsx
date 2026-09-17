@@ -9,9 +9,10 @@ interface NavigationDrawerProps {
     className?: string;
     isOpen: boolean;
     children?: React.ReactNode;
+    id?: string;
 }
 
-const NavigationDrawerStyled = styled.div<{ isOpen: boolean }>`
+const NavigationDrawerStyled = styled.nav<{ isOpen: boolean }>`
     width: 20%;
     height: 100vh;
     background-color: ${({ theme }) => theme.colors.deepPlum};
@@ -40,7 +41,7 @@ const Subtitle = styled.p`
 
 type clickedNameGeneric = 'Start Page' | 'Main Chat' | 'Simulation' | 'Calendar' | 'History' | 'My Page'
 
-export default function NavigationDrawer({ className, isOpen, children }: NavigationDrawerProps) {
+export default function NavigationDrawer({ className, isOpen, children, id }: NavigationDrawerProps) {
     const location = useLocation();
 
     const pathMap: Record<string, clickedNameGeneric> = {
@@ -55,7 +56,7 @@ export default function NavigationDrawer({ className, isOpen, children }: Naviga
     const clickedName = pathMap[location.pathname] ?? 'Main Chat';
 
     return (
-        <NavigationDrawerStyled className = { className } isOpen = { isOpen }>
+        <NavigationDrawerStyled className = { className } isOpen = { isOpen } id = { id } aria-label = 'Main' aria-hidden = { !isOpen }>
             <PaddingLeftWithLine>
                 <FlexDiv>
                     <Title title = 'MBTInduce' />
@@ -63,12 +64,12 @@ export default function NavigationDrawer({ className, isOpen, children }: Naviga
                 </FlexDiv>
                 <Subtitle> MBTI Chat-GPT AI Agent </Subtitle>
             </PaddingLeftWithLine>
-            <PageButton name = '👋🏻 Start Page' clicked = {clickedName === 'Start Page'} text = 'Start' />
-            <PageButton name = '💬 Main Chat' clicked = {clickedName === 'Main Chat'} text = 'MainChat' />
-            <PageButton name = '👥 Simulation' clicked = {clickedName === 'Simulation'} text = 'Simulation' />
-            <PageButton name = '📅 Calendar' clicked = {clickedName === 'Calendar'} text = 'Calendar' />
-            <PageButton name = '📄 History' clicked = {clickedName === 'History'} text = 'History' />
-            <PageButton name = '👤 My Page' clicked = {clickedName === 'My Page'} text = 'Mypage' />
+            <PageButton name = '👋🏻 Start Page' clicked = {clickedName === 'Start Page'} to = '/Start' />
+            <PageButton name = '💬 Main Chat' clicked = {clickedName === 'Main Chat'} to = '/MainChat' />
+            <PageButton name = '👥 Simulation' clicked = {clickedName === 'Simulation'} to = '/Simulation' />
+            <PageButton name = '📅 Calendar' clicked = {clickedName === 'Calendar'} to = '/Calendar' />
+            <PageButton name = '📄 History' clicked = {clickedName === 'History'} to = '/History' />
+            <PageButton name = '👤 My Page' clicked = {clickedName === 'My Page'} to = '/Mypage' />
             <WebsiteIntro content='MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.' />
         </NavigationDrawerStyled>
     )

@@ -1,10 +1,11 @@
 import styled from '@emotion/styled'
-import { useState } from 'react'
 
 interface TwoMbtiProps {
     first: string;
     second: string;
     target: (t: boolean) => void;
+    isFirstSelected: boolean;
+    isSecondSelected: boolean;
 }
 
 const TwoMbtiStyled = styled.div`
@@ -40,23 +41,16 @@ const SecondMbtiStyled = styled.button<{ isSecondSelected: boolean }>`
     width: 50%;
 `;
 
-export default function TwoMbti({ first, second, target }: TwoMbtiProps) {
-    const [isFirstSelected, setIsFirstSelected] = useState<boolean>(false);
-    const [isSecondSelected, setIsSecondSelected] = useState<boolean>(false);
-
+export default function TwoMbti({ first, second, target, isFirstSelected, isSecondSelected }: TwoMbtiProps) {
     return(
         <TwoMbtiStyled>
             <FirstMbtiStyled isFirstSelected = { isFirstSelected } onClick = {() => {
-                setIsFirstSelected(true);
-                setIsSecondSelected(false);
                 target(true);
             }}>
                 { first }
             </FirstMbtiStyled>
             <PurpleLine> | </PurpleLine>
             <SecondMbtiStyled isSecondSelected = { isSecondSelected } onClick = {() => {
-                setIsFirstSelected(false);
-                setIsSecondSelected(true);
                 target(false);
             }}>
                 { second }

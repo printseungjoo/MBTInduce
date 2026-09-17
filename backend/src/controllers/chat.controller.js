@@ -10,8 +10,22 @@ import {
   normalizeMbtiWeights,
 } from "../lib/mbtiPrompt.js";
 import { deleteChatSessionById, updateChatSessionTitle } from "../services/chat.service.js";
-import { getChatCompletion } from "../services/openAiService.js";
+import { getChatCompletion, streamChatCompletion } from "../services/openAiService.js";
 import { validateChatSessionPatchBody } from "../validators/chat.validator.js";
+
+export function initSse(res) {
+  res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no");
+  if (typeof res.flushHeaders === "function") {
+    res.flushHeaders();
+  }
+}
+
+export function writeSse(res, event, data) {
+  res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+}
 
 async function ensureSessionOwner(sessionId, userId) {
   const chatSession = await prisma.chatSession.findFirst({
@@ -153,9 +167,12 @@ export async function patchChatSession(req, res, next) {
 
 /**
  * Shared pipeline for POST .../sessions/:id/messages and frontend-compat POST /api/chat.
+ * @param {{ onDelta?: (text: string) => void, signal?: AbortSignal }} [options]
  * @throws {{ status: number, message: string }}
  */
-export async function postMessageCore(userId, sessionId, body = {}) {
+export async function postMessageCore(userId, sessionId, body = {}, options = {}) {
+  const onDelta = typeof options.onDelta === "function" ? options.onDelta : null;
+  const abortSignal = options.signal;
   const content = body.content ?? body.text;
   const persistMbtiWeights = body.persistMbtiWeights !== false;
 
@@ -366,20 +383,27 @@ export async function postMessageCore(userId, sessionId, body = {}) {
       assistantMessages.push(assistantMessage);
     }
   } else {
-    let assistantReplyText;
+    let assistantReplyText = "";
     try {
-      assistantReplyText = await getChatCompletion(openaiMessages);
+      if (onDelta) {
+        assistantReplyText = await streamChatCompletion(openaiMessages, onDelta, abortSignal);
+      } else {
+        assistantReplyText = await getChatCompletion(openaiMessages);
+      }
     } catch (aiError) {
       assistantReplyText = `[AI response fails] ${aiError?.message || "unknown error"}`;
     }
-    const assistantMessage = await prisma.message.create({
-      data: {
-        chatSessionId: sessionId,
-        role: "ASSISTANT",
-        content: assistantReplyText,
-      },
-    });
-    assistantMessages.push(assistantMessage);
+    const skipAssistant = Boolean(abortSignal?.aborted && !assistantReplyText);
+    if (!skipAssistant) {
+      const assistantMessage = await prisma.message.create({
+        data: {
+          chatSessionId: sessionId,
+          role: "ASSISTANT",
+          content: assistantReplyText,
+        },
+      });
+      assistantMessages.push(assistantMessage);
+    }
   }
 
   await prisma.chatSession.update({
@@ -420,6 +444,63 @@ export async function postMessage(req, res, next) {
       return res.status(error.status).json({ message: error.message });
     }
     next(error);
+  }
+}
+
+export function endSseError(res, next, error) {
+  if (error && typeof error.status === "number" && error.message) {
+    if (!res.headersSent) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    writeSse(res, "error", { message: error.message });
+    res.end();
+    return;
+  }
+  if (!res.headersSent) {
+    return next(error);
+  }
+  writeSse(res, "error", { message: "Internal server error" });
+  res.end();
+}
+
+export async function postMessageStream(req, res, next) {
+  const abortController = new AbortController();
+  const onClose = () => {
+    if (!res.writableEnded) {
+      abortController.abort();
+    }
+  };
+  req.on("close", onClose);
+
+  try {
+    const content = req.body?.content ?? req.body?.text;
+    if (!content || typeof content !== "string") {
+      return res.status(400).json({ message: "content is required" });
+    }
+
+    const chatSession = await ensureSessionOwner(req.params.id, req.user.id);
+    if (!chatSession) {
+      return res.status(404).json({ message: "Chat session not found" });
+    }
+
+    initSse(res);
+    const result = await postMessageCore(req.user.id, req.params.id, req.body || {}, {
+      onDelta: (text) => writeSse(res, "delta", { text }),
+      signal: abortController.signal
+    });
+    if (abortController.signal.aborted || res.writableEnded) {
+      return;
+    }
+    writeSse(res, "done", result);
+    res.end();
+  } catch (error) {
+    if (abortController.signal.aborted) {
+      if (!res.writableEnded) res.end();
+      return;
+    }
+    endSseError(res, next, error);
+  } finally {
+    req.off("close", onClose);
   }
 }
 

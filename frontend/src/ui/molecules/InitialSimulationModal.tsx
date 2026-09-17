@@ -1,11 +1,12 @@
-import styled from '@emotion/styled'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import GenerateButton from '../atoms/GenerateButton'
 import MakeNewSimulationModal from './MakeNewSimulationModal'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
 import OldSimulationModal from './OldSimulationModal'
+import Modal from './Modal'
 
 interface InitialSimulationRightScreenProps {
     onConfirm: () => void;
@@ -16,37 +17,8 @@ interface InitialSimulationRightScreenProps {
     }) => void;
 }
 
-const InitialSimulationRightScreenStyled = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-`;
-
-const CenterBox = styled.div`
-    width: min(90vw, 36rem);
-    max-height: 85vh;
-    overflow-y: auto;
-    background-color: ${({ theme }) => theme.colors.lightWhite};
-    border-radius: 1rem;
-    padding: 2vh 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-    box-sizing: border-box;
-
-    @media screen and (min-width: 768px) {
-        width: 30vw;
-        padding: 2vh 1vw;
-    }
-`;
-
 export default function InitialSimulationRightScreen({ onConfirm, onSelectHistory }: InitialSimulationRightScreenProps) {
+    const navigate = useNavigate();
     const [showNew, setShowNew] = useState(false);
     const [showOld, setShowOld] = useState(false);
     const goToMakeNewSimulationRightScreen = () => {
@@ -67,13 +39,11 @@ export default function InitialSimulationRightScreen({ onConfirm, onSelectHistor
     }
 
     return (
-        <InitialSimulationRightScreenStyled>
-            <CenterBox>
-                <GenerateButton content = 'Make new' onClick = { goToMakeNewSimulationRightScreen } />
-                <GenerateButton content = 'Bringing up old conversations' onClick = { goToOldSimulationRightScreen } />
-                <CenterPurpleP content = 'You can simulate conversations with a selected MBTI personality. The AI generates dialogue responses as if the selected MBTI personality were participating in the conversation. This feature works like a role-play simulation system.' />
-                <GoBackButton />
-            </CenterBox>
-        </InitialSimulationRightScreenStyled>
+        <Modal onClose = {() => navigate('/Start')}>
+            <GenerateButton content = 'Make new' onClick = { goToMakeNewSimulationRightScreen } />
+            <GenerateButton content = 'Bringing up old conversations' onClick = { goToOldSimulationRightScreen } />
+            <CenterPurpleP content = 'You can simulate conversations with a selected MBTI personality. The AI generates dialogue responses as if the selected MBTI personality were participating in the conversation. This feature works like a role-play simulation system.' />
+            <GoBackButton />
+        </Modal>
     )
 }

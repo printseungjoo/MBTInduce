@@ -1,45 +1,18 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { apiFetch } from '../../api/client'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
 import SelectTime from './SelectTime'
+import Modal from './Modal'
 
 interface EditScheduleProps {
     content: string;
     target: string;
     id: string;
 }
-
-const EditScheduleModalStyled = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-`;
-
-const CenterBox = styled.div`
-    width: min(90vw, 36rem);
-    max-height: 85vh;
-    overflow-y: auto;
-    background-color: ${({ theme }) => theme.colors.lightWhite};
-    border-radius: 1rem;
-    padding: 2vh 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-    box-sizing: border-box;
-
-    @media screen and (min-width: 768px) {
-        width: 30vw;
-        padding: 2vh 1vw;
-    }
-`;
 
 const ScheduleTextArea = styled.textarea`
     width: 98%;
@@ -69,26 +42,19 @@ const SubmitButton = styled.button<{isValid: boolean}>`
 `;
 
 export default function EditSchedule({ target, id }: EditScheduleProps) {
+    const navigate = useNavigate();
     const [changedContent, setChangedContent] = useState<string>('');
     const [selectedDate, setSelectedDate] = useState<string>('');
     const [selectedTime, setSelectedTime] = useState<string>('');
 
     async function editTitle(title: string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent/${id}`, {
+            const data = await apiFetch<{ session: unknown }>(`/api/calendarEvent/${id}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     title: title
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch schedule title');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);
@@ -97,20 +63,12 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
 
     async function editStart(start: Date | string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent/${id}`, {
+            const data = await apiFetch<{ session: unknown }>(`/api/calendarEvent/${id}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     startAt: start instanceof Date ? start.toISOString() : start
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch start schedule');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);
@@ -119,20 +77,12 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
 
     async function editEnd(end: Date | string) {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/calendarEvent/${id}`, {
+            const data = await apiFetch<{ session: unknown }>(`/api/calendarEvent/${id}`, {
                 method: 'PATCH',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
+                body: {
                     endAt: end instanceof Date ? end.toISOString() : end
-                })
+                }
             });
-            if (!response.ok) {
-                throw new Error('Failed to patch end schedule');
-            }
-            const data = await response.json();
             return data.session;
         } catch (error) {
             console.error(error);
@@ -173,15 +123,13 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
     };
 
     return (
-        <EditScheduleModalStyled>
-            <CenterBox>
-                <CenterPurpleP content = 'If you want to modify what you selected, please write down the content here.' />
-                {target === 'title' ? (<ScheduleTextArea value = { changedContent } onChange={(e) => setChangedContent(e.target.value)}/>
-                ) : (<input type = "date" value = { selectedDate } onChange = {(e) => setSelectedDate(e.target.value)}/>)}
-                {selectedDate && (<SelectTime date = { selectedDate } onTimeChange = { setSelectedTime } showDateLabel = { false }/>)}
-                <GoBackButton />
-                <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
-            </CenterBox>
-        </EditScheduleModalStyled>
+        <Modal onClose = {() => navigate('/Start')}>
+            <CenterPurpleP content = 'If you want to modify what you selected, please write down the content here.' />
+            {target === 'title' ? (<ScheduleTextArea value = { changedContent } onChange={(e) => setChangedContent(e.target.value)}/>
+            ) : (<input type = "date" value = { selectedDate } onChange = {(e) => setSelectedDate(e.target.value)}/>)}
+            {selectedDate && (<SelectTime date = { selectedDate } onTimeChange = { setSelectedTime } showDateLabel = { false }/>)}
+            <GoBackButton />
+            <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
+        </Modal>
     )
 }

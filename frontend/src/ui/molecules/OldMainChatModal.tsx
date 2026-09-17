@@ -1,55 +1,19 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { apiFetch } from '../../api/client'
+import type { ChatSession } from '../../types/chat'
 import GoBackButton from '../atoms/GoBackButton'
 import OldMainChatButton from '../atoms/OldMainChatButton'
+import ListSkeleton from './ListSkeleton'
+import StatusMessage from './StatusMessage'
+import Modal from './Modal'
 
 interface OldMainChatModalProps {
     onConfirm: () => void;
     onSelectHistory: (history: ChatSession) => void;
 }
-
-interface ChatSession {
-    id: string;
-    userId: string;
-    title: string | null;
-    isArchived: boolean;
-    createdAt: string;
-    updatedAt: string;
-    _count: {
-        messages: number;
-    };
-}
-
-const OldMainChatModalStyled = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 3;
-`;
-
-const CenterBox = styled.div`
-    width: min(90vw, 36rem);
-    max-height: 85vh;
-    overflow-y: auto;
-    background-color: ${({ theme }) => theme.colors.lightWhite};
-    border-radius: 1rem;
-    padding: 2vh 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5vh;
-    box-sizing: border-box;
-
-    @media screen and (min-width: 768px) {
-        width: 50vw;
-        padding: 2vh 1vw;
-    }
-`;
 
 const NoChatText = styled.p`
     color: ${({ theme }) => theme.colors.deepPlum};
@@ -58,8 +22,10 @@ const NoChatText = styled.p`
 `;
 
 export default function OldMainChatModal({ onConfirm, onSelectHistory }: OldMainChatModalProps) {
+    const navigate = useNavigate();
     const [remove, setRemove] = useState<boolean>(false);
-    const [chatSessions, setChatSessions] = useState<ChatSession[] | null>(null);
+    const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+    const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
     const removeModal = () => {
         setRemove(true);
@@ -76,35 +42,37 @@ export default function OldMainChatModal({ onConfirm, onSelectHistory }: OldMain
     }, []);
 
     async function getChatSessions() {
+        setStatus('loading');
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/chatMessage/sessions`, {
-                method: 'GET',
-                credentials: 'include',
-            });
-            if (!response.ok) {
-                throw new Error('Failed to get chat sessions');
-            }
-            const data = await response.json();
+            const data = await apiFetch<{ sessions: ChatSession[] }>('/api/chatMessage/sessions');
             const mainOnlySessions = data.sessions.filter((session: ChatSession) => !session.title?.startsWith('simulation:'));
             setChatSessions(mainOnlySessions);
+            setStatus('ready');
         } catch (error) {
             console.error(error);
+            setStatus('error');
         }
     }
 
     return (
         <>
-            {!remove && <OldMainChatModalStyled>
-                <CenterBox>
-                    {chatSessions?.length === 0 ? ( <NoChatText> There is no chat room left </NoChatText>) : 
-                        (chatSessions?.map((c, index) => (
-                            <div key = { index } onClick = {() => clickHistory(c)}>
-                                <OldMainChatButton chatContent = { c.title } />
-                            </div>
-                    )))}
+            {!remove && (
+                <Modal desktopWidth = '50vw' onClose = {() => navigate('/Start')}>
+                {status === 'loading' && <ListSkeleton count = { 2 } />}
+                {status === 'error' && (
+                    <StatusMessage message = 'Could not load chat rooms.' onRetry = { getChatSessions } />
+                )}
+                {status === 'ready' && chatSessions.length === 0 && (
+                    <NoChatText> There is no chat room left </NoChatText>
+                )}
+                {status === 'ready' && chatSessions.map((c) => (
+                    <div key = { c.id } onClick = {() => clickHistory(c)}>
+                        <OldMainChatButton chatContent = { c.title } />
+                    </div>
+                ))}
                     <GoBackButton />
-                </CenterBox>
-            </OldMainChatModalStyled>}
+                </Modal>
+            )}
         </>
     )
 }

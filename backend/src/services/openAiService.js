@@ -49,6 +49,90 @@ export async function getChatCompletion(messages) {
   return text.trim();
 }
 
+function isAbortError(error) {
+  return Boolean(
+    error?.name === "CanceledError" ||
+      error?.name === "AbortError" ||
+      error?.code === "ERR_CANCELED"
+  );
+}
+
+/**
+ * @param {Array<{ role: string; content: string }>} messages
+ * @param {(text: string) => void} onDelta
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<string>}
+ */
+export async function streamChatCompletion(messages, onDelta, signal) {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY is not configured");
+  }
+
+  const model = getModel();
+  const temperature = Number(process.env.OPENAI_TEMPERATURE);
+  const maxTokensRaw = process.env.OPENAI_MAX_TOKENS;
+
+  const response = await axios.post(
+    OPENAI_URL,
+    {
+      model,
+      messages,
+      stream: true,
+      temperature: Number.isFinite(temperature) ? temperature : 0.7,
+      ...(maxTokensRaw ? { max_tokens: Number(maxTokensRaw) } : { max_tokens: 1024 })
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        Accept: "text/event-stream"
+      },
+      responseType: "stream",
+      timeout: 120000,
+      signal
+    }
+  );
+
+  let buffer = "";
+  let fullText = "";
+
+  try {
+    for await (const chunk of response.data) {
+      buffer += chunk.toString("utf8");
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith("data:")) continue;
+        const payload = trimmed.slice(5).trim();
+        if (!payload || payload === "[DONE]") continue;
+        let parsed;
+        try {
+          parsed = JSON.parse(payload);
+        } catch {
+          continue;
+        }
+        const piece = parsed?.choices?.[0]?.delta?.content;
+        if (typeof piece === "string" && piece) {
+          fullText += piece;
+          onDelta(piece);
+        }
+      }
+    }
+  } catch (error) {
+    if (isAbortError(error) || signal?.aborted) {
+      return fullText;
+    }
+    throw error;
+  }
+
+  if (!fullText) {
+    throw new Error("OpenAI returned empty content");
+  }
+  return fullText.trim();
+}
+
 /**
  * Chat Completions with JSON object output (for structured parsing).
  * @param {Array<{ role: string; content: string }>} messages
