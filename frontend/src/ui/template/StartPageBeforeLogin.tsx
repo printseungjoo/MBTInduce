@@ -83,6 +83,11 @@ const GenerateButtonPlus = styled(GenerateButton)`
 `;
 
 export default function StartPageBeforeLogin() {
+    function googleAuthUrl(mode: 'login' | 'signup') {
+        const next = encodeURIComponent(window.location.origin);
+        return apiUrl(`/auth/google?mode=${mode}&next=${next}`);
+    }
+
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const error = params.get('error');
@@ -94,16 +99,16 @@ export default function StartPageBeforeLogin() {
         if (error === 'not_registered') {
             window.alert("You don't have an account yet. Please sign up first.");
             window.history.replaceState({}, '', window.location.pathname);
-            window.location.href = apiUrl('/auth/google?mode=signup');
+            window.location.href = googleAuthUrl('signup');
         }
     }, []);
 
     const goToGoogleSignUp = () => {
-        window.location.href = apiUrl('/auth/google?mode=signup');
+        window.location.href = googleAuthUrl('signup');
     };
 
     const goToGoogleLogin = () => {
-        window.location.href = apiUrl('/auth/google?mode=login');
+        window.location.href = googleAuthUrl('login');
     };
 
     return(

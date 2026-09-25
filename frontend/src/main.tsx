@@ -5,7 +5,6 @@ import App from './App.tsx'
 import { ThemeProvider } from '@emotion/react'
 import { theme } from './styles/theme'
 import { GlobalStyle } from './styles/GlobalStyle'
-import { BrowserRouter } from 'react-router-dom'
 
 declare global {
   interface Window {
@@ -15,11 +14,9 @@ declare global {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <App />
-      </ThemeProvider>
-    </BrowserRouter>
+    <ThemeProvider theme = { theme }>
+      <GlobalStyle />
+      <App />
+    </ThemeProvider>
   </StrictMode>
 )

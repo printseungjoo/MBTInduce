@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { useEffect, useMemo, useState } from 'react'
 import type { Dispatch, SetStateAction } from 'react'
-import { NavLink, Outlet, useLocation, useMatches, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 import NavigationDrawer from '../organisms/NavigationDrawer'
 import Hamburger from '../atoms/Hamburger'
@@ -132,17 +132,18 @@ const MobileBottomNavItem = styled(NavLink)`
     }
 `;
 
+const APP_SHELL_HANDLES: Record<string, AppShellHandle> = {
+    '/Start': { title: 'Start' },
+    '/MainChat': { title: 'Main Chat', hasRightScreen: true, hasMobileRightPanel: true },
+    '/Simulation': { title: 'Simulation', hasRightScreen: true, hasMobileRightPanel: true },
+    '/Calendar': { title: 'Calendar', hasRightScreen: true },
+    '/History': { title: 'History' },
+    '/Mypage': { title: 'Mypage' }
+}
+
 function useAppShellHandle() {
-    const matches = useMatches();
-    return useMemo(() => {
-        for (let index = matches.length - 1; index >= 0; index -= 1) {
-            const handle = matches[index].handle as AppShellHandle | undefined;
-            if (handle?.title) {
-                return handle;
-            }
-        }
-        return { title: '' } satisfies AppShellHandle;
-    }, [matches]);
+    const { pathname } = useLocation();
+    return useMemo(() => APP_SHELL_HANDLES[pathname] ?? { title: '' }, [pathname]);
 }
 
 export default function AppShell() {

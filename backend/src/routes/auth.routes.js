@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { passport } from "../config/passport.js";
 import {
+  clientOriginFromNext,
   deleteMyAccount,
   handleGoogleCallbackFailure,
   handleGoogleCallbackSuccess,
@@ -19,29 +20,38 @@ function ensureGoogleOAuthConfigured(req, res, next) {
 
 router.get("/google", ensureGoogleOAuthConfigured, (req, res, next) => {
   const mode = req.query.mode === "login" ? "login" : "signup";
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-    prompt: "select_account",
-    state: mode,
-  })(req, res, next);
+  if (typeof req.query.next === "string") {
+    req.session.oauthNext = req.query.next;
+  }
+  req.session.save((saveErr) => {
+    if (saveErr) {
+      return next(saveErr);
+    }
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
+      prompt: "select_account",
+      state: mode,
+    })(req, res, next);
+  });
 });
 
 router.get("/google/callback", ensureGoogleOAuthConfigured, (req, res, next) => {
+  const origin = clientOriginFromNext(req.session?.oauthNext);
   passport.authenticate("google", (err, user) => {
     if (err) {
       console.error("Google OAuth error:", err);
       console.error("Google OAuth error message:", err.message);
 
       if (err.message === "Account already registered") {
-        return res.redirect("https://www.mbtinduce.com/?error=already_registered");
+        return res.redirect(`${origin}/?error=already_registered`);
       }
       if (err.message === "Account not registered") {
-        return res.redirect("https://www.mbtinduce.com/?error=not_registered");
+        return res.redirect(`${origin}/?error=not_registered`);
       }
-      return res.redirect("https://www.mbtinduce.com/?error=oauth_failed");
+      return res.redirect(`${origin}/?error=oauth_failed`);
     }
     if (!user) {
-      return res.redirect("https://www.mbtinduce.com/?error=oauth_failed");
+      return res.redirect(`${origin}/?error=oauth_failed`);
     }
     req.login(user, (loginErr) => {
       if (loginErr) {

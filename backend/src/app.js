@@ -33,6 +33,14 @@ const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
   .map((o) => o.trim())
   .filter(Boolean);
 
+if (process.env.NODE_ENV !== "production") {
+  for (const localOrigin of ["http://localhost:5173", "http://127.0.0.1:5173"]) {
+    if (!allowedOrigins.includes(localOrigin)) {
+      allowedOrigins.push(localOrigin);
+    }
+  }
+}
+
 app.use(helmet());
 app.use(
   cors({

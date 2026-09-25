@@ -18,17 +18,47 @@ export function clearAuthSession(req, res) {
   });
 }
 
+function clientOrigins() {
+  const origins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  for (const localOrigin of ["http://localhost:5173", "http://127.0.0.1:5173"]) {
+    if (!origins.includes(localOrigin)) {
+      origins.push(localOrigin);
+    }
+  }
+  return origins;
+}
+
+export function clientOriginFromNext(next) {
+  try {
+    const origin = new URL(next).origin;
+    if (clientOrigins().includes(origin)) {
+      return origin;
+    }
+  } catch {
+  }
+  const fallback = process.env.AUTH_SUCCESS_REDIRECT || process.env.CLIENT_ORIGIN || "http://localhost:5173";
+  try {
+    return new URL(fallback).origin;
+  } catch {
+    return "http://localhost:5173";
+  }
+}
+
 export async function handleGoogleCallbackSuccess(req, res) {
-  const defaultUrl = process.env.AUTH_SUCCESS_REDIRECT || "http://localhost:5173";
-  const signupUrl = process.env.AUTH_SIGNUP_REDIRECT || `${defaultUrl.replace(/\/$/, "")}/SignUp`;
-  const adminUrl = process.env.AUTH_ADMIN_SUCCESS_REDIRECT || `${defaultUrl.replace(/\/$/, "")}/Admin`;
+  const origin = clientOriginFromNext(req.session?.oauthNext);
+  if (req.session) {
+    delete req.session.oauthNext;
+  }
   if (req.user?.role === "ADMIN") {
-    return res.redirect(adminUrl);
+    return res.redirect(`${origin}/Admin`);
   }
   if (req.user && req.user.onboardingCompleted === false) {
-    return res.redirect(signupUrl);
+    return res.redirect(`${origin}/SignUp`);
   }
-  return res.redirect(defaultUrl);
+  return res.redirect(`${origin}/Start`);
 }
 
 export async function handleGoogleCallbackFailure(req, res) {
