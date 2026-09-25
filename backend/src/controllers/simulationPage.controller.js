@@ -34,6 +34,9 @@ export async function postChatMessageHandler(req, res, next) {
     if (!content || typeof content !== "string") {
       return res.status(400).json({ message: "content is required" });
     }
+    if (content.length > 4000) {
+      return res.status(400).json({ message: "content must be at most 4000 characters" });
+    }
     if (rate !== undefined && typeof rate !== "number") {
       return res.status(400).json({ message: "rate must be number" });
     }

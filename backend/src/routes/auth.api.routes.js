@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { requireAuth } from "../middlewares/requireAuth.js";
+import { authRateLimit } from "../middlewares/rateLimit.js";
 import { deleteMyAccount } from "../controllers/auth.controller.js";
 import {
   getAuthMe,
@@ -10,8 +11,8 @@ import {
 
 const router = Router();
 
-router.post("/signup", postSignup);
-router.post("/login", postLogin);
+router.post("/signup", authRateLimit, postSignup);
+router.post("/login", authRateLimit, postLogin);
 router.post("/logout", requireAuth, postApiLogout);
 router.get("/me", requireAuth, getAuthMe);
 router.delete("/withdraw", requireAuth, deleteMyAccount);

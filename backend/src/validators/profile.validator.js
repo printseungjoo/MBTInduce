@@ -30,6 +30,7 @@ export function validateProfilePatchBody(body) {
     if (typeof raw.nickname !== "string") return bad("nickname must be a string");
     nickname = raw.nickname.trim();
     if (!nickname) return bad("nickname must not be empty");
+    if (nickname.length > 40) return bad("nickname must be at most 40 characters");
   }
 
   if (hasMbti) {

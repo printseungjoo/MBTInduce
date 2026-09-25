@@ -7,12 +7,13 @@ import {
   postMainChatFlatStream
 } from "../controllers/chat.compat.controller.js";
 import { requireAuth } from "../middlewares/requireAuth.js";
+import { chatRateLimit } from "../middlewares/rateLimit.js";
 
 const router = Router();
 
 router.get("/", requireAuth, getMainChatFlat);
-router.post("/stream", requireAuth, postMainChatFlatStream);
-router.post("/", requireAuth, postMainChatFlat);
+router.post("/stream", requireAuth, chatRateLimit, postMainChatFlatStream);
+router.post("/", requireAuth, chatRateLimit, postMainChatFlat);
 router.delete("/", requireAuth, deleteMainChatFlat);
 router.patch("/:messageId", requireAuth, patchMainChatMessageRate);
 

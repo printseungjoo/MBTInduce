@@ -3,20 +3,40 @@ import connectPgSimple from "connect-pg-simple";
 
 const PgSession = connectPgSimple(session);
 
+const WEAK_SESSION_SECRETS = new Set([
+  "",
+  "dev-session-secret",
+  "replace_this_with_random_secret"
+]);
+
+export function sessionCookieOptions() {
+  const isProd = process.env.NODE_ENV === "production";
+  return {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: "lax",
+    path: "/"
+  };
+}
+
 export function createSessionMiddleware() {
   const isProd = process.env.NODE_ENV === "production";
+  const secret = process.env.SESSION_SECRET || "";
+
+  if (isProd && WEAK_SESSION_SECRETS.has(secret)) {
+    throw new Error("SESSION_SECRET must be a strong value in production");
+  }
+
   const sessionOptions = {
     name: "mbtinduce.sid",
-    secret: process.env.SESSION_SECRET || "dev-session-secret",
+    secret: secret || "dev-session-secret",
     resave: false,
     saveUninitialized: false,
     proxy: isProd,
     cookie: {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? "none" : "lax",
-      maxAge: 1000 * 60 * 60 * 24 * 14,
-    },
+      ...sessionCookieOptions(),
+      maxAge: 1000 * 60 * 60 * 24 * 7
+    }
   };
 
   if (!process.env.DATABASE_URL) {

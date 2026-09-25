@@ -179,6 +179,9 @@ export async function postMessageCore(userId, sessionId, body = {}, options = {}
   if (!content || typeof content !== "string") {
     throw { status: 400, message: "content is required" };
   }
+  if (content.length > 4000) {
+    throw { status: 400, message: "content must be at most 4000 characters" };
+  }
 
   const chatSession = await ensureSessionOwner(sessionId, userId);
   if (!chatSession) {

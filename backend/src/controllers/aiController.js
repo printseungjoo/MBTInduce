@@ -8,6 +8,9 @@ export async function postAiRespond(req, res, next) {
     if (!message || typeof message !== "string") {
       return res.status(400).json({ message: "Field 'message' is required" });
     }
+    if (message.length > 4000) {
+      return res.status(400).json({ message: "message must be at most 4000 characters" });
+    }
 
     const traitsArray = Array.isArray(traits) ? traits : [];
     const prompt = buildPrompt(message, traitsArray);
@@ -29,8 +32,14 @@ export async function postAiCompare(req, res, next) {
 
     if (!messageA || !messageB) {
       return res.status(400).json({
-        message: "Fields 'messageA' and 'messageB' are required",
+        message: "Fields 'messageA' and 'messageB' are required"
       });
+    }
+    if (typeof messageA !== "string" || typeof messageB !== "string") {
+      return res.status(400).json({ message: "messageA and messageB must be strings" });
+    }
+    if (messageA.length > 4000 || messageB.length > 4000) {
+      return res.status(400).json({ message: "messages must be at most 4000 characters" });
     }
 
     const traitsArray = Array.isArray(traits) ? traits : [];

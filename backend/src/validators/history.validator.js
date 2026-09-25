@@ -22,6 +22,7 @@ export function parseHistoryListQuery(query) {
   let search;
   if (raw.search !== undefined && raw.search !== null && String(raw.search).trim() !== "") {
     search = String(raw.search).trim();
+    if (search.length > 100) return bad("search must be at most 100 characters");
   }
 
   let limit = 20;
@@ -46,14 +47,17 @@ export function validateHistoryCreateBody(body) {
 
   const title = typeof raw.title === "string" ? raw.title.trim() : "";
   if (!title) return bad("title is required");
+  if (title.length > 200) return bad("title must be at most 200 characters");
 
   const content = typeof raw.content === "string" ? raw.content : "";
   if (!content.trim()) return bad("content is required");
+  if (content.length > 20000) return bad("content must be at most 20000 characters");
 
   let preview = null;
   if (raw.preview !== undefined && raw.preview !== null) {
     if (typeof raw.preview !== "string") return bad("preview must be a string");
     preview = raw.preview.trim() || null;
+    if (preview && preview.length > 500) return bad("preview must be at most 500 characters");
   }
 
   let mbti = null;

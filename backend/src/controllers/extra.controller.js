@@ -6,6 +6,12 @@ export async function createRating(req, res, next) {
     if (!chatSessionId || typeof score !== "number") {
       return res.status(400).json({ message: "chatSessionId and numeric score are required" });
     }
+    if (!Number.isInteger(score) || score < 1 || score > 5) {
+      return res.status(400).json({ message: "score must be an integer 1–5" });
+    }
+    if (comment !== undefined && comment !== null && (typeof comment !== "string" || comment.length > 500)) {
+      return res.status(400).json({ message: "comment must be at most 500 characters" });
+    }
 
     const owned = await prisma.chatSession.findFirst({
       where: { id: chatSessionId, userId: req.user.id },
@@ -26,6 +32,9 @@ export async function createFeedback(req, res, next) {
     const { content, category } = req.body || {};
     if (!content || typeof content !== "string") {
       return res.status(400).json({ message: "content is required" });
+    }
+    if (content.length > 2000) {
+      return res.status(400).json({ message: "content must be at most 2000 characters" });
     }
 
     const feedback = await prisma.feedback.create({

@@ -5,9 +5,11 @@ import {
   deleteMyAccount,
   handleGoogleCallbackFailure,
   handleGoogleCallbackSuccess,
-  logout,
+  logout
 } from "../controllers/auth.controller.js";
+import { parseAllowedClientOrigin } from "../lib/origins.js";
 import { requireAuth } from "../middlewares/requireAuth.js";
+import { authRateLimit } from "../middlewares/rateLimit.js";
 
 const router = Router();
 
@@ -18,10 +20,11 @@ function ensureGoogleOAuthConfigured(req, res, next) {
   return next();
 }
 
-router.get("/google", ensureGoogleOAuthConfigured, (req, res, next) => {
+router.get("/google", authRateLimit, ensureGoogleOAuthConfigured, (req, res, next) => {
   const mode = req.query.mode === "login" ? "login" : "signup";
-  if (typeof req.query.next === "string") {
-    req.session.oauthNext = req.query.next;
+  const nextOrigin = parseAllowedClientOrigin(req.query.next);
+  if (nextOrigin) {
+    req.session.oauthNext = nextOrigin;
   }
   req.session.save((saveErr) => {
     if (saveErr) {

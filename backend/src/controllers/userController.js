@@ -26,12 +26,36 @@ export async function getMe(req, res, next) {
 export async function patchMe(req, res, next) {
   try {
     const { nickname, profileImage } = req.body || {};
+    let nextNickname;
+    let nextProfileImage;
+
+    if (typeof nickname === "string") {
+      nextNickname = nickname.trim();
+      if (!nextNickname || nextNickname.length > 40) {
+        return res.status(400).json({ message: "nickname must be 1–40 characters" });
+      }
+    }
+
+    if (typeof profileImage === "string") {
+      if (profileImage.length > 500) {
+        return res.status(400).json({ message: "profileImage is too long" });
+      }
+      try {
+        const imageUrl = new URL(profileImage);
+        if (imageUrl.protocol !== "https:") {
+          return res.status(400).json({ message: "profileImage must be an https URL" });
+        }
+        nextProfileImage = imageUrl.href;
+      } catch {
+        return res.status(400).json({ message: "profileImage must be a valid URL" });
+      }
+    }
 
     const updated = await prisma.user.update({
       where: { id: req.user.id },
       data: {
-        nickname: typeof nickname === "string" ? nickname : undefined,
-        profileImage: typeof profileImage === "string" ? profileImage : undefined,
+        nickname: nextNickname,
+        profileImage: nextProfileImage
       },
       select: {
         id: true,

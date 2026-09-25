@@ -1,4 +1,6 @@
 import { prisma } from "../lib/prisma.js";
+import { fallbackClientOrigin, parseAllowedClientOrigin } from "../lib/origins.js";
+import { sessionCookieOptions } from "../config/session.js";
 
 /** Ends Passport session, destroys express-session store row, clears cookie. */
 export function clearAuthSession(req, res) {
@@ -11,40 +13,15 @@ export function clearAuthSession(req, res) {
         if (sessionError) {
           return reject(sessionError);
         }
-        res.clearCookie("mbtinduce.sid");
+        res.clearCookie("mbtinduce.sid", sessionCookieOptions());
         resolve();
       });
     });
   });
 }
 
-function clientOrigins() {
-  const origins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean);
-  for (const localOrigin of ["http://localhost:5173", "http://127.0.0.1:5173"]) {
-    if (!origins.includes(localOrigin)) {
-      origins.push(localOrigin);
-    }
-  }
-  return origins;
-}
-
 export function clientOriginFromNext(next) {
-  try {
-    const origin = new URL(next).origin;
-    if (clientOrigins().includes(origin)) {
-      return origin;
-    }
-  } catch {
-  }
-  const fallback = process.env.AUTH_SUCCESS_REDIRECT || process.env.CLIENT_ORIGIN || "http://localhost:5173";
-  try {
-    return new URL(fallback).origin;
-  } catch {
-    return "http://localhost:5173";
-  }
+  return parseAllowedClientOrigin(next) || fallbackClientOrigin();
 }
 
 export async function handleGoogleCallbackSuccess(req, res) {
@@ -62,8 +39,7 @@ export async function handleGoogleCallbackSuccess(req, res) {
 }
 
 export async function handleGoogleCallbackFailure(req, res) {
-  const redirectUrl = process.env.AUTH_FAILURE_REDIRECT || "http://localhost:5173/login?error=oauth_failed";
-  return res.redirect(redirectUrl);
+  return res.redirect(`${fallbackClientOrigin()}/?error=oauth_failed`);
 }
 
 export async function logout(req, res, next) {

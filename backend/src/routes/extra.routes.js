@@ -16,8 +16,8 @@ const router = Router();
 
 router.post("/ratings", requireAuth, createRating);
 router.post("/feedback", requireAuth, createFeedback);
-router.get("/templates", getTemplates);
-router.get("/simulation-question-templates", getSimulationQuestionTemplates);
+router.get("/templates", requireAuth, getTemplates);
+router.get("/simulation-question-templates", requireAuth, getSimulationQuestionTemplates);
 
 router.get("/admin/dashboard", requireAuth, requireAdmin, getAdminDashboard);
 router.post("/admin/templates", requireAuth, requireAdmin, createTemplate);

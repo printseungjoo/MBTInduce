@@ -1,6 +1,5 @@
-import { completeLocalSignup } from "./auth.api.controller.js";
 import { getProfilePayloadByUserId, updateProfile } from "../services/profile.service.js";
-import { validateProfilePatchBody, validateProfilePostBody } from "../validators/profile.validator.js";
+import { validateProfilePatchBody } from "../validators/profile.validator.js";
 
 function fail(res, status, message) {
   return res.status(status).json({ success: false, message });
@@ -10,20 +9,8 @@ function ok(res, status, data) {
   return res.status(status).json({ success: true, data });
 }
 
-export async function postProfile(req, res, next) {
-  try {
-    const parsed = validateProfilePostBody(req.body);
-    if (!parsed.ok) {
-      return fail(res, 400, parsed.message);
-    }
-
-    return await completeLocalSignup(req, res, parsed.value);
-  } catch (err) {
-    if (err.statusCode) {
-      return fail(res, err.statusCode, err.message);
-    }
-    next(err);
-  }
+export async function postProfile(req, res) {
+  return fail(res, 405, "Use PATCH /api/profile to update your profile");
 }
 
 export async function getProfile(req, res, next) {

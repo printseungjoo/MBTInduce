@@ -18,8 +18,10 @@ export function validateSignupBody(body) {
 
   if (!password) return bad("password is required");
   if (password.length < 8) return bad("password must be at least 8 characters");
+  if (password.length > 72) return bad("password must be at most 72 characters");
 
   if (!nickname) return bad("nickname is required");
+  if (nickname.length > 40) return bad("nickname must be at most 40 characters");
 
   let mbti = null;
   if (mbtiRaw !== undefined && mbtiRaw !== null) {

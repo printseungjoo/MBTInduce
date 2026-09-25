@@ -1,7 +1,11 @@
 import { prisma } from "../lib/prisma.js";
 
 export async function requireAuth(req, res, next) {
-  if (process.env.NODE_ENV === "development" && process.env.DEV_AUTH_BYPASS === "true") {
+  if (
+    process.env.NODE_ENV === "development" &&
+    process.env.NODE_ENV !== "production" &&
+    process.env.DEV_AUTH_BYPASS === "true"
+  ) {
     if (!req.user) {
       const devUserId = process.env.DEV_AUTH_USER_ID || "dev-bypass-user";
       const devRole = process.env.DEV_AUTH_ROLE || "USER";
