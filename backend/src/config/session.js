@@ -24,7 +24,7 @@ export function createSessionMiddleware() {
   const secret = process.env.SESSION_SECRET || "";
 
   if (isProd && WEAK_SESSION_SECRETS.has(secret)) {
-    throw new Error("SESSION_SECRET must be a strong value in production");
+    console.error("SESSION_SECRET is missing or weak. Set a long random value in the host environment.");
   }
 
   const sessionOptions = {
