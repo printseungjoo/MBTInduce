@@ -1,477 +1,337 @@
 # MBTInduce
 
+> **An interactive AI web service that allows users to adjust MBTI traits and their influence to experience and compare AI responses from different perspectives.**
 
-MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits.  
-Users can choose specific MBTI characteristics and control how strongly those traits influence the AI's answers.
-
-The platform helps users receive responses that match the emotional tone or logical style they want, and also allows them to simulate conversations with specific MBTI personalities.
+[For Korean README, click me!](Documents/KOR-README.md)
 
 ---
 
-## ⚠️ Problem Statement
+## 1. Project Overview
 
-Current AI chat services typically provide responses based on a single generalized model.  
-While this approach works well for many cases, it does not consider that people often want different types of responses depending on their personality or emotional needs.
+MBTInduce is an **interactive AI web service that allows users to adjust the influence of E/I, S/N, T/F, and J/P traits to customize the direction of AI responses**.
 
-For example, some users may prefer empathetic and supportive responses, while others may prefer logical and objective advice. However, most AI systems generate answers without allowing users to control these perspectives.
-
-In addition, people are often curious about how individuals with different personality types might react in certain situations. Existing AI tools do not provide an easy way to simulate conversations or responses based on specific personality traits.
-
-Because of this limitation, users cannot easily:
-
-- Guide the tone or reasoning style of AI responses  
-- Compare answers from different personality perspectives  
-- Simulate conversations with specific personality types  
-
-MBTInduce addresses this problem by allowing users to influence AI responses using MBTI personality traits and simulate interactions from different personality perspectives.
+Centered around MBTI-based AI conversations, the service provides personalized responses, side-by-side comparisons of different perspectives, conversation simulations with specific MBTI personality types, and AI-assisted planning based on the user's schedule.
 
 ---
 
+## 2. Motivation
 
-## 📝 Project Overview
+Even when asking about the same situation, users may prefer different types of responses depending on their needs.
 
+When discussing personal concerns, users may want empathy and emotional support. When solving a problem, they may prefer a logical and practical perspective. Before an important conversation, users may also want to anticipate how someone with a particular personality type might respond.
 
-People often want different types of responses depending on the situation.  
-Sometimes users want emotional comfort, while other times they want realistic or logical advice.
-
-
-Recently, content like **“answering as an F-type personality”** has become popular online because people recognize that communication styles differ depending on personality traits.
-
-
-MBTInduce integrates **MBTI personality concepts with AI responses** so that users can guide the tone and perspective of ChatGPT answers.
-
-
-For example:
-
-
-- A user whose MBTI is **ESFP** might want to understand how someone with **ENTP** would react in a conversation.
-- A user might want to see how different personality perspectives approach the same problem.
-- A user whose MBTI is **ESFJ** might want ChatGPT to plan tightly while a user whose MBTI is **ESFP** does not want to.
-
-
-This service helps users explore their problems from various perspectives, understand others better, and simulate conversations based on MBTI personalities.
-
+MBTInduce was developed around this idea, with the goal of creating **an AI conversation experience where users can actively choose and explore the perspectives they need instead of passively receiving a single predefined perspective**.
 
 ---
 
+## 3. Project Information
 
-# ✨ Features
+| Category | Details |
+| --- | --- |
+| **Project** | MBTInduce |
+| **Team** | 2-person team project |
+| **Development Period** | Mar 2026 – Jun 2026 |
+| **Current Status** | Actively maintained and continuously improved |
+| **Target Users** | Users who want personalized AI conversations and the ability to explore responses from different perspectives |
+| **Responsibilities** | **@printseungjoo** — Planning · UI/UX · Frontend · Refactoring<br>**@jibeomryu** — Planning · Backend · Database · AI Response Logic Design |
+| **Language** | English |
+| **Platform** | Responsive Web |
 
+### Tech Stack
 
-## 1. MBTI Trait-Based Response Induction
-Users can input a question and select specific MBTI traits to influence the AI response.
+**Frontend**  
+React · TypeScript · Vite · React Router · Emotion · React Big Calendar
 
+**Backend & Database**  
+Node.js · Express · PostgreSQL · Prisma
 
-Examples:
-- Select **F** to receive a more empathetic response
-- Select **T + S** for a logical and practical response
+**AI**  
+OpenAI API
 
+**Authentication & Security**  
+Google OAuth · bcrypt · Helmet · CORS
 
-Users can also control the **influence percentage** of each trait using a slider.
+**Deployment**  
+Railway
 
-
-
-
----
-
-
-## 2. Dual Perspective Comparison Mode
-Users can compare answers from two different personality perspectives.
-
-
-Example:
-- F vs T
-- N vs S
-
-
-Both responses appear on the screen simultaneously, allowing users to choose which answer they prefer.
-
-
----
-
-
-## 3. MBTI Conversation Simulation
-Users can simulate conversations with a selected MBTI personality.
-
-
-
-
-The AI generates dialogue responses as if the selected MBTI personality were participating in the conversation.
-
-
-This feature works like a **role-play simulation system**.
-
+**Collaboration**  
+GitHub · Jira · Figma
 
 ---
 
+## 4. Screens & Features
 
-## 4. Smart Planning with Calendar Integration
-When the user asks the ChatGPT to plan, the original ChatGPT's answer is usually answered without knowing the user's existing schedule. With our service, the AI can generate plans while considering the user's calendar.
+Detailed information about the service screens and features is available in the screen specification document below.
 
-
-Users can:
-- Write important existing events in a calendar UI
-- Ask AI to generate schedules
-- Receive plans that avoid original scheduling conflicts
-
+[MBTInduce UI Document (KOR)](https://drive.google.com/file/d/11kU227K9eItTz7KiAYHeTyBycoPvBwxE/view?usp=sharing)
 
 ---
 
+## 5. Key Features
 
-## 5. User MBTI Personalization
-Users can fill out their MBTI in advance.
+### 5-1. MBTI-Based AI Responses
 
+Users can directly adjust the influence of E/I, S/N, T/F, and J/P traits and apply those preferences to AI responses.
 
-If no MBTI traits are manually selected, the AI automatically generates responses that match the user's MBTI personality.
+Rather than simply selecting a predefined MBTI type, MBTInduce provides a **slider interface that allows users to fine-tune the influence of individual personality traits**.
 
+**Examples**
 
----
+- Stronger `F` preference → responses emphasizing empathy and emotional perspectives
+- Stronger `T + S` preferences → responses emphasizing logical and practical perspectives
 
+**Implementation**
 
-## 6. AI Feedback System
-Users can evaluate every response with:
-
-
-- 👍 Like
-- 👎 Dislike
-- Comments
-
-
-These evaluations are used in the admin panel to improve future AI responses.
-
+- Managed values corresponding to E/I, S/N, T/F, and J/P using TypeScript domain types
+- Connected user-adjusted MBTI values to chat requests and passed them to the backend
+- Managed the applied MBTI information alongside AI responses to associate conversation data with response perspectives
 
 ---
 
+### 5-2. Side-by-Side Perspective Comparison
 
-## 7. Google OAuth Login
-Users can log in using their Google account via OAuth authentication.
+Users can **generate and compare AI responses from different MBTI perspectives for the same question**.
 
+Opposing personality dimensions such as `F/T` and `S/N` can be viewed within the same interface, allowing users to examine the same situation from multiple perspectives.
 
----
-
-
-## 8. Conversation Simulation with Media Context Interaction
-Users can upload media files such as exported **KakaoTalk conversation records**.
-
-
-The AI analyzes these records to gain contextual understanding before running a simulation, producing more realistic responses.
-
+Instead of relying on a single AI response, users can **directly compare different perspectives and choose the response that best fits their needs**.
 
 ---
 
+### 5-3. MBTI-Based Conversation Simulation
 
-## 9. Question Template Library
-A sidebar provides commonly used question templates to help users quickly start conversations.
+Users can simulate conversations with someone who has a specific MBTI personality type.
 
+After configuring the other person's MBTI type and the conversation scenario, users can interact with an AI that responds according to the selected personality traits.
 
----
+**Implementation**
 
-
-## 10. MBTI Tab Response View
-Users can view responses from all MBTI perspectives.
-
-
-Instead of displaying everything at once, responses are organized into **tabs** for each MBTI dimension.
-
-
-Example:
-- E
-- I
-- S
-- N
-- T
-- F
-- J
-- P
-
+- Managed conversation messages and MBTI data together within the dedicated Simulation screen
+- Associated MBTI information with individual conversation messages
+- Reflected the streaming state in the UI while AI responses were being generated
+- Refactored the frontend architecture so Main Chat and Simulation could share common API and message structures
 
 ---
 
+### 5-4. AI-Assisted Schedule Planning
 
-# 🛠 Admin Features
+Users can register existing events in the Calendar and ask the AI to create new plans based on their current schedule.
 
+To address the limitation of AI generating plans without knowing a user's actual schedule, MBTInduce connects registered calendar information to AI requests.
 
-The admin dashboard provides analytics and management tools.
+**Scheduling Options**
 
+- You can disturb
+- Do not disturb whole day
+- Do not disturb only at this time
 
-### Admin Capabilities
-
-
-- View user feedback on AI responses
-- Monitor the most frequently used templates
-- Track comparison mode usage rate
-- Monitor system error rates
-- Track average response time
-- View total users and number of questions
-- Receive and respond to user inquiries
-
+The Calendar UI is implemented using React Big Calendar.
 
 ---
 
-# 🎯 Goal
+### 5-5. Question Templates
 
+Frequently used questions are provided as templates so that first-time users can quickly start interacting with the AI.
 
-MBTInduce aims to create a new AI interaction experience where users can explore different personality perspectives, improve communication understanding, and receive responses tailored to their preferred emotional or logical style.
+This reduces the need to repeatedly type common questions and helps users easily explore the service's core AI features.
 
 ---
 
-# Instructions for Checking Out the Source Code
+### 5-6. AI Response Feedback
 
-### 1. Clone the Repository
+Users can rate individual AI responses using a star-based feedback system.
 
-Download the project directly from the main branch, or clone it using the command below.
+The collected feedback can be reviewed through the Admin Dashboard, enabling the team to **continuously monitor AI response quality and the overall user experience**.
 
-```bash
-git clone https://github.com/printseungjoo/MBTInduce.git
-```
+---
 
-### 2. Move into the Project Folder
+### 5-7. Admin Dashboard
 
-```bash
-cd MBTInduce
-```
+MBTInduce provides an Admin Dashboard for monitoring service usage and user feedback.
 
-### 3. Install Dependencies
+Administrators can view or manage the following:
 
-Install dependencies for the root project, frontend, and backend.
+- View and edit Question Templates
+- View the total number of users
+- View the total number of questions/messages
+- View the average feedback rating
+- View the number of feedback entries for each rating
 
-```bash
-npm install
+Beyond implementing user-facing features, the service also includes **operational functionality for monitoring service usage and user feedback**.
 
-cd frontend
-npm install
+---
 
-cd ../backend
-npm install
+## 6. Architecture
 
-cd ..
-```
+```text
+                         ┌─────────────────────┐
+                         │        User         │
+                         └──────────┬──────────┘
+                                    │
+                                    ▼
+                      ┌──────────────────────────┐
+                      │    React + TypeScript    │
+                      │         Frontend         │
+                      └────────────┬─────────────┘
+                                   │
+                         REST API / Streaming
+                                   │
+                                   ▼
+                      ┌──────────────────────────┐
+                      │    Node.js + Express     │
+                      │          Backend         │
+                      └───────┬───────┬──────────┘
+                              │       │
+                   ┌──────────┘       └───────────┐
+                   │                              │
+                   ▼                              ▼
+          ┌────────────────┐            ┌────────────────┐
+          │   OpenAI API   │            │  Google OAuth  │
+          └────────────────┘            └────────────────┘
+                   │
+                   │ Streaming Response
+                   │
+                   ▼
+             Frontend UI
 
-### 4. Set Up Environment Variables
 
-Move into the backend folder and create a `.env` file by copying `.env.example`.
-
-```bash
-cd backend
-copy .env.example .env
-```
-
-> Note: For `.env` setup, please follow the instructions in the **Getting Started** section below.
-
-### 5. Set Up the Database
-
-After starting PostgreSQL, run the following commands inside the backend folder.
-
-```bash
-npm run prisma:generate
-npm run prisma:migrate
+                      Node.js + Express
+                              │
+                              ▼
+                        ┌──────────┐
+                        │  Prisma  │
+                        └────┬─────┘
+                             │
+                             ▼
+                     ┌────────────────┐
+                     │   PostgreSQL   │
+                     └────────────────┘
 ```
 
 ---
 
+## 7. Troubleshooting
 
-# ⚙️ Getting Started
+### 7-1. Text Readability Issues in Dark Mode
 
-### 1. Clone the repository
-git clone https://github.com/printseungjoo/MBTInduce.git  
+#### Problem
 
-cd MBTInduce
+During beta testing, a user reported that some text colors were displayed differently than expected in Dark Mode, resulting in insufficient contrast between the text and background.
 
-### 2. Install dependencies
-npm install  
+Text readability varied depending on the user's browser and system theme settings.
 
-cd frontend && npm install  
+#### Analysis
 
-cd ../backend && npm install  
+Some UI elements did not have explicitly defined text colors, causing them to be affected by browser and system-level Dark Mode settings.
 
-cd ..
+As a result, text colors could change in certain environments and fail to maintain sufficient contrast against the existing background.
 
-### 3. Environment Setup
-The backend requires a `.env` file to work properly.
-If you need access to the `.env` file, please request it via email:
-printseungjoo@gmail.com  
+#### Solution
 
-The request will be reviewed before the file is shared.
+Reviewed the Emotion styles and explicitly defined colors for key text elements and UI states.
 
-### 4. Run the project
-From the root directory:
-npm run dev  
+The interface was also tested across different theme environments, including Dark Mode, to ensure that the intended colors and readability were maintained regardless of the user's system settings.
 
-This command runs both frontend and backend simultaneously.
+#### Result
 
-### Local Development
-- Frontend: http://localhost:5173  
-- Backend: http://localhost:4000
+Improved the interface to **maintain consistent text readability across different system themes**.
 
-### Notes
-- PostgreSQL must be running before starting the backend.
-- The backend will not work without a valid `.env` file.
+This experience also provided an opportunity to identify and resolve an environment-dependent UI issue discovered through actual user testing.
 
 ---
 
+### 7-2. Reducing Frontend Complexity as the Service Expanded
 
-# 🔒 Privacy Policy
+#### Problem
 
+As features such as Main Chat, Simulation, Calendar, History, My Page, and Admin were added, the responsibilities of individual components and UI logic became increasingly complex.
 
-To protect user privacy:
+Similar UI and data-handling logic was distributed across multiple screens, requiring several files to be reviewed when modifying a feature and increasing the possibility that changes to one UI could affect another.
 
+#### Analysis
 
-- User questions and AI responses are **not stored permanently**
-- Sensitive user conversations are **not collected or stored**
-- Only anonymous analytics data is used for system improvement
+After reviewing the frontend architecture, several areas for improvement were identified:
 
+- API requests and UI logic were coupled within screen components
+- Main Chat and Simulation contained similar input interfaces
+- Signup and My Page used similar Profile Forms
+- Multiple Modals contained repeated UI structures
+- Frontend domain types were distributed across different locations
+- Main Screen was responsible for multiple features
 
+The issue was identified not as an individual feature problem, but as a **structural problem caused by unclear boundaries between component responsibilities and shared logic**.
 
+#### Solution
 
+The frontend architecture was reorganized based on functionality and responsibility.
 
+- Separated Main Screen into Layout and Route-level responsibilities
+- Introduced a shared frontend API client
+- Centralized domain types
+- Shared the Profile Form between Signup and My Page
+- Shared the input UI between Main Chat and Simulation
+- Extracted repeated Modal structures into a reusable Modal Shell component
+- Reduced duplicated Admin Template Panel structures
+- Separated network calls from UI components
+- Added Error Boundary and Loading State handling
 
+Rather than simply splitting files, the refactoring focused on **redefining responsibilities so that code that changes for the same reason is grouped together**.
 
+#### Result
 
+Clarified the responsibilities of individual screens and shared components, reducing the scope of code that needs to be reviewed when modifying specific features.
 
-
-
-
-
-
-
-
-
-
-
-
----
-
-
-# 🚀 Tech Stack
-
-
-### Frontend
-- React
-- TypeScript
-- Emotion
-
-
-### Backend
-- Node.js
-- AI API Integration
-- Express
-
-### Authentication
-- Google OAuth
-
-
-### AI
-- OpenAI API
-- Prompt Engineering
-- Personality-based response tuning
-
+Shared UI and API handling structures were also made reusable, improving the frontend architecture for future feature additions and UI changes.
 
 ---
 
-### Tools
-- Jira
-- Figma
-- Git / GitHub
+### 7-3. Improving AI Response UX with Streaming
+
+#### Problem
+
+With a conventional request-response approach, users must wait until the AI finishes generating the entire response before seeing the result.
+
+As responses become longer, users may have difficulty determining whether their request is being processed correctly, making the perceived waiting time longer than the actual generation time.
+
+#### Analysis
+
+Because the frontend cannot directly reduce the AI model's generation time, displaying generated content progressively was considered more appropriate for a conversational interface than rendering the entire response only after generation was complete.
+
+Since both Main Chat and Simulation use AI-generated responses, a reusable streaming architecture was required rather than a solution tied to a single screen.
+
+#### Solution
+
+Implemented streaming AI responses so that generated content could be progressively reflected in the frontend.
+
+- Implemented a shared API client for streaming requests
+- Processed `text/event-stream` responses
+- Connected Main Chat to a streaming message endpoint
+- Reused the same streaming architecture in Simulation
+- Managed AI message streaming state separately
+- Incrementally updated existing AI messages as response content arrived
+
+This allowed Main Chat and Simulation to reuse the same streaming mechanism.
+
+#### Result
+
+Improved the user experience by allowing users to **see AI responses as they are generated instead of waiting for the entire response to complete**.
+
+Streaming logic was also separated into a shared API layer, allowing the same implementation to be reused across multiple AI conversation screens.
 
 ---
 
-## 🗣️ Frontend Development Plan
+## 8. API Documentation
 
-| Feature                                              | Description                                                                                               | Estimated Date | Status      |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------: | ----------- |
-| 1. Hamburger / Navigation UI                         | Hamburger menu implementation for logged-in and logged-out users                                          |          ~3/24 | ✅ Completed |
-| 2. Main Chat Page                                    | Chat UI, right screen, templates, and input box                                                           |           ~4/7 | ✅ Completed |
-| 3. Simulation Page                                   | Simulation UI and right-side interaction                                                                  |          ~4/21 | ✅ Completed |
-| 4. Calendar Page                                     | Calendar UI and schedule interaction                                                                      |          ~5/11 | ✅ Completed |
-| 5. History Page                                      | Main chat, simulation, and schedule history                                                               |          ~5/18 | ✅ Completed |
-| 6. Start Page / Sign Up / My Page                    | Sign up flow, profile, nickname, MBTI settings                                                            |          ~5/20 | ✅ Completed |
-| 7. Admin Page                                        | Statistics, rating data, logout functionality                                                             |          ~5/23 | ✅ Completed |
-| 8. Responsive Design                                 | Responsive optimization for start page, main chat, simulation, calendar, history, my page, and admin page |          ~5/26 | ✅ Completed |
-| 9. Testing and Bug Fixing                            | Frontend testing and debugging                                                                            |          ~5/30 | ✅ Completed |
-| 10. Deployment / Analytics / Environment Refactoring | Deployment, analytics integration, and environment refactoring                                            |          ~5/31 | ✅ Completed |
+The API specification is maintained as a separate document to clearly define endpoints, request formats, and response structures between the frontend and backend.
+
+During the two-person development process, the document served as a shared reference to ensure that both frontend and backend development followed consistent request and response specifications.
+
+[MBTInduce API Documentation](https://docs.google.com/document/d/1cfbuPG2nsKaCHA7x5rJtaO5bWX-61feJREjMbKB7Ofo/edit?usp=sharing)
 
 ---
 
-## 🗣️ Backend Development Plan
+## 9. Project Goal
 
-| Feature                        | Description                                                                                 | Estimated Date | Status      |
-| ------------------------------ | ------------------------------------------------------------------------------------------- | -------------: | ----------- |
-| 1. Google Login Implementation | Google OAuth login system implementation                                                    |          ~3/24 | ✅ Completed |
-| 2. Database Setup              | Database schema, variable naming, and API data flow for Main Chat, Simulation, and Calendar |          ~3/24 | ✅ Completed |
-| 3. Main Chat                   | Main chat backend API and logic                                                             |           ~4/7 | ✅ Completed |
-| 4. Simulation                  | Simulation backend API and functionality                                                    |          ~4/21 | ✅ Completed |
-| 5. Calendar                    | Calendar backend API and event handling                                                     |          ~5/11 | ✅ Completed |
-| 6. Sign Up / My Page           | User profile, sign up, and account management                                               |          ~5/19 | ✅ Completed |
-| 7. Administrators Page         | Admin page backend and role-based access                                                    |          ~5/22 | ✅ Completed |
-| 8. AI Service Layer - Tuning   | AI response service tuning and prompt improvements                                          |          ~5/25 | ✅ Completed |
-| 9. Testing                     | Backend testing and debugging                                                               |          ~5/26 | ✅ Completed |
+MBTInduce was developed to go beyond AI providing responses from a single perspective and create an **AI interaction experience where users can directly choose, adjust, and compare the perspectives they want**.
 
-
----
-
-## Bug Tracking System
-
-Our team uses **Jira** as the main bug tracking system for this project.
-
-All outstanding bugs, reported issues, and serious problems are recorded and managed in Jira. Team members can check the current list of bugs, assigned person, and progress through the Jira project board.
-
-If a new bug or issue is found, it should be reported in Jira with the following information:
-
-- Description of the problem
-- issued date
-- Expected behavior
-
-For serious bugs, the issue is generally assigned to a responsible team member, and the required bug-fixing time is managed according to the project milestones and schedule.
-
-Since our team is using Jira instead of GitHub Issues, please refer to our Jira board for the official list of outstanding bugs and bug reports.
-
----
-
-# 📡 API Documentation
-
-[MBTInduce API (Google Doc)](https://docs.google.com/document/d/1cfbuPG2nsKaCHA7x5rJtaO5bWX-61feJREjMbKB7Ofo/edit?usp=sharing)
-
-
----
-
-## 💻 Supported Operating Systems
-
-The setup, build, and testing instructions in this project are intended to work on the operating systems currently used by our team members.
-
-### 🖥️ Supported OS
-
-* Windows 11 (Intel-based systems)
-* Else
-
-These instructions have been written and tested for Windows 11 development environments used by the team.
-
-### ⚙️ Team Development Environment
-
-| Team Member  | Operating System |
-| ------------ | ---------------- |
-| Seungjoo  | Windows 11       |
-| Jibeom    | Windows 11       |
-
-Since all team members use Windows 11, all setup, build, testing, and deployment instructions in this README are optimized for a Windows 11 environment.
-
----
-
-# 🥹 Notification
-
-When running the website, it would feel slow. But everything works well with low speed. Please wait for the process. Also, if something doesn’t work, can you report printseungjoo@gmail.com and jibeom.ryu@stonybrook.edu if you can give us a chance for us to refactor code?
-
----
-
-# 🫱🏻‍🫲🏼 Team
-
-
-### Seungjoo
-- Project Planning
-- Frontend Development  
-- UI / UX Design
-
-
-### Jibeom
-- Project Planning
-- Backend Development
-- AI Model Training & Tuning
+Through MBTI trait adjustment, side-by-side perspective comparison, MBTI-based conversation simulation, and schedule-aware AI planning, MBTInduce aims to provide an experience where users can **actively explore and select the perspectives they need rather than passively accepting a single AI response**.
