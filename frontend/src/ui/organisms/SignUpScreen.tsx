@@ -3,10 +3,10 @@ import styled from '@emotion/styled'
 import ProfileForm from '../molecules/ProfileForm'
 
 const SignUpScreenStyled = styled.div`
+    position: fixed;
+    inset: 0;
     width: 100%;
-    max-width: 100%;
-    height: 100vh;
-    max-height: 100vh;
+    height: 100%;
     overflow: hidden;
     box-sizing: border-box;
     display: flex;

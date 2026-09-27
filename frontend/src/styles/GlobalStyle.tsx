@@ -11,9 +11,12 @@ export function GlobalStyle() {
 
             html, body, #root {
                 width: 100%;
-                min-height: 100vh;
+                max-width: 100%;
+                height: 100%;
+                min-height: 100%;
                 margin: 0;
                 padding: 0;
+                overflow-x: hidden;
                 background-color: ${theme.colors.midnightPurple};
                 font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
             }
