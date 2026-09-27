@@ -1,5 +1,5 @@
 import { prisma } from "../lib/prisma.js";
-import { lettersFromWeights, normalizeMbtiWeights } from "../lib/mbtiPrompt.js";
+import { lettersFromWeights, weightsFromRequestBody } from "../lib/mbtiPrompt.js";
 
 function normalizeLetter(value, allowed, fallback) {
   if (typeof value !== "string") return fallback;
@@ -50,32 +50,21 @@ export async function upsertMyMbti(req, res, next) {
       lifestyle: existing?.lifestyleWeight ?? 50,
     };
 
-    const nextW = normalizeMbtiWeights({
-      energy:
-        mbtiWeights?.energy ??
-        mbtiRange?.eValue ??
-        eValue ??
-        energyWeight ??
-        baseW.energy,
-      information:
-        mbtiWeights?.information ??
-        mbtiRange?.sValue ??
-        sValue ??
-        informationWeight ??
-        baseW.information,
-      decision:
-        mbtiWeights?.decision ??
-        mbtiRange?.fValue ??
-        fValue ??
-        decisionWeight ??
-        baseW.decision,
-      lifestyle:
-        mbtiWeights?.lifestyle ??
-        mbtiRange?.pValue ??
-        pValue ??
-        lifestyleWeight ??
-        baseW.lifestyle,
-    });
+    const nextW = weightsFromRequestBody(
+      {
+        mbtiWeights,
+        mbtiRange,
+        energyWeight,
+        informationWeight,
+        decisionWeight,
+        lifestyleWeight,
+        eValue,
+        sValue,
+        fValue,
+        pValue
+      },
+      baseW
+    );
 
     const derived = lettersFromWeights(nextW);
 

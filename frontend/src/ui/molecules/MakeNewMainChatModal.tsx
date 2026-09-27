@@ -25,8 +25,9 @@ const MainChatTextArea = styled.textarea`
     border: 1px solid ${({ theme }) => theme.colors.paleLavender};
 
     &:focus {
-        border: 1px solid ${({ theme }) => theme.colors.softLavender};
+        border: 1px solid ${({ theme }) => theme.colors.transparent};
         outline: none;
+        box-shadow: none;
     }
 
     @media screen and (max-width: 767px) {

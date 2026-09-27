@@ -30,7 +30,7 @@ export async function getChatCompletion(messages) {
     {
       model,
       messages,
-      temperature: Number.isFinite(temperature) ? temperature : 0.7,
+      temperature: Number.isFinite(temperature) ? temperature : 0.85,
       ...(maxTokensRaw ? { max_tokens: Number(maxTokensRaw) } : { max_tokens: 1024 }),
     },
     {
@@ -79,7 +79,7 @@ export async function streamChatCompletion(messages, onDelta, signal) {
       model,
       messages,
       stream: true,
-      temperature: Number.isFinite(temperature) ? temperature : 0.7,
+      temperature: Number.isFinite(temperature) ? temperature : 0.85,
       ...(maxTokensRaw ? { max_tokens: Number(maxTokensRaw) } : { max_tokens: 1024 })
     },
     {

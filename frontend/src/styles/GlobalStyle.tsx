@@ -29,8 +29,9 @@ export function GlobalStyle() {
             }
 
             input:focus, textarea:focus, select:focus {
-                border: 1px solid ${theme.colors.softLavender};
+                border: 1px solid ${theme.colors.transparent};
                 outline: none;
+                box-shadow: none;
             }
             `}
         />

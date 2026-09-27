@@ -163,7 +163,7 @@ export default function MainChatScreen() {
         const body = {
             content: trimmedValue,
             role: 'user',
-            mbtiRange: { eValue, sValue, fValue, pValue },
+            mbtiRange,
             showBoth,
             pageType: 'main',
             simulationKey: ''

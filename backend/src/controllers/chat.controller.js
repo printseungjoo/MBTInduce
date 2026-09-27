@@ -8,6 +8,7 @@ import {
   MBTI_SYSTEM_PERSONALITY_RULES,
   mbtiToWeightedInstruction,
   normalizeMbtiWeights,
+  weightsFromRequestBody
 } from "../lib/mbtiPrompt.js";
 import { deleteChatSessionById, updateChatSessionTitle } from "../services/chat.service.js";
 import { getChatCompletion, streamChatCompletion } from "../services/openAiService.js";
@@ -210,31 +211,11 @@ export async function postMessageCore(userId, sessionId, body = {}, options = {}
     const baseD = mbti?.decisionWeight ?? 50;
     const baseL = mbti?.lifestyleWeight ?? 50;
 
-    const nextW = normalizeMbtiWeights({
-      energy:
-        body.mbtiWeights?.energy ??
-        body.mbtiRange?.eValue ??
-        body.eValue ??
-        body.energyWeight ??
-        baseE,
-      information:
-        body.mbtiWeights?.information ??
-        body.mbtiRange?.sValue ??
-        body.sValue ??
-        body.informationWeight ??
-        baseI,
-      decision:
-        body.mbtiWeights?.decision ??
-        body.mbtiRange?.fValue ??
-        body.fValue ??
-        body.decisionWeight ??
-        baseD,
-      lifestyle:
-        body.mbtiWeights?.lifestyle ??
-        body.mbtiRange?.pValue ??
-        body.pValue ??
-        body.lifestyleWeight ??
-        baseL,
+    const nextW = weightsFromRequestBody(body, {
+      energy: baseE,
+      information: baseI,
+      decision: baseD,
+      lifestyle: baseL
     });
     const letters = lettersFromWeights(nextW);
 
@@ -310,8 +291,8 @@ export async function postMessageCore(userId, sessionId, body = {}, options = {}
   const recent = history.length > maxTurns ? history.slice(-maxTurns) : history;
 
   const systemContent = [
-    "You are a helpful assistant in an app called MBTInduce.",
-    "Follow the MBTI style guidance below for tone and structure.",
+    "You are a conversational partner in MBTInduce.",
+    "Your personality this turn is the MBTI mix in the profile below, not a generic assistant voice.",
     "",
     "Language rules (strict — highest priority):",
     "- Reply in the same language as the user's latest message in this turn only.",

@@ -62,9 +62,16 @@ const TextInputBoxStyled = styled.input`
     box-sizing: border-box;
     border: none;
     outline: none;
+    box-shadow: none;
     background: ${({ theme }) => theme.colors.transparent};
     font-size: 1rem;
     color: ${({ theme }) => theme.colors.deepBlack};
+
+    &:focus {
+        border: 1px solid ${({ theme }) => theme.colors.transparent};
+        outline: none;
+        box-shadow: none;
+    }
 `;
 
 export default function ChatTextInputBox({ page, onSubmit, disabled = false }: ChatTextInputBoxProps) {
