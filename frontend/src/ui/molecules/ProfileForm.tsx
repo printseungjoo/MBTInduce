@@ -17,9 +17,13 @@ interface ProfileFormProps {
     extraActions?: ReactNode;
 }
 
-const MainContent = styled.div<{ fullViewport: boolean }>`
-    width: ${({ fullViewport }) => fullViewport ? '100vw' : '100%'};
-    height: ${({ fullViewport }) => fullViewport ? '100vh' : '100%'};
+const MainContent = styled.div`
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -54,8 +58,8 @@ const ProfileMbti = styled.div`
 `;
 
 const ProfileLogo = styled.img`
-    width: 13rem;
-    height: 13rem;
+    width: min(13rem, 26vh);
+    height: min(13rem, 26vh);
     object-fit: cover;
     margin-bottom: 1vh;
 `;
@@ -70,16 +74,18 @@ const WriteProfile = styled.div`
     border-radius: 7px;
     background-color: ${({ theme }) => theme.colors.deepPlum};
     box-sizing: border-box;
-    width: min(90vw, 36rem);
-    max-height: 85vh;
+    width: min(90%, 36rem);
+    max-width: 100%;
+    max-height: 100%;
+    overflow-x: hidden;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     padding: 5vh 4vw;
 
     @media screen and (min-width: 768px) {
-        width: 45vw;
-        padding: 2.5vh 1.5vw;
+        width: min(42vw, 32rem);
+        padding: 2vh 1.4vw;
     }
 `;
 
@@ -135,7 +141,7 @@ const SaveButtonPlus = styled(SaveButton)`
     color: ${({ theme }) => theme.colors.fadedWhite};
 `;
 
-export default function ProfileForm({ fullViewport = false, showSavedProfile = false, extraActions }: ProfileFormProps) {
+export default function ProfileForm({ showSavedProfile = false, extraActions }: ProfileFormProps) {
     const [ei, setEi] = useState<EnergyLetter | null>(null);
     const [sn, setSn] = useState<InformationLetter | null>(null);
     const [ft, setFt] = useState<DecisionLetter | null>(null);
@@ -194,7 +200,7 @@ export default function ProfileForm({ fullViewport = false, showSavedProfile = f
     }
 
     return (
-        <MainContent fullViewport = { fullViewport }>
+        <MainContent>
             <ProfileCard>
                 <ProfileLogo src="/ProfileLogo.png" alt="Profile Logo" />
                 {showSavedProfile && <Name> { profileInformation?.nickname } </Name>}
