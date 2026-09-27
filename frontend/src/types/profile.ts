@@ -4,4 +4,5 @@ export type Profile = {
     nickname: string | null;
     mbti: string | null;
     isAdmin?: boolean;
+    onboardingCompleted?: boolean;
 }

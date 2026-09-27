@@ -1,6 +1,6 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
 
-import { AdminRoute, ProtectedRoute } from './auth/ProtectedRoute'
+import { AdminRoute, AuthFallbackRoute, GuestRoute, OnboardingRoute, ProtectedRoute } from './auth/ProtectedRoute'
 import { AuthProvider } from './auth/AuthProvider'
 import type { AppShellHandle } from './ui/template/AppShell'
 import AppShell from './ui/template/AppShell'
@@ -18,13 +18,20 @@ import AdminScreen from './ui/template/AdminScreen'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path = "/" element = {<StartPageBeforeLogin />} />
+      <Route
+        path = "/"
+        element = {
+          <GuestRoute>
+            <StartPageBeforeLogin />
+          </GuestRoute>
+        }
+      />
       <Route
         path = "/SignUp"
         element = {
-          <ProtectedRoute>
+          <OnboardingRoute>
             <SignUpScreen />
-          </ProtectedRoute>
+          </OnboardingRoute>
         }
       />
       <Route
@@ -73,6 +80,7 @@ const router = createBrowserRouter(
           </AdminRoute>
         }
       />
+      <Route path = "*" element = {<AuthFallbackRoute />} />
     </>
   )
 )

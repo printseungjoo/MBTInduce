@@ -10,10 +10,20 @@ type AuthContextValue = {
     status: AuthStatus;
     user: Profile | null;
     isAdmin: boolean;
+    needsOnboarding: boolean;
+    applyUser: (next: Profile) => void;
     clearSession: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+
+function readProfile(data: { data?: Profile } | null | undefined) {
+    const profile = data?.data;
+    if (!profile || typeof profile.id !== 'string' || profile.id.length === 0) {
+        return null;
+    }
+    return profile;
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [status, setStatus] = useState<AuthStatus>('loading');
@@ -26,7 +36,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             try {
                 const data = await apiFetch<{ data: Profile }>('/api/auth/me');
                 if (cancelled) return;
-                setUser(data.data);
+                const profile = readProfile(data);
+                if (!profile) {
+                    setUser(null);
+                    setStatus('unauthenticated');
+                    return;
+                }
+                setUser(profile);
                 setStatus('authenticated');
             } catch {
                 if (cancelled) return;
@@ -41,17 +57,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         };
     }, []);
 
+    const applyUser = useCallback((next: Profile) => {
+        setUser(next);
+        setStatus('authenticated');
+    }, []);
+
     const clearSession = useCallback(() => {
         setUser(null);
         setStatus('unauthenticated');
     }, []);
 
+    const isAdmin = Boolean(user?.isAdmin);
+    const needsOnboarding = Boolean(user) && user?.onboardingCompleted === false && !isAdmin;
+
     const value = useMemo(() => ({
         status,
         user,
-        isAdmin: Boolean(user?.isAdmin),
+        isAdmin,
+        needsOnboarding,
+        applyUser,
         clearSession
-    }), [status, user, clearSession]);
+    }), [status, user, isAdmin, needsOnboarding, applyUser, clearSession]);
 
     return (
         <AuthContext.Provider value = { value }>

@@ -23,6 +23,7 @@ import { adminRouter } from "./routes/admin.routes.js";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler.js";
 import { allowedClientOrigins } from "./lib/origins.js";
 import { rejectDangerousKeys } from "./middlewares/rejectDangerousKeys.js";
+import { isOnboardingExemptApiPath, requireOnboarding } from "./middlewares/requireOnboarding.js";
 
 const app = express();
 app.disable("x-powered-by");
@@ -62,6 +63,13 @@ app.use(passport.session());
 // Test route
 app.get("/", (req, res) => {
   res.status(200).send("MBTInduce Backend Running");
+});
+
+app.use("/api", (req, res, next) => {
+  if (isOnboardingExemptApiPath(req.path)) {
+    return next();
+  }
+  return requireOnboarding(req, res, next);
 });
 
 app.use("/auth", authRouter);

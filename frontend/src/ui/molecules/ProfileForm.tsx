@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
 
 import { apiFetch } from '../../api/client'
+import { useAuth } from '../../auth/AuthProvider'
 import type { DecisionLetter, EnergyLetter, InformationLetter, LifestyleLetter } from '../../types/mbti'
 import { parseMbtiLetters } from '../../types/mbti'
 import type { Profile } from '../../types/profile'
@@ -141,13 +142,14 @@ const SaveButtonPlus = styled(SaveButton)`
     color: ${({ theme }) => theme.colors.fadedWhite};
 `;
 
-export default function ProfileForm({ showSavedProfile = false, extraActions }: ProfileFormProps) {
+export default function ProfileForm({ fullViewport = false, showSavedProfile = false, extraActions }: ProfileFormProps) {
     const [ei, setEi] = useState<EnergyLetter | null>(null);
     const [sn, setSn] = useState<InformationLetter | null>(null);
     const [ft, setFt] = useState<DecisionLetter | null>(null);
     const [pj, setPj] = useState<LifestyleLetter | null>(null);
     const [nickname, setNickname] = useState<string>('');
     const [profileInformation, setProfileInformation] = useState<Profile | null>(null);
+    const { applyUser } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -195,6 +197,7 @@ export default function ProfileForm({ showSavedProfile = false, extraActions }: 
             window.alert('Failed to save profile.');
             return;
         }
+        applyUser(saved);
         window.alert('It is successfully saved.');
         navigate('/Start');
     }
@@ -222,7 +225,9 @@ export default function ProfileForm({ showSavedProfile = false, extraActions }: 
                     <TwoMbti first = 'P' second = 'J' isFirstSelected = { pj === 'P' } isSecondSelected = { pj === 'J' } target = {(t) => t ? setPj('P') : setPj('J')} />
                 </FlexDiv>
                 <Mbti> { ei }{ sn }{ ft }{ pj } </Mbti>
-                <GenerateButtonPlus content = 'Go to start page' onClick = {() => navigate('/Start')} />
+                {!fullViewport && (
+                    <GenerateButtonPlus content = 'Go to start page' onClick = {() => navigate('/Start')} />
+                )}
                 { extraActions }
                 <SaveButtonPlus onClick = { isSaved } />
             </WriteProfile>
