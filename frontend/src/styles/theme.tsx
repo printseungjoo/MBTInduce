@@ -13,7 +13,9 @@ export const theme = {
         softYellow: '#FEE95E',
         paleLavender: '#B08BC2',
         deepBlack: '#000000',
-        brightWhite: '#FFFFFF'
+        brightWhite: '#FFFFFF',
+        fadedWhite: '#FFFFFF9E',
+        transparent: 'transparent'
     }
 }
 

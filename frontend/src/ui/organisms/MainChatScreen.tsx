@@ -70,7 +70,7 @@ function readStreamDoneResult(data: unknown): PostChatMessageResponse | null {
 }
 
 export default function MainChatScreen() {
-    const { isMobileRightOpen } = useOutletContext<AppShellOutletContext>();
+    const { isMobileRightOpen, closeNavigation } = useOutletContext<AppShellOutletContext>();
     const location = useLocation();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [eValue, setEValue] = useState<number>(50);
@@ -82,6 +82,12 @@ export default function MainChatScreen() {
     const [selectedMainChatSessionId, setSelectedMainChatSessionId] = useState<string | null>(null);
     const mainChatRightScreenRef = useRef<MainChatRightScreenRef | null>(null);
     const isBlockingModalOpen = !selectedMainChatSessionId;
+
+    useEffect(() => {
+        if (!isBlockingModalOpen) {
+            closeNavigation();
+        }
+    }, [isBlockingModalOpen, closeNavigation]);
 
     useEffect(() => {
         const reset = (location.state as { reset?: number } | null)?.reset;

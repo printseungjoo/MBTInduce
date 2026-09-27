@@ -7,9 +7,11 @@ interface OldMainChatButtonProps {
 }
 
 const OldMainChatButtonStyled = styled.button`
-    background-color: transparent;
+    background-color: ${({ theme }) => theme.colors.transparent};
     width: 100%;
-    border: 0.5px solid ${({theme}) => theme.colors.warmTaupe};
+    border: 1px solid ${({theme}) => theme.colors.warmTaupe};
+    box-sizing: border-box;
+    padding: 1.4vh 1.2vw;
     display: flex;
     flex-direction: column;
     gap: 1vh;

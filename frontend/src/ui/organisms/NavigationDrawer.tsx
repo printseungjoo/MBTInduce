@@ -10,6 +10,7 @@ interface NavigationDrawerProps {
     isOpen: boolean;
     children?: React.ReactNode;
     id?: string;
+    onNavigate?: (to: string) => void;
 }
 
 const NavigationDrawerStyled = styled.nav<{ isOpen: boolean }>`
@@ -41,7 +42,7 @@ const Subtitle = styled.p`
 
 type clickedNameGeneric = 'Start Page' | 'Main Chat' | 'Simulation' | 'Calendar' | 'History' | 'My Page'
 
-export default function NavigationDrawer({ className, isOpen, children, id }: NavigationDrawerProps) {
+export default function NavigationDrawer({ className, isOpen, children, id, onNavigate }: NavigationDrawerProps) {
     const location = useLocation();
 
     const pathMap: Record<string, clickedNameGeneric> = {
@@ -64,12 +65,12 @@ export default function NavigationDrawer({ className, isOpen, children, id }: Na
                 </FlexDiv>
                 <Subtitle> MBTI Chat-GPT AI Agent </Subtitle>
             </PaddingLeftWithLine>
-            <PageButton name = '👋🏻 Start Page' clicked = {clickedName === 'Start Page'} to = '/Start' />
-            <PageButton name = '💬 Main Chat' clicked = {clickedName === 'Main Chat'} to = '/MainChat' />
-            <PageButton name = '👥 Simulation' clicked = {clickedName === 'Simulation'} to = '/Simulation' />
-            <PageButton name = '📅 Calendar' clicked = {clickedName === 'Calendar'} to = '/Calendar' />
-            <PageButton name = '📄 History' clicked = {clickedName === 'History'} to = '/History' />
-            <PageButton name = '👤 My Page' clicked = {clickedName === 'My Page'} to = '/Mypage' />
+            <PageButton name = '👋🏻 Start Page' clicked = {clickedName === 'Start Page'} to = '/Start' onNavigate = { onNavigate } />
+            <PageButton name = '💬 Main Chat' clicked = {clickedName === 'Main Chat'} to = '/MainChat' onNavigate = { onNavigate } />
+            <PageButton name = '👥 Simulation' clicked = {clickedName === 'Simulation'} to = '/Simulation' onNavigate = { onNavigate } />
+            <PageButton name = '📅 Calendar' clicked = {clickedName === 'Calendar'} to = '/Calendar' onNavigate = { onNavigate } />
+            <PageButton name = '📄 History' clicked = {clickedName === 'History'} to = '/History' onNavigate = { onNavigate } />
+            <PageButton name = '👤 My Page' clicked = {clickedName === 'My Page'} to = '/Mypage' onNavigate = { onNavigate } />
             <WebsiteIntro content='MBTInduce is a ChatGPT(AI) agent web service that allows users to induce ChatGPT responses based on selected MBTI personality traits. It also allows you to simulate conversations with specific MBTI personalities.' />
         </NavigationDrawerStyled>
     )

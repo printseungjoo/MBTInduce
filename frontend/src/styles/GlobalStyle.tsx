@@ -21,6 +21,16 @@ export function GlobalStyle() {
             button {
                 cursor: pointer;
                 font-family: inherit;
+                border: 1px solid ${theme.colors.paleLavender};
+            }
+
+            input, textarea, select {
+                border: 1px solid ${theme.colors.paleLavender};
+            }
+
+            input:focus, textarea:focus, select:focus {
+                border: 1px solid ${theme.colors.softLavender};
+                outline: none;
             }
             `}
         />

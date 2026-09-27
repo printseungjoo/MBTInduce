@@ -1,18 +1,18 @@
 import styled from '@emotion/styled'
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 import { apiFetch } from '../../api/client'
 import type { ChatSession } from '../../types/chat'
 import GoBackButton from '../atoms/GoBackButton'
 import OldMainChatButton from '../atoms/OldMainChatButton'
-import ListSkeleton from './ListSkeleton'
+import LoadingBlock from './LoadingBlock'
 import StatusMessage from './StatusMessage'
 import Modal from './Modal'
 
 interface OldMainChatModalProps {
     onConfirm: () => void;
     onSelectHistory: (history: ChatSession) => void;
+    onBack: () => void;
 }
 
 const NoChatText = styled.p`
@@ -21,8 +21,7 @@ const NoChatText = styled.p`
     text-align: center;
 `;
 
-export default function OldMainChatModal({ onConfirm, onSelectHistory }: OldMainChatModalProps) {
-    const navigate = useNavigate();
+export default function OldMainChatModal({ onConfirm, onSelectHistory, onBack }: OldMainChatModalProps) {
     const [remove, setRemove] = useState<boolean>(false);
     const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
     const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -57,8 +56,8 @@ export default function OldMainChatModal({ onConfirm, onSelectHistory }: OldMain
     return (
         <>
             {!remove && (
-                <Modal desktopWidth = '50vw' onClose = {() => navigate('/Start')}>
-                {status === 'loading' && <ListSkeleton count = { 2 } />}
+                <Modal desktopWidth = '50vw' onClose = { onBack }>
+                {status === 'loading' && <LoadingBlock message = 'Loading chats...' />}
                 {status === 'error' && (
                     <StatusMessage message = 'Could not load chat rooms.' onRetry = { getChatSessions } />
                 )}
@@ -70,7 +69,7 @@ export default function OldMainChatModal({ onConfirm, onSelectHistory }: OldMain
                         <OldMainChatButton chatContent = { c.title } />
                     </div>
                 ))}
-                    <GoBackButton />
+                    <GoBackButton content = 'Go back' onClick = { onBack } />
                 </Modal>
             )}
         </>

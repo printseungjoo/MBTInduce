@@ -7,13 +7,16 @@ interface HistoryOptionButtonProps {
 }
 
 const HistoryOptionButtonStyled = styled.button<{ selected: boolean }>`
-    border-left: transparent;
-    border-right: transparent;
-    border-top: transparent;
-    border-bottom: 3px solid ${({ theme, selected }) => selected  ? theme.colors.softLavender : 'transparent'};
+    border-left: ${({ theme }) => theme.colors.transparent};
+    border-right: ${({ theme }) => theme.colors.transparent};
+    border-top: ${({ theme }) => theme.colors.transparent};
+    border-bottom: 2px solid ${({ theme, selected }) => selected  ? theme.colors.softLavender : theme.colors.transparent};
     color: ${({ theme }) => theme.colors.lightWhite};
     border-radius: 0;
-    background-color: transparent;
+    background-color: ${({ theme }) => theme.colors.transparent};
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.6vh 0.8vw;
 
     .history-option-icon {
         display: none;

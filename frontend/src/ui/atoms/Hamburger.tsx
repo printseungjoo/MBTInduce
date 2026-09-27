@@ -9,7 +9,7 @@ const HamburgerButton = styled.button<{ isOpen?: boolean }>`
     padding: 0;
     border: 0;
     border-radius: 0;
-    background: transparent;
+    background: ${({ theme }) => theme.colors.transparent};
     appearance: none;
     -webkit-appearance: none;
     cursor: pointer;

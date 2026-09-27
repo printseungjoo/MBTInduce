@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Dispatch, SetStateAction } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
@@ -17,6 +17,8 @@ export type AppShellHandle = {
 export type AppShellOutletContext = {
     isMobileRightOpen: boolean;
     setIsMobileRightOpen: Dispatch<SetStateAction<boolean>>;
+    openNavigation: () => void;
+    closeNavigation: () => void;
 }
 
 const FullScreen = styled.div`
@@ -79,10 +81,13 @@ const NavigationDrawerPlus = styled(NavigationDrawer)<{ isOpen: boolean }>`
     display: flex;
     position: fixed;
     height: 100vh;
+    z-index: 20;
 `;
 
 const DesktopOnlyHamburger = styled.div`
     display: block;
+    position: relative;
+    z-index: 20;
 
     @media screen and (max-width: 767px) {
         display: none;
@@ -154,10 +159,18 @@ export default function AppShell() {
     const handle = useAppShellHandle();
     const hasRightScreen = Boolean(handle.hasRightScreen);
     const hasMobileRightPanel = Boolean(handle.hasMobileRightPanel);
+    const openNavigation = useCallback(() => setIsOpen(true), []);
+    const closeNavigation = useCallback(() => setIsOpen(false), []);
     const outletContext: AppShellOutletContext = {
         isMobileRightOpen,
-        setIsMobileRightOpen
+        setIsMobileRightOpen,
+        openNavigation,
+        closeNavigation
     };
+
+    function handleNavNavigate(_path: string) {
+        setIsOpen(false);
+    }
 
     function isClicked() {
         setIsOpen(!isOpen);
@@ -177,7 +190,7 @@ export default function AppShell() {
 
     return (
         <FullScreen>
-            <NavigationDrawerPlus isOpen = { isOpen } id = 'app-navigation-drawer'>
+            <NavigationDrawerPlus isOpen = { isOpen } id = 'app-navigation-drawer' onNavigate = { handleNavNavigate }>
                 <DesktopOnlyHamburger>
                     <Hamburger isClicked = { isClicked } isOpen = { isOpen } label = { isOpen ? 'Close navigation' : 'Open navigation' } controls = 'app-navigation-drawer' />
                 </DesktopOnlyHamburger>
@@ -205,12 +218,12 @@ export default function AppShell() {
                 </FlexColumnDiv>
             </MainContent>
             <MobileBottomNav aria-label = 'Main'>
-                <MobileBottomNavItem to = "/Start" aria-label = 'Start'> 👋🏻 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Start" aria-label = 'Start' onClick = {() => handleNavNavigate('/Start')}> 👋🏻 </MobileBottomNavItem>
                 <MobileBottomNavItem to = "/MainChat" aria-label = 'Main Chat' onClick = {() => handleSameTabClick('/MainChat')}> 💬 </MobileBottomNavItem>
                 <MobileBottomNavItem to = "/Simulation" aria-label = 'Simulation' onClick = {() => handleSameTabClick('/Simulation')}> 👥 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/Calendar" aria-label = 'Calendar'> 📅 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/History" aria-label = 'History'> 📄 </MobileBottomNavItem>
-                <MobileBottomNavItem to = "/Mypage" aria-label = 'My Page'> 👤 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Calendar" aria-label = 'Calendar' onClick = {() => handleNavNavigate('/Calendar')}> 📅 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/History" aria-label = 'History' onClick = {() => handleNavNavigate('/History')}> 📄 </MobileBottomNavItem>
+                <MobileBottomNavItem to = "/Mypage" aria-label = 'My Page' onClick = {() => handleNavNavigate('/Mypage')}> 👤 </MobileBottomNavItem>
             </MobileBottomNav>
         </FullScreen>
     );

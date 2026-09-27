@@ -5,7 +5,7 @@ import { apiFetch } from '../../api/client'
 import type { SimulationProfile, SimulationTemplate } from '../../types/simulation'
 import GoBackButton from '../atoms/GoBackButton'
 import OldSimulationButton from '../atoms/OldSimulationButton'
-import ListSkeleton from './ListSkeleton'
+import LoadingBlock from './LoadingBlock'
 import StatusMessage from './StatusMessage'
 import Modal from './Modal'
 
@@ -76,7 +76,7 @@ export default function OldSimulationModal({ onConfirm, onSelectHistory }: OldSi
         <>
             {!remove && (
                 <Modal desktopWidth = '50vw' onClose = {() => navigate('/Start')}>
-                { status === 'loading' && <ListSkeleton count = { 2 } /> }
+                { status === 'loading' && <LoadingBlock message = 'Loading conversations...' /> }
                 { status === 'error' && (
                     <StatusMessage message = 'Could not load simulations.' onRetry = { getHistory } />
                 )}

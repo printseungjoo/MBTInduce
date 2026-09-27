@@ -8,14 +8,17 @@ interface GenerateButtonProps {
 
 const GenerateButtonStyled = styled.button`
     width: 100%;
-    min-height: 4vh;
+    min-height: 4.4vh;
     height: auto;
+    padding: 1.1vh 1vw;
     font-weight: bolder;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: ${({ theme }) => theme.colors.coolGray};
-    border-radius: 0;
+    border: 1px solid ${({ theme }) => theme.colors.mutedViolet};
+    border-radius: 8px;
+    box-sizing: border-box;
     color: ${({ theme }) => theme.colors.deepBlack};
 `;
 

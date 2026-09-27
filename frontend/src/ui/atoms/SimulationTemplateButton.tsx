@@ -14,7 +14,7 @@ interface SimulationTemplateButtonProps {
 const SimulationTemplateButtonStyled = styled.button`
     border-top: 1px solid ${({ theme }) => theme.colors.lightWhite};
     border-bottom: 1px solid ${({ theme }) => theme.colors.lightWhite};
-    background-color: transparent;
+    background-color: ${({ theme }) => theme.colors.transparent};
     width: 100%;
     border-radius: 0;
     padding: 1.3vh 1%;

@@ -20,8 +20,8 @@ const FirstMbtiStyled = styled.button<{isFirstSelected: boolean}>`
     color: ${({ theme }) => theme.colors.lightWhite};
     font-weight: bolder;
     text-align: center;
-    border: 1px solid transparent;
-    background-color: ${({ theme, isFirstSelected }) => isFirstSelected ? theme.colors.mutedViolet : 'transparent'};
+    border: 1px solid ${({ theme }) => theme.colors.transparent};
+    background-color: ${({ theme, isFirstSelected }) => isFirstSelected ? theme.colors.mutedViolet : theme.colors.transparent};
     width: 50%;
 `;
 
@@ -36,8 +36,8 @@ const SecondMbtiStyled = styled.button<{ isSecondSelected: boolean }>`
     color: ${({ theme }) => theme.colors.lightWhite};
     font-weight: bolder;
     text-align: center;
-    border: 1px solid transparent;
-    background-color: ${({ theme, isSecondSelected }) => isSecondSelected ? theme.colors.mutedViolet : 'transparent'};
+    border: 1px solid ${({ theme }) => theme.colors.transparent};
+    background-color: ${({ theme, isSecondSelected }) => isSecondSelected ? theme.colors.mutedViolet : theme.colors.transparent};
     width: 50%;
 `;
 

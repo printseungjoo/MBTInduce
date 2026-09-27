@@ -12,6 +12,13 @@ const InputStyled = styled.input`
     text-align: center;
     background-color: ${({ theme }) => theme.colors.lightWhite};
     color: ${({ theme }) => theme.colors.deepBlack};
+    border: 1px solid ${({ theme }) => theme.colors.paleLavender};
+    box-sizing: border-box;
+
+    &:focus {
+        border: 1px solid ${({ theme }) => theme.colors.softLavender};
+        outline: none;
+    }
 
     &::placeholder {
         text-align: center;

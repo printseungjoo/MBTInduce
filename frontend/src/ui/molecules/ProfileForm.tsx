@@ -96,16 +96,18 @@ const FlexDiv = styled.div`
 `;
 
 const GenerateButtonPlus = styled(GenerateButton)`
-    height: 3vh;
+    height: 4.5vh;
+    min-height: 4.5vh;
     border-radius: 7px;
-    margin: 2vh 0;
-    color: ${({ theme }) => theme.colors.deepBlack};
+    margin: 0 0 1.5vh;
+    box-sizing: border-box;
+    padding: 0;
 
     && {
-        color: ${({ theme }) => theme.colors.deepBlack} !important;
-        background-color: ${({ theme }) => theme.colors.brightWhite};
-        -webkit-text-fill-color: ${({ theme }) => theme.colors.deepBlack} !important;
-        color-scheme: only light;
+        color: ${({ theme }) => theme.colors.fadedWhite};
+        background-color: ${({ theme }) => theme.colors.mutedViolet};
+        border: 1px solid ${({ theme }) => theme.colors.softLavender};
+        -webkit-text-fill-color: ${({ theme }) => theme.colors.fadedWhite};
     }
 `;
 
@@ -125,10 +127,12 @@ const Mbti = styled.p`
     color: ${({ theme }) => theme.colors.softLavender};
     text-align: center;
     font-size: 1.5rem;
+    padding-bottom: 2vh;
 `;
 
 const SaveButtonPlus = styled(SaveButton)`
     width: 100%;
+    color: ${({ theme }) => theme.colors.fadedWhite};
 `;
 
 export default function ProfileForm({ fullViewport = false, showSavedProfile = false, extraActions }: ProfileFormProps) {

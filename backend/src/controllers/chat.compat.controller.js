@@ -8,12 +8,32 @@ import { endSseError, initSse, postMessageCore, writeSse } from "./chat.controll
 
 async function getOrCreateChatSession(userId, pageType, simulationKey) {
   let session = await findActiveChatSession(userId, pageType, simulationKey);
-  if (!session) {
-    const title = resolveChatSessionTitle(pageType, simulationKey);
-    session = await prisma.chatSession.create({
-      data: { userId, title },
-    });
+  if (session) {
+    return session;
   }
+
+  const title = resolveChatSessionTitle(pageType, simulationKey);
+  session = await prisma.chatSession.create({
+    data: { userId, title },
+  });
+
+  const matches = await prisma.chatSession.findMany({
+    where: { userId, title, isArchived: false },
+    orderBy: { createdAt: "asc" }
+  });
+  if (matches.length > 1) {
+    const [keep, ...extras] = matches;
+    for (const extra of extras) {
+      const messageCount = await prisma.message.count({
+        where: { chatSessionId: extra.id }
+      });
+      if (messageCount === 0) {
+        await prisma.chatSession.delete({ where: { id: extra.id } });
+      }
+    }
+    return keep;
+  }
+
   return session;
 }
 

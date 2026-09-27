@@ -29,7 +29,7 @@ const CalendarStyled = styled.div`
         background-color: ${({ theme }) => theme.colors.lightWhite};
     }
     .rbc-today {
-        background-color: transparent;
+        background-color: ${({ theme }) => theme.colors.transparent};
     }
     .rbc-toolbar,
     .rbc-header,

@@ -37,7 +37,7 @@ const SplitI = styled.span`
         ${({ theme }) => theme.colors.paleLavender} 50%
     );
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-text-fill-color: ${({ theme }) => theme.colors.transparent};
 `;
 
 const SubTitle = styled.h3`

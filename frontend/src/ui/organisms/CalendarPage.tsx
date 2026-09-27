@@ -41,7 +41,7 @@ const CalendarModalCloseButton = styled.button`
     width: 2rem;
     height: 2rem;
     border: none;
-    background: transparent;
+    background: ${({ theme }) => theme.colors.transparent};
     color: ${({ theme }) => theme.colors.lightWhite};
     font-size: 1.5rem;
     font-weight: 700;

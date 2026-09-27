@@ -31,11 +31,20 @@ const Center = styled.div`
 const RangeBarStick = styled.input`
     width: 100%;
     appearance: none;
-    background-color: transparent;
+    background-color: ${({ theme }) => theme.colors.transparent};
     cursor: pointer;
+    border: none;
+    box-shadow: none;
+
+    && {
+        border: none;
+        box-shadow: none;
+    }
 
     &:focus {
         outline: none;
+        border: none;
+        box-shadow: none;
     }
 
     &::-webkit-slider-runnable-track {

@@ -48,7 +48,7 @@ const TextInputBoxDiv = styled.div`
 
 const TextExampleButton = styled.button`
     border: none;
-    background: transparent;
+    background: ${({ theme }) => theme.colors.transparent};
     cursor: pointer;
     font-size: 1.2rem;
     margin-right: 0.5vw;
@@ -62,7 +62,7 @@ const TextInputBoxStyled = styled.input`
     box-sizing: border-box;
     border: none;
     outline: none;
-    background: transparent;
+    background: ${({ theme }) => theme.colors.transparent};
     font-size: 1rem;
     color: ${({ theme }) => theme.colors.deepBlack};
 `;

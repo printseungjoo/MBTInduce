@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
 import EditScheduleOptionButton from '../atoms/EditScheduleOptionButton'
@@ -13,17 +11,17 @@ interface InitialEditScheduleProps {
     start: Date;
     end: Date;
     onSelectEditTarget: (target: EditTarget, content: string | Date, id: string) => void;
+    onBack: () => void;
 }
 
-export default function InitialEditSchedule({ id, title, start, end, onSelectEditTarget }: InitialEditScheduleProps) {
-    const navigate = useNavigate();
+export default function InitialEditSchedule({ id, title, start, end, onSelectEditTarget, onBack }: InitialEditScheduleProps) {
     return (
-        <Modal onClose = {() => navigate('/Start')}>
+        <Modal onClose = { onBack }>
             <CenterPurpleP content = 'Click what you want to change' />
             <EditScheduleOptionButton content = { title } onSelect = { onSelectEditTarget } target = 'title' id = { id }/>
             <EditScheduleOptionButton content = { start } onSelect = { onSelectEditTarget } target = 'start' id = { id }/>
             <EditScheduleOptionButton content = { end } onSelect = { onSelectEditTarget } target = 'end' id = { id }/>
-            <GoBackButton />
+            <GoBackButton content = 'Go back' onClick = { onBack } />
         </Modal>
     )
 }

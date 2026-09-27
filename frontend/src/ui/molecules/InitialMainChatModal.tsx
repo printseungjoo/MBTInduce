@@ -22,7 +22,7 @@ export default function InitialMainChatModal({ onConfirm, onSelectHistory }: Ini
         setShowNew(true);
     };
     if (showNew) {
-        return <MakeNewMainChatModal onSubmitSuccess = {(session) => {
+        return <MakeNewMainChatModal onBack = {() => setShowNew(false)} onSubmitSuccess = {(session) => {
             setShowNew(false);
             onSelectHistory(session);
             onConfirm();
@@ -32,7 +32,7 @@ export default function InitialMainChatModal({ onConfirm, onSelectHistory }: Ini
         setShowOld(true);
     };
     if (showOld) {
-        return <OldMainChatModal onConfirm = { onConfirm } onSelectHistory = { onSelectHistory } /> 
+        return <OldMainChatModal onBack = {() => setShowOld(false)} onConfirm = { onConfirm } onSelectHistory = { onSelectHistory } /> 
     }
 
     return (

@@ -6,8 +6,8 @@ const PageButtonStyled = styled(NavLink)<{ clicked: boolean }>`
     height: 5vh;
     margin-left: 0.5vw;
     margin-top: 1.5vh;
-    background-color: ${({ theme, clicked }) => clicked ? theme.colors.mutedViolet : 'transparent'};
-    color: white;
+    background-color: ${({ theme, clicked }) => clicked ? theme.colors.mutedViolet : theme.colors.transparent};
+    color: ${({ theme }) => theme.colors.lightWhite};
     text-align: left;
     padding-left: 0.5vw;
     display: flex;
@@ -22,11 +22,12 @@ interface PageButtonProps {
     name: string;
     clicked: boolean;
     to: string;
+    onNavigate?: (to: string) => void;
 }
 
-export default function PageButton({ name, clicked, to }: PageButtonProps) {
+export default function PageButton({ name, clicked, to, onNavigate }: PageButtonProps) {
     return(
-        <PageButtonStyled clicked = { clicked } to = { to }>
+        <PageButtonStyled clicked = { clicked } to = { to } onClick = {() => onNavigate?.(to)}>
             { name }
         </PageButtonStyled>
     )

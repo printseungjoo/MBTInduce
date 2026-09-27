@@ -25,8 +25,8 @@ export default function InitialSimulationRightScreen({ onConfirm, onSelectHistor
         setShowNew(true);
     };
     if (showNew) {
-        return <MakeNewSimulationModal onSubmitSuccess = {(selection) => {
-            setShowNew(false); 
+        return <MakeNewSimulationModal onBack = {() => setShowNew(false)} onSubmitSuccess = {(selection) => {
+            setShowNew(false);
             onSelectHistory(selection);
             onConfirm();
         }} />;

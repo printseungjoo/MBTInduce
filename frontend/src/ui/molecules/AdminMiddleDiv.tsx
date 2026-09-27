@@ -81,7 +81,7 @@ const RatingRow = styled.div`
 `
 
 const ScoreText = styled.p`
-    color: white;
+    color: ${({ theme }) => theme.colors.lightWhite};
     font-size: 1.5rem;
     font-weight: bold;
     margin: 0;

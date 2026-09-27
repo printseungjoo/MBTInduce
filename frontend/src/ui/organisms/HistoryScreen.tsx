@@ -7,7 +7,7 @@ import type { ChatSession } from '../../types/chat'
 import type { SimulationProfile, SimulationTemplate } from '../../types/simulation'
 import HistoryDiv from '../molecules/HistoryDiv'
 import HistoryOptionButton from '../atoms/HistoryOptionButton'
-import ListSkeleton from '../molecules/ListSkeleton'
+import LoadingBlock from '../molecules/LoadingBlock'
 import StatusMessage from '../molecules/StatusMessage'
 import EditMainChat from '../molecules/EditMainChat'
 import InitialEditSimulation from '../molecules/InitialEditSimulation'
@@ -35,7 +35,7 @@ const Option = styled.div`
         padding-left: 0;
         margin-top: 0;
         margin-bottom: 0.6rem;
-        border-top: 3px solid ${({ theme }) => theme.colors.royalPurple};
+        border-top: 1px solid ${({ theme }) => theme.colors.royalPurple};
         border-bottom: 1px solid ${({ theme }) => theme.colors.royalPurple};
     }
 `;
@@ -205,7 +205,7 @@ export default function HistoryScreen() {
                 <HistoryOptionButton name = 'Simulation History' clicked = {() => setOptionSelected('Simulation History')} selected = {optionSelected === 'Simulation History'} />
                 <HistoryOptionButton name = 'Schedule' clicked = {() => setOptionSelected('Schedule')} selected = {optionSelected === 'Schedule'} />
             </Option>
-            {optionSelected === 'Chat History' && chatStatus === 'loading' && <ListSkeleton />}
+            {optionSelected === 'Chat History' && chatStatus === 'loading' && <LoadingBlock message = 'Loading chats...' />}
             {optionSelected === 'Chat History' && chatStatus === 'error' && (
                 <StatusMessage message = 'Could not load chat history.' onRetry = { getChatSessions } />
             )}
@@ -217,8 +217,13 @@ export default function HistoryScreen() {
                     <HistoryDiv key = { c.id } title = { 'Chat' } description = { c.title || '' } date = { '' } etc = { '' } onClick = {() => { deleteChatSession(c.id) }} onEditClick = {() => { goToEditMainChat(c.id) }}/>
                 )
             })}
-            {isMainEditOpen && editingChatId && (<EditMainChat changedChatId = { editingChatId }/>)}
-            {optionSelected === 'Simulation History' && simulationStatus === 'loading' && <ListSkeleton />}
+            {isMainEditOpen && editingChatId && (
+                <EditMainChat changedChatId = { editingChatId } onBack = {() => {
+                    setIsMainEditOpen(false);
+                    setEditingChatId(null);
+                }} />
+            )}
+            {optionSelected === 'Simulation History' && simulationStatus === 'loading' && <LoadingBlock message = 'Loading simulations...' />}
             {optionSelected === 'Simulation History' && simulationStatus === 'error' && (
                 <StatusMessage message = 'Could not load simulation history.' onRetry = { getSimulationData } />
             )}
@@ -236,9 +241,16 @@ export default function HistoryScreen() {
                     <HistoryDiv key = { s.id } title = { user.name } description = { s.content } date = { s.createdAt || '' } etc = { user.mbti } onClick = {() => { deleteSimulationSession(s.id, user.id) }} onEditClick = {() => { goToEditSimulation(user.name, user.mbti, s.content, user.id, s.id) }}/>
                 )
             })}
-            {isSimulationEditOpen && editingSimulationId && (<InitialEditSimulation userName = { editingSimulationId.userName } userMbti = { editingSimulationId.userMbti } simulationContent = { editingSimulationId.simulationContent } userId = { editingSimulationId.userId } simulationId = { editingSimulationId.simulationId } onSelectEditTarget = { handleSelectEditTarget } />)}
-            {isSimulationEditOpen && selectedEditTarget && (<EditSimulation content = { selectedEditContent } target = { selectedEditTarget } id = { selectedSimulationId }/>)}
-            {optionSelected === 'Schedule' && scheduleStatus === 'loading' && <ListSkeleton />}
+            {isSimulationEditOpen && editingSimulationId && !selectedEditTarget && (
+                <InitialEditSimulation userName = { editingSimulationId.userName } userMbti = { editingSimulationId.userMbti } simulationContent = { editingSimulationId.simulationContent } userId = { editingSimulationId.userId } simulationId = { editingSimulationId.simulationId } onSelectEditTarget = { handleSelectEditTarget } onBack = {() => {
+                    setIsSimulationEditOpen(false);
+                    setEditingSimulationId(null);
+                }} />
+            )}
+            {isSimulationEditOpen && selectedEditTarget && (
+                <EditSimulation content = { selectedEditContent } target = { selectedEditTarget } id = { selectedSimulationId } onBack = {() => setSelectedEditTarget(null)} />
+            )}
+            {optionSelected === 'Schedule' && scheduleStatus === 'loading' && <LoadingBlock message = 'Loading schedules...' />}
             {optionSelected === 'Schedule' && scheduleStatus === 'error' && (
                 <StatusMessage message = 'Could not load schedules.' onRetry = { loadCalendarEvents } />
             )}
@@ -250,8 +262,15 @@ export default function HistoryScreen() {
                     <HistoryDiv key = { e.id } title = { e.title } description = { formatDisplayDate(e.start) + ' ' + formatDisplayTime(e.start) + ' - ' + formatDisplayDate(e.end) + ' ' + formatDisplayTime(e.end)} date = { '' } etc = { '' } onClick = {() => { deleteSchedule(e.id) }} onEditClick = {() => { goToEditSchedule(e.id, e.title, e.start, e.end) }}/>
                 )
             })}
-            {isScheduleEditOpen && editingScheduleId && !selectedScheduleTarget && (<InitialEditSchedule id = { editingScheduleId.scheduleId } title = { editingScheduleId.scheduleTitle } start = { editingScheduleId.scheduleStart } end = { editingScheduleId.scheduleEnd } onSelectEditTarget = { handleSelectScheduleEditTarget } />)}
-            {isScheduleEditOpen && selectedScheduleTarget && (<EditSchedule id = { selectedScheduleId } target = { selectedScheduleTarget } content = { String(selectedScheduleContent) }/>)}
+            {isScheduleEditOpen && editingScheduleId && !selectedScheduleTarget && (
+                <InitialEditSchedule id = { editingScheduleId.scheduleId } title = { editingScheduleId.scheduleTitle } start = { editingScheduleId.scheduleStart } end = { editingScheduleId.scheduleEnd } onSelectEditTarget = { handleSelectScheduleEditTarget } onBack = {() => {
+                    setIsScheduleEditOpen(false);
+                    setEditingScheduleId(null);
+                }} />
+            )}
+            {isScheduleEditOpen && selectedScheduleTarget && (
+                <EditSchedule id = { selectedScheduleId } target = { selectedScheduleTarget } content = { String(selectedScheduleContent) } onBack = {() => setSelectedScheduleTarget(null)} />
+            )}
         </>
     )
 }

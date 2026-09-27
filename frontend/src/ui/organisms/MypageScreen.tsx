@@ -15,14 +15,17 @@ const MypageScreenStyled = styled.div`
 const RedButton = styled.button`
     background-color: ${({ theme }) => theme.colors.mutedRose};
     border-radius: 7px;
-    color: ${({ theme }) => theme.colors.royalPurple};
-    border: 0;
+    color: ${({ theme }) => theme.colors.fadedWhite};
+    font-weight: bolder;
+    border: 1px solid ${({ theme }) => theme.colors.paleLavender};
     height: 4.5vh;
+    min-height: 4.5vh;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     margin-bottom: 1.5vh;
+    box-sizing: border-box;
 `;
 
 export default function MypageScreen() {

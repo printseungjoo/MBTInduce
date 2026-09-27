@@ -14,7 +14,7 @@ import InitialSimulationModal from '../molecules/InitialSimulationModal'
 import SimulationRightScreen from './SimulationRightScreen'
 
 export default function SimulationScreen() {
-    const { isMobileRightOpen } = useOutletContext<AppShellOutletContext>();
+    const { isMobileRightOpen, closeNavigation } = useOutletContext<AppShellOutletContext>();
     const location = useLocation();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const eValue = 50;
@@ -38,6 +38,12 @@ export default function SimulationScreen() {
     const currentChatMessages = isReadySimulation ? simulationChatMessages[selectedSimulationKey] ?? [] : [];
 
     useEffect(() => {
+        if (!isBlockingModalOpen) {
+            closeNavigation();
+        }
+    }, [isBlockingModalOpen, closeNavigation]);
+
+    useEffect(() => {
         const reset = (location.state as { reset?: number } | null)?.reset;
         if (!reset) return;
         setShowSimulation(false);
@@ -52,12 +58,6 @@ export default function SimulationScreen() {
             getChatMessages(selectedSimulationKey);
         }
     }, [isReadySimulation, selectedSimulationKey]);
-
-    useEffect(() => {
-        if (showSimulation && selectedSimulationKey) {
-            getChatMessages();
-        }
-    }, [showSimulation, selectedSimulationKey]);
 
     async function getChatMessages(simKey?: string) {
         const key = simKey ?? selectedSimulationKey;

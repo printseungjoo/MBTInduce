@@ -50,7 +50,7 @@ const StarsRow = styled.div`
 
 const StarButton = styled.button<{ active: boolean }>`
     border: none;
-    background: transparent;
+    background: ${({ theme }) => theme.colors.transparent};
     cursor: pointer;
     padding: 0;
     font-size: 1vw;

@@ -1,10 +1,10 @@
 import styled from '@emotion/styled'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 import { apiFetch } from '../../api/client'
 import CenterPurpleP from '../atoms/CenterPurpleP'
 import GoBackButton from '../atoms/GoBackButton'
+import LoadingBlock from './LoadingBlock'
 import SelectTime from './SelectTime'
 import Modal from './Modal'
 
@@ -12,6 +12,7 @@ interface EditScheduleProps {
     content: string;
     target: string;
     id: string;
+    onBack: () => void;
 }
 
 const ScheduleTextArea = styled.textarea`
@@ -23,6 +24,12 @@ const ScheduleTextArea = styled.textarea`
     padding: 1.5vh 1vw;
     background-color: ${({ theme }) => theme.colors.brightWhite};
     color: ${({ theme }) => theme.colors.deepBlack};
+    border: 1px solid ${({ theme }) => theme.colors.paleLavender};
+
+    &:focus {
+        border: 1px solid ${({ theme }) => theme.colors.softLavender};
+        outline: none;
+    }
 
     @media screen and (max-width: 767px) {
         padding: 0.8vh 2vw;
@@ -31,21 +38,24 @@ const ScheduleTextArea = styled.textarea`
 
 const SubmitButton = styled.button<{isValid: boolean}>`
     width: 100%;
-    min-height: 4vh;
-    height: auto;
+    min-height: 4.4vh;
+    height: 4.4vh;
+    padding: 0 1vw;
     font-weight: bolder;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: ${({ theme, isValid }) => isValid ? theme.colors.paleLavender : theme.colors.coolGray};
-    border-radius: 0;
+    border: 1px solid ${({ theme }) => theme.colors.paleLavender};
+    border-radius: 8px;
+    box-sizing: border-box;
 `;
 
-export default function EditSchedule({ target, id }: EditScheduleProps) {
-    const navigate = useNavigate();
+export default function EditSchedule({ target, id, onBack }: EditScheduleProps) {
     const [changedContent, setChangedContent] = useState<string>('');
     const [selectedDate, setSelectedDate] = useState<string>('');
     const [selectedTime, setSelectedTime] = useState<string>('');
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     async function editTitle(title: string) {
         try {
@@ -106,7 +116,8 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
     }
 
     const clickSubmitButton = async () => {
-        if (!isValid) return;
+        if (!isValid || isSubmitting) return;
+        setIsSubmitting(true);
         try {
             if (target === 'title') {
                 await editTitle(changedContent);
@@ -119,17 +130,24 @@ export default function EditSchedule({ target, id }: EditScheduleProps) {
             window.location.reload();
         } catch (error) {
             console.error(error);
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <Modal onClose = {() => navigate('/Start')}>
-            <CenterPurpleP content = 'If you want to modify what you selected, please write down the content here.' />
-            {target === 'title' ? (<ScheduleTextArea value = { changedContent } onChange={(e) => setChangedContent(e.target.value)}/>
-            ) : (<input type = "date" value = { selectedDate } onChange = {(e) => setSelectedDate(e.target.value)}/>)}
-            {selectedDate && (<SelectTime date = { selectedDate } onTimeChange = { setSelectedTime } showDateLabel = { false }/>)}
-            <GoBackButton />
-            <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
+        <Modal onClose = { isSubmitting ? undefined : onBack }>
+            {isSubmitting ? (
+                <LoadingBlock message = 'Submitting...' />
+            ) : (
+                <>
+                    <CenterPurpleP content = 'If you want to modify what you selected, please write down the content here.' />
+                    {target === 'title' ? (<ScheduleTextArea value = { changedContent } onChange={(e) => setChangedContent(e.target.value)}/>
+                    ) : (<input type = "date" value = { selectedDate } onChange = {(e) => setSelectedDate(e.target.value)}/>)}
+                    {selectedDate && (<SelectTime date = { selectedDate } onTimeChange = { setSelectedTime } showDateLabel = { false }/>)}
+                    <GoBackButton content = 'Go back' onClick = { onBack } />
+                    <SubmitButton isValid = { isValid } disabled = { !isValid } onClick = { clickSubmitButton }> Submit </SubmitButton>
+                </>
+            )}
         </Modal>
     )
 }
