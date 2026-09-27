@@ -67,7 +67,7 @@ const TextInputBoxStyled = styled.input`
     font-size: 1rem;
     color: ${({ theme }) => theme.colors.deepBlack};
 
-    &:focus {
+    &&:focus {
         border: 1px solid ${({ theme }) => theme.colors.transparent};
         outline: none;
         box-shadow: none;

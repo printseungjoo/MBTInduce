@@ -16,9 +16,8 @@ const InputStyled = styled.input`
     box-sizing: border-box;
 
     &:focus {
-        border: 1px solid ${({ theme }) => theme.colors.transparent};
+        border: 1px solid ${({ theme }) => theme.colors.softLavender};
         outline: none;
-        box-shadow: none;
     }
 
     &::placeholder {

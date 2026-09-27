@@ -41,9 +41,8 @@ const ScenarioTextArea = styled.textarea`
     border: 1px solid ${({ theme }) => theme.colors.paleLavender};
 
     &:focus {
-        border: 1px solid ${({ theme }) => theme.colors.transparent};
+        border: 1px solid ${({ theme }) => theme.colors.softLavender};
         outline: none;
-        box-shadow: none;
     }
 
     @media screen and (max-width: 767px) {
